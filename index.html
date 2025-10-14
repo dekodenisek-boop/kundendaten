@@ -5,34 +5,137 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <title>Kundennummer beantragen</title>
   <style>
-    :root{--text:#0f172a;--muted:#6b7280;--primary:#2563eb;--primary-hover:#1d4ed8;--border:#e5e7eb;--input:#f9fafb;--danger:#b91c1c;--shadow:0 10px 30px rgba(0,0,0,.06)}
+    :root{
+      --bg:#f7f7f8;
+      --card:#ffffff; /* Basiswert, wird unten für .card überschrieben */
+      --text:#0f172a;
+      --muted:#6b7280;
+      --primary:#2563eb;
+      --primary-hover:#1d4ed8;
+      --success:#16a34a;
+      --success-strong:#15803d;
+      --danger:#b91c1c;
+      --border:#e5e7eb;
+      --input:#f9fafb;
+      --shadow:0 10px 30px rgba(0,0,0,.06);
+      --radius:14px;
+      --wa:#25D366; /* WhatsApp grün */
+    }
     *{box-sizing:border-box}
-    body{margin:0;padding:24px;background:#fff;color:var(--text);font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
-    .wrap{max-width:860px;margin:0 auto}
-    h1{margin:0 0 16px;font-weight:800}
-    p.lead{margin:0 0 18px;color:var(--muted)}
-    .card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:20px;box-shadow:var(--shadow)}
-    label{font-size:14px}
-    input{width:100%;padding:12px;border-radius:10px;border:1px solid var(--border);background:var(--input);font-size:16px;outline:none}
-    input:focus{border-color:var(--primary);background:#fff}
-    .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-    .full{grid-column:1/-1}
-    @media (max-width:720px){.grid{grid-template-columns:1fr}}
-    .req{color:#dc2626;margin-left:4px;font-weight:700}
-    .err{display:none;color:var(--danger);font-size:12px;margin-top:6px}
-    .err.show{display:block}
-    .is-invalid{border-color:#ef4444!important;background:#fff}
-    .actions{display:flex;gap:10px;align-items:center;margin-top:8px;flex-wrap:wrap}
-    .btn{display:inline-flex;align-items:center;justify-content:center;padding:12px 16px;border-radius:10px;border:1px solid transparent;background:#e5e7eb;color:#111;font-weight:700;cursor:pointer}
-    .btn-primary{background:var(--primary);color:#fff}
-    .btn-primary:hover{background:var(--primary-hover)}
-    .muted{font-size:13px;color:var(--muted)}
-    .overlay{position:fixed;inset:0;display:none;place-items:center;background:rgba(0,0,0,.45);z-index:9999;padding:16px}
-    .overlay.show{display:grid}
-    .dialog{width:min(620px,94vw);background:#fff;border:1px solid var(--border);border-radius:16px;padding:18px;box-shadow:0 20px 60px rgba(0,0,0,.15)}
-    .dialog h2{margin:6px 0 12px;font-size:20px}
-    .ok{margin-top:12px;display:flex;gap:10px;justify-content:flex-end}
-    .btn-wa{background:#25D366;color:#fff;border-radius:999px;padding:12px 18px;font-weight:800;text-decoration:none}
+    html,body{height:100%}
+    body{
+      margin:0; padding:24px; background:var(--bg);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--text);
+      -webkit-text-size-adjust:100%;
+      text-size-adjust:100%;
+    }
+    .wrap{max-width:860px; margin:0 auto;}
+    h1{margin:0 0 16px; font-size:22px; font-weight:800; letter-spacing:.3px;}
+    p.lead{margin:0 0 20px; color:var(--muted)}
+
+    /* FORM-KARTE: dunkel #4B134A */
+    .card{
+      background:#4B134A; border:1px solid #3a0f39;
+      border-radius:var(--radius); padding:20px; box-shadow:var(--shadow);
+      color:#fff;
+    }
+    .card label{color:#fff;}
+    .card .hint{color:#f3e8ff;}
+    .card .checkline{border-top:1px dashed rgba(255,255,255,.28);}
+    .card .checkline a{color:#c7d2fe;}
+    .card .err{color:#ffe4e6;}
+    /* Inputs bleiben hell für bestmöglichen Kontrast */
+    input, select{
+      width:100%; padding:12px 12px; border-radius:10px;
+      border:1px solid var(--border); background:var(--input); font-size:15px;
+      outline:none; transition:border-color .15s, background .15s;
+      color:#0f172a;
+    }
+    input:focus, select:focus{ border-color: var(--primary); background:#fff; }
+
+    .grid{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+    .full{grid-column:1 / -1;}
+    @media (max-width:720px){ .grid{grid-template-columns:1fr;} }
+
+    .req{color:#ffd1d1; margin-left:4px; font-weight:700;}
+
+    .row-inline{display:grid; grid-template-columns: 1fr 1fr; gap:14px;}
+    @media (max-width:560px){ .row-inline{grid-template-columns:1fr;} }
+
+    .actions{display:flex; gap:10px; align-items:center; margin-top:8px; flex-wrap:wrap;}
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center;
+      padding:12px 16px; border-radius:10px; border:1px solid transparent;
+      background:#e5e7eb; color:#111; cursor:pointer; font-weight:700;
+      transition: background .15s, transform .04s ease;
+      text-decoration:none;
+    }
+    .btn:active{ transform: translateY(1px); }
+    .btn-primary{ background:var(--primary); color:#fff; }
+    .btn-primary:hover{ background:var(--primary-hover); }
+    .btn-success{ background:var(--success); color:#fff; }
+    .btn-success:hover{ background:var(--success-strong); }
+    .btn[disabled]{ opacity:.65; pointer-events:none; }
+
+    /* WhatsApp Button */
+    .btn-wa{
+      background:var(--wa); color:#fff; border-radius:999px; padding:12px 18px;
+      gap:10px; font-weight:800;
+    }
+    .btn-wa:hover{ filter:brightness(0.95); }
+    .btn-wa svg{ width:20px; height:20px; display:block; }
+
+    .muted{font-size:13px; color:var(--muted);}
+
+    /* Overlay (Erfolg + Review) */
+    .overlay{
+      position:fixed; inset:0; display:none; place-items:center;
+      background:rgba(0,0,0,.45); z-index:9999;
+      padding:16px;
+    }
+    .overlay.show{ display:grid; }
+    .dialog{
+      width:min(620px, 94vw); max-width:620px; background:#fff;
+      border:1px solid var(--border); color:var(--text);
+      border-radius:16px; padding:18px 18px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.15);
+      position:relative; /* für Close-Button */
+    }
+    .dialog h2{ margin:6px 0 12px; font-size:20px; }
+    .dialog p{ margin:6px 0 0; font-size:15px; }
+    .dialog .ok{ margin-top:12px; text-align:right; display:flex; gap:10px; justify-content:flex-end; flex-wrap:wrap; }
+    .review-table{ width:100%; border-collapse: collapse; margin-top:8px; }
+    .review-table td{ padding:6px 8px; border-bottom:1px solid #f1f5f9; vertical-align:top; }
+    .review-table td:first-child{ width:180px; color:#334155; font-weight:600; }
+
+    /* Close-Button (X) */
+    .close{
+      position:absolute; top:10px; right:10px;
+      background:transparent; border:0; cursor:pointer;
+      font-size:22px; line-height:1; color:#64748b;
+      padding:4px 8px; border-radius:8px;
+    }
+    .close:hover{ color:#0f172a; background:#f1f5f9; }
+
+    /* Erfolgsdialog grün */
+    .dialog.success{ background:#ecfdf5; border-color:#bbf7d0; color:#064e3b; }
+
+    /* Fehlermarkierung */
+    .is-invalid{ border-color:#ef4444 !important; background:#fff; }
+    .err{ display:none; font-size:12px; color:#b91c1c; margin-top:6px;}
+    .err.show{ display:block; }
+
+    .err-inline{margin-top:4px; margin-left:2px;}
+
+    /* Mobile Typo leicht größer */
+    @media (max-width:420px){
+      body{ padding:16px; }
+      .dialog h2{ font-size:18px; }
+      input,select{ font-size:16px; } /* iOS Zoom vermeiden */
+      .btn{ padding:12px 14px; }
+      .btn-wa{ padding:12px 16px; }
+    }
   </style>
 </head>
 <body>
@@ -42,155 +145,399 @@
 
     <form id="form" class="card" novalidate>
       <div class="grid">
-        <div class="full"><label for="firma">Firma</label><input id="firma" autocomplete="organization"></div>
-        <div><label for="vorname">Vorname <span class="req">*</span></label><input id="vorname" required><div class="err" id="e-vorname">Bitte Vornamen angeben.</div></div>
-        <div><label for="nachname">Nachname <span class="req">*</span></label><input id="nachname" required><div class="err" id="e-nachname">Bitte Nachnamen angeben.</div></div>
-        <div class="full"><label for="strasse">Straße &amp; Nr. <span class="req">*</span></label><input id="strasse" required autocomplete="address-line1"><div class="err" id="e-strasse">Bitte Straße &amp; Nr. angeben.</div></div>
-        <div><label for="plz">PLZ <span class="req">*</span></label><input id="plz" required pattern="^[A-Za-z0-9 \-]{1,10}$"><div class="err" id="e-plz">Bitte gültige PLZ (max. 10).</div></div>
-        <div><label for="ort">Ort <span class="req">*</span></label><input id="ort" required autocomplete="address-level2"><div class="err" id="e-ort">Bitte Ort angeben.</div></div>
-        <div class="full"><label for="land">Land <span class="req">*</span></label><input id="land" required></div>
-        <div><label for="handy">Handy (WhatsApp) <span class="req">*</span></label><input id="handy" required inputmode="tel" placeholder="+49 1525 1234567"><div class="err" id="e-handy">Bitte Handy-Nr. angeben.</div></div>
-        <div><label for="email">E-Mail <span class="req">*</span></label><input id="email" type="email" required inputmode="email" placeholder="name@example.com"><div class="err" id="e-email">Bitte gültige E-Mail.</div></div>
-        <div><label for="email2">E-Mail bestätigen <span class="req">*</span></label><input id="email2" type="email" required inputmode="email" placeholder="E-Mail erneut eingeben"><div class="err" id="e-email2">E-Mails stimmen nicht überein.</div></div>
+        <!-- Firma über die volle Breite -->
         <div class="full">
-          <label><input type="checkbox" id="agb"> Ich akzeptiere die AGB <span class="req">*</span></label>
-          <div class="err" id="e-agb">Bitte AGB akzeptieren.</div>
+          <label for="firma">Firma</label>
+          <input id="firma" name="firma" type="text" autocomplete="organization" />
         </div>
+
+        <div>
+          <label for="vorname">Vorname <span class="req">*</span></label>
+          <input id="vorname" name="vorname" type="text" required autocomplete="given-name" />
+          <div class="err" id="err-vorname">Bitte Vornamen angeben.</div>
+        </div>
+
+        <div>
+          <label for="nachname">Nachname <span class="req">*</span></label>
+          <input id="nachname" name="nachname" type="text" required autocomplete="family-name" />
+          <div class="err" id="err-nachname">Bitte Nachnamen angeben.</div>
+        </div>
+
         <div class="full">
-          <label><input type="checkbox" id="dsgvo"> Ich stimme der Datenschutzerklärung zu <span class="req">*</span></label>
-          <div class="err" id="e-dsgvo">Bitte Datenschutzerklärung bestätigen.</div>
+          <label for="strasse">Straße &amp; Hausnummer <span class="req">*</span></label>
+          <input id="strasse" name="strasse" type="text" required autocomplete="address-line1" />
+          <div class="err" id="err-strasse">Bitte Straße &amp; Hausnummer angeben.</div>
         </div>
+
+        <div>
+          <label for="plz">PLZ <span class="req">*</span></label>
+          <input id="plz" name="plz" type="text" required inputmode="text"
+                 pattern="^[A-Za-z0-9 \-]{1,10}$" />
+          <div class="hint">International erlaubt (z. B. 10115, W1A 1HQ, 75008, 1234-AB). Max. 10 Zeichen.</div>
+          <div class="err" id="err-plz">Bitte eine gültige PLZ angeben (Buchstaben/Zahlen/Leerzeichen/-, max. 10).</div>
+        </div>
+
+        <div>
+          <label for="ort">Ort <span class="req">*</span></label>
+          <input id="ort" name="ort" type="text" required autocomplete="address-level2" />
+          <div class="err" id="err-ort">Bitte Ort angeben.</div>
+        </div>
+
+        <!-- Land: Auswahl + optionales Freitextfeld -->
+        <div class="full">
+          <label for="landSelect">Land <span class="req">*</span></label>
+          <select id="landSelect" required>
+            <option value="">Land auswählen …</option>
+            <option>Deutschland</option>
+            <option>Österreich</option>
+            <option>Schweiz</option>
+            <option>Luxemburg</option>
+            <option>Niederlande</option>
+            <option>Belgien</option>
+            <option>Frankreich</option>
+            <option>Italien</option>
+            <option>Spanien</option>
+            <option>Polen</option>
+            <option>Tschechien</option>
+            <option>Dänemark</option>
+            <option>Schweden</option>
+            <option>Norwegen</option>
+            <option>Finnland</option>
+            <option>Irland</option>
+            <option>Vereinigtes Königreich</option>
+            <option value="other">Anderes Land …</option>
+          </select>
+          <input id="landOther" type="text" placeholder="Land eingeben"
+                 style="display:none; margin-top:8px;" />
+          <div class="err" id="err-land">Bitte Land angeben.</div>
+        </div>
+
+        <div>
+          <label for="handy">Handy (WhatsApp) <span class="req">*</span></label>
+          <input id="handy" name="handy" type="tel" required inputmode="tel"
+                 placeholder="+49 1525 1234567" />
+          <div class="err" id="err-handy">Bitte eine gültige Handy-Nr. angeben.</div>
+        </div>
+
+        <div>
+          <label for="email">E-Mail <span class="req">*</span></label>
+          <input id="email" name="email" type="email" inputmode="email" autocomplete="email"
+                 placeholder="name@example.com" required />
+          <div class="err" id="err-email">Bitte eine gültige E-Mail eintragen.</div>
+        </div>
+
+        <div>
+          <label for="emailConfirm">E-Mail bestätigen <span class="req">*</span></label>
+          <input id="emailConfirm" name="emailConfirm" type="email" inputmode="email"
+                 placeholder="E-Mail erneut eingeben" required />
+          <div class="err" id="err-emailConfirm">Die E-Mail-Adressen stimmen nicht überein.</div>
+        </div>
+
+        <div class="full checkline">
+          <input id="acceptAgb" name="acceptAgb" type="checkbox" />
+          <label for="acceptAgb">
+            Ich akzeptiere die <a href="https://dekodenise.de/policies/terms-of-service" target="_blank" rel="noopener">AGB</a>.
+            <span class="req">*</span>
+          </label>
+        </div>
+        <div class="full"><div class="err err-inline" id="err-agb">Bitte AGB akzeptieren.</div></div>
+
+        <div class="full checkline" style="margin-top:-8px;">
+          <input id="acceptDsgvo" name="acceptDsgvo" type="checkbox" />
+          <label for="acceptDsgvo">
+            Ich stimme der <a href="https://dekodenise.de/policies/privacy-policy" target="_blank" rel="noopener">Datenschutzerklärung</a> zu.
+            <span class="req">*</span>
+          </label>
+        </div>
+        <div class="full"><div class="err err-inline" id="err-dsgvo">Bitte der Datenschutzerklärung zustimmen.</div></div>
+
         <div class="full actions">
           <button id="submitBtn" class="btn btn-primary" type="submit">Kundennummer anfordern</button>
-          <span class="muted" id="hint"></span>
+          <button id="resetBtn" class="btn" type="button">Zurücksetzen</button>
+          <span class="muted" id="submitHint"></span>
         </div>
       </div>
     </form>
   </div>
 
-  <div id="okOverlay" class="overlay" aria-hidden="true">
-    <div class="dialog">
-      <h2>Alles klar! ✅</h2>
-      <p>Danke, <b id="ovName"></b>! Deine Kundennummer lautet: <b id="ovKd"></b>.</p>
-      <p style="margin-top:10px">Direkt schreiben auf WhatsApp:</p>
-      <a id="waBtn" class="btn-wa" target="_blank" rel="noopener">Jetzt per WhatsApp schreiben</a>
-      <div class="ok"><button id="closeOk" class="btn">Schließen</button></div>
+  <!-- Review-Overlay -->
+  <div id="reviewOverlay" class="overlay" aria-hidden="true">
+    <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="reviewTitle">
+      <button type="button" class="close" id="closeReview" aria-label="Schließen">×</button>
+      <h2 id="reviewTitle">Bitte prüfe deine Angaben</h2>
+      <table class="review-table">
+        <tbody>
+          <tr><td>Firma</td><td id="rev-firma"></td></tr>
+          <tr><td>Vorname</td><td id="rev-vorname"></td></tr>
+          <tr><td>Nachname</td><td id="rev-nachname"></td></tr>
+          <tr><td>Straße &amp; Nr.</td><td id="rev-strasse"></td></tr>
+          <tr><td>PLZ</td><td id="rev-plz"></td></tr>
+          <tr><td>Ort</td><td id="rev-ort"></td></tr>
+          <tr><td>Land</td><td id="rev-land"></td></tr>
+          <tr><td>Handy</td><td id="rev-handy"></td></tr>
+          <tr><td>E-Mail</td><td id="rev-email"></td></tr>
+        </tbody>
+      </table>
+      <div class="ok">
+        <button id="editBtn" class="btn" type="button">ändern</button>
+        <button id="confirmSubmitBtn" class="btn btn-primary" type="button">Jetzt registrieren</button>
+      </div>
     </div>
   </div>
 
-<script>
-(function(){
-  // === HIER EINTRAGEN: deine Apps-Script Web-App URL (endet auf /exec)
-  const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxcslNZhjXLbOeTsk8yuabOatZXQEaWSnc0cl5kiXg9ylEIwPaRohFlrDyHcqkzoV4/exec';
+  <!-- Erfolgs-Overlay -->
+  <div id="successOverlay" class="overlay" aria-hidden="true">
+    <div class="dialog success" role="dialog" aria-modal="true" aria-labelledby="successTitle">
+      <button type="button" class="close" id="closeSuccess" aria-label="Schließen">×</button>
+      <h2 id="successTitle">Alles klar! ✅</h2>
+      <p><b>Senden erfolgreich.</b></p>
+      <p>Danke, <span id="ovName"></span>! Deine Kundennummer lautet: <b id="ovKdNr"></b>.</p>
 
-  const $ = id => document.getElementById(id);
-  const form = $('form'), btn=$('submitBtn'), hint=$('hint');
-  const okOv=$('okOverlay'), ovName=$('ovName'), ovKd=$('ovKd'), waBtn=$('waBtn');
+      <!-- Hinweis in Rot -->
+      <p style="color:#b91c1c; font-weight:700; margin-top:16px;">
+        Bitte setze dich einmal über WhatsApp mit mir in Verbindung. Werde mich morgen persönlich bei Dir zurück melden!
+      </p>
 
-  function showErr(id, ok){
-    const el=$(id); if(!el) return;
-    const inputId = id.replace('e-',''); const inp=$(inputId);
-    if(!ok){ el.classList.add('show'); inp && inp.classList.add('is-invalid'); }
-    else   { el.classList.remove('show'); inp && inp.classList.remove('is-invalid'); }
-  }
+      <!-- WhatsApp Button (pillenförmig) -->
+      <div style="margin-top:10px; display:flex; justify-content:flex-start;">
+        <a id="waBtn" class="btn btn-wa" href="#" target="_blank" rel="noopener">
+          <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+            <path fill="currentColor" d="M19.11 17.16c-.27-.14-1.6-.79-1.85-.88-.25-.09-.43-.14-.62.14s-.71.88-.87 1.06c-.16.18-.32.2-.59.07-.27-.14-1.14-.42-2.17-1.35-.8-.71-1.34-1.58-1.5-1.85-.16-.27-.02-.42.12-.56.12-.12.27-.32.41-.48.14-.16.18-.27.27-.45.09-.18.05-.34-.02-.48s-.62-1.49-.85-2.04c-.22-.53-.45-.46-.62-.46h-.53c-.18 0-.48.07-.73.34s-.96.94-.96 2.28 1 2.64 1.14 2.83c.14.18 1.97 3.02 4.76 4.23.67.29 1.19.46 1.6.58.67.21 1.28.18 1.76.11.54-.08 1.6-.65 1.83-1.28.23-.63.23-1.17.16-1.28-.07-.11-.25-.18-.52-.32zM16 3c7.18 0 13 5.82 13 13 0 2.5-.7 4.84-1.92 6.83L28 29l-6.3-1.91A12.95 12.95 0 0 1 16 29C8.82 29 3 23.18 3 16S8.82 3 16 3m0-2C7.72 1 1 7.72 1 16c0 2.74.75 5.3 2.06 7.5L1 31l7.66-2.02A14.95 14.95 0 0 0 16 31c8.28 0 15-6.72 15-15S24.28 1 16 1z"/>
+          </svg>
+          Jetzt per WhatsApp schreiben
+        </a>
+      </div>
+    </div>
+  </div>
 
-  function validate(){
-    let ok=true;
-    const firma=$('firma').value.trim();
-    const vorname=$('vorname').value.trim();
-    const nachname=$('nachname').value.trim();
-    const strasse=$('strasse').value.trim();
-    const plz=$('plz').value.trim();
-    const ort=$('ort').value.trim();
-    const land=$('land').value.trim();
-    const handy=$('handy').value.trim();
-    const email=$('email').value.trim();
-    const email2=$('email2').value.trim();
-    const agb=$('agb').checked;
-    const dsgvo=$('dsgvo').checked;
+  <script>
+    (function(){
+      // === DEINE Apps Script Web-App URL (endet auf /exec) ===
+      const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxcslNZhjXLbOeTsk8yuabOatZXQEaWSnc0cl5kiXg9ylEIwPaRohFlrDyHcqkzoV4/exec';
 
-    showErr('e-vorname', !!vorname); ok &= !!vorname;
-    showErr('e-nachname',!!nachname);ok &= !!nachname;
-    showErr('e-strasse', !!strasse); ok &= !!strasse;
-    const plzOk=/^[A-Za-z0-9 \-]{1,10}$/.test(plz);
-    showErr('e-plz',plzOk);          ok &= plzOk;
-    showErr('e-ort', !!ort);         ok &= !!ort;
-    showErr('e-handy', !!handy);     ok &= !!handy;
-    showErr('e-agb', agb);           ok &= agb;
-    showErr('e-dsgvo', dsgvo);       ok &= dsgvo;
+      const form = document.getElementById('form');
+      const submitBtn = document.getElementById('submitBtn');
+      const resetBtn  = document.getElementById('resetBtn');
+      const submitHint= document.getElementById('submitHint');
 
-    const emailOk=email.length && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-    showErr('e-email', emailOk);     ok &= emailOk;
-    const emailMatch=emailOk && email2.length && (email.toLowerCase()===email2.toLowerCase());
-    showErr('e-email2', emailMatch); ok &= emailMatch;
+      const reviewOverlay = document.getElementById('reviewOverlay');
+      const confirmSubmitBtn = document.getElementById('confirmSubmitBtn');
+      const editBtn = document.getElementById('editBtn');
 
-    return { ok: !!ok, data:{ firma, vorname, nachname, strasse, plz, ort, land, handy, email, emailConfirm: email2, acceptAgb: agb, acceptDsgvo: dsgvo } };
-  }
+      const successOverlay = document.getElementById('successOverlay');
+      const ovName = document.getElementById('ovName');
+      const ovKdNr = document.getElementById('ovKdNr');
+      const waBtn  = document.getElementById('waBtn');
 
-  function openOk(name, kd){
-    ovName.textContent = name; ovKd.textContent = kd;
-    const waNumber='4915258164673';
-    const waText=`Hallo Denise,
-ich habe mich gerade registriert uns soll mich bei dir melden.
-Meine Kundennummer: ${kd}
-Liebe Grüße ${name}`;
-    waBtn.href='https://wa.me/'+waNumber+'?text='+encodeURIComponent(waText);
-    okOv.classList.add('show'); okOv.setAttribute('aria-hidden','false');
-  }
-  $('closeOk').addEventListener('click',()=>{ okOv.classList.remove('show'); okOv.setAttribute('aria-hidden','true'); });
+      const closeReview  = document.getElementById('closeReview');
+      const closeSuccess = document.getElementById('closeSuccess');
 
-  form.addEventListener('submit', async (e)=>{
-    e.preventDefault();
-    const v = validate();
-    if(!v.ok){ hint.textContent='Bitte korrigieren.'; return; }
+      const landSelect = document.getElementById('landSelect');
+      const landOther  = document.getElementById('landOther');
 
-    btn.disabled=true; const old=btn.textContent; btn.textContent='Sende …'; hint.textContent='';
+      const $ = (id) => document.getElementById(id);
 
-    try{
-      // Safari-freundlich: x-www-form-urlencoded (vermeidet strengen Preflight)
-      const body = new URLSearchParams(v.data).toString();
-      const res = await fetch(WEB_APP_URL, {
-        method:'POST',
-        headers:{ 'Content-Type':'application/x-www-form-urlencoded' },
-        body
+      function showOverlay(ov){ ov.classList.add('show'); ov.setAttribute('aria-hidden','false'); }
+      function hideOverlay(ov){ ov.classList.remove('show'); ov.setAttribute('aria-hidden','true'); }
+
+      function markInvalid(input, errId, show){
+        if(!input) return;
+        if(show){
+          if (input.type !== 'checkbox') input.classList.add('is-invalid');
+          if(errId) $(errId).classList.add('show');
+        } else {
+          if (input.type !== 'checkbox') input.classList.remove('is-invalid');
+          if(errId) $(errId).classList.remove('show');
+        }
+      }
+
+      function firstErrorScroll(){
+        const el = document.querySelector('.err.show, .is-invalid');
+        if (el) {
+          const target = el.closest('.checkline') || el;
+          target.scrollIntoView({behavior:'smooth', block:'center'});
+        }
+      }
+
+      // Land: Anderes -> Freitext ein/ausblenden
+      landSelect.addEventListener('change', ()=>{
+        const isOther = landSelect.value === 'other';
+        landOther.style.display = isOther ? 'block' : 'none';
+        if (!isOther) landOther.value = '';
+        markInvalid(landSelect, 'err-land', false);
+        markInvalid(landOther,  'err-land', false);
       });
 
-      // DEBUG-FIRST: erst Rohtext lesen, dann JSON parsen -> bessere Fehlersicht statt "bad_json"
-      const raw = await res.text();
-      let json = null;
-      try { json = JSON.parse(raw); }
-      catch (parseErr) {
-        console.error('RAW RESPONSE (keine JSON):', raw);
-        hint.textContent = `Server lieferte kein JSON (${res.status}). Inhalt (Auszug): ${raw.slice(0,200)}…`;
-        btn.disabled=false; btn.textContent=old;
-        return;
+      function getLandValue(){
+        return (landSelect.value === 'other') ? landOther.value.trim() : landSelect.value.trim();
       }
 
-      if(!json.ok){
-        hint.textContent = json.error || 'Fehler beim Senden.';
-        btn.disabled=false; btn.textContent=old;
-        return;
+      function validate(){
+        let ok = true;
+
+        const vorname = $('vorname'), nachname=$('nachname'), strasse=$('strasse'),
+              plz=$('plz'), ort=$('ort'), handy=$('handy'),
+              email=$('email'), emailConfirm=$('emailConfirm'),
+              acceptAgb=$('acceptAgb'), acceptDsgvo=$('acceptDsgvo');
+
+        [['vorname','err-vorname'],['nachname','err-nachname'],['strasse','err-strasse'],
+         ['ort','err-ort'],['handy','err-handy']].forEach(([id,err])=>{
+          const el=$(id); const bad = !el.value.trim();
+          markInvalid(el, err, bad); ok = ok && !bad;
+        });
+
+        const plzBad = !plz.value.trim() || !(new RegExp(/^[A-Za-z0-9 \-]{1,10}$/).test(plz.value.trim()));
+        markInvalid(plz, 'err-plz', plzBad); ok = ok && !plzBad;
+
+        const landVal = getLandValue();
+        const landBad = !landVal;
+        markInvalid(landSelect, 'err-land', landBad && landSelect.value !== 'other');
+        markInvalid(landOther,  'err-land', landBad && landSelect.value === 'other');
+        ok = ok && !landBad;
+
+        const emailVal = email.value.trim();
+        const emailGood = emailVal.length && email.checkValidity();
+        markInvalid(email, 'err-email', !emailGood); ok = ok && emailGood;
+
+        const emailConfVal = emailConfirm.value.trim();
+        const emailMatch = emailConfVal.length && (emailVal.toLowerCase() === emailConfVal.toLowerCase());
+        markInvalid(emailConfirm, 'err-emailConfirm', !emailMatch); ok = ok && emailMatch;
+
+        const agbBad   = !acceptAgb.checked;
+        const dsgvoBad = !acceptDsgvo.checked;
+        markInvalid(acceptAgb, 'err-agb', agbBad);       ok = ok && !agbBad;
+        markInvalid(acceptDsgvo, 'err-dsgvo', dsgvoBad); ok = ok && !dsgvoBad;
+
+        if(!ok) firstErrorScroll();
+        return ok;
       }
 
-      const name = json.fullName || (v.data.vorname + ' ' + v.data.nachname);
-      openOk(name, json.kdNr);
-      btn.textContent='Senden erfolgreich';
-      form.reset();
+      function fillReview(){
+        $('rev-firma').textContent   = $('firma').value.trim() || '—';
+        $('rev-vorname').textContent = $('vorname').value.trim();
+        $('rev-nachname').textContent= $('nachname').value.trim();
+        $('rev-strasse').textContent = $('strasse').value.trim();
+        $('rev-plz').textContent     = $('plz').value.trim();
+        $('rev-ort').textContent     = $('ort').value.trim();
+        $('rev-land').textContent    = getLandValue();
+        $('rev-handy').textContent   = $('handy').value.trim();
+        $('rev-email').textContent   = $('email').value.trim();
+      }
 
-    }catch(err){
-      console.error(err);
-      hint.textContent='Netzwerk-/CORS-Fehler.';
-      btn.disabled=false; btn.textContent=old;
-    }
-  });
+      function buildPayload(){
+        return {
+          firma:   $('firma').value.trim(),
+          vorname: $('vorname').value.trim(),
+          nachname:$('nachname').value.trim(),
+          strasse: $('strasse').value.trim(),
+          plz:     $('plz').value.trim(),
+          ort:     $('ort').value.trim(),
+          land:    getLandValue(),
+          handy:   $('handy').value.trim(),
+          email:   $('email').value.trim(),
+          emailConfirm: $('emailConfirm').value.trim(),
+          acceptAgb:  $('acceptAgb').checked,
+          acceptDsgvo:$('acceptDsgvo').checked
+        };
+      }
 
-  // live Feedback bei E-Mail-Confirm
-  $('email2').addEventListener('input', ()=>{
-    const a=$('email').value.trim().toLowerCase();
-    const b=$('email2').value.trim().toLowerCase();
-    showErr('e-email2', a && b && a===b);
-  });
-})();
-</script>
+      // Submit -> Review
+      form.addEventListener('submit', function(e){
+        e.preventDefault();
+        if(!validate()) return;
+        fillReview();
+        showOverlay(reviewOverlay);
+      });
+
+      // Review: ändern / schließen
+      document.getElementById('editBtn').addEventListener('click', ()=> hideOverlay(reviewOverlay));
+      document.getElementById('closeReview').addEventListener('click', ()=> hideOverlay(reviewOverlay));
+
+      // Review: Jetzt registrieren -> FETCH zu Apps Script (GitHub-Setup)
+      document.getElementById('confirmSubmitBtn').addEventListener('click', async ()=>{
+        const payload = buildPayload();
+
+        submitBtn.disabled = true;
+        const oldText = submitBtn.textContent;
+        submitBtn.textContent = 'Sende …';
+        submitHint.textContent = '';
+
+        try{
+          // Safari-freundlich: x-www-form-urlencoded
+          const body = new URLSearchParams(payload).toString();
+          const res = await fetch(WEB_APP_URL, {
+            method:'POST',
+            headers:{ 'Content-Type':'application/x-www-form-urlencoded' },
+            body
+          });
+
+          // Erst Rohtext lesen -> dann JSON parsen (bessere Debugbarkeit)
+          const raw = await res.text();
+          let json=null;
+          try{ json = JSON.parse(raw); }
+          catch(_){
+            submitHint.textContent = `Server lieferte kein JSON (${res.status}). Inhalt (Auszug): ${raw.slice(0,180)}…`;
+            submitBtn.disabled=false; submitBtn.textContent=oldText;
+            hideOverlay(reviewOverlay);
+            return;
+          }
+
+          if(!json.ok){
+            submitHint.textContent = json.error || 'Fehler beim Senden.';
+            submitBtn.disabled=false; submitBtn.textContent=oldText;
+            hideOverlay(reviewOverlay);
+            return;
+          }
+
+          // Erfolg → Success-Overlay füllen & zeigen
+          const fullName = json.fullName || (payload.vorname + ' ' + payload.nachname);
+          const kdNr = json.kdNr || '';
+          document.getElementById('ovName').textContent = fullName;
+          document.getElementById('ovKdNr').textContent = kdNr;
+
+          const waNumber = '4915258164673'; // +49 1525 8164673 ohne +
+          const waText = `Hallo Denise, 
+ich habe mich gerade registriert.
+Meine Kundennummer: ${kdNr}
+Liebe Grüße ${fullName}`;
+          const waUrl = 'https://wa.me/' + waNumber + '?text=' + encodeURIComponent(waText);
+          document.getElementById('waBtn').setAttribute('href', waUrl);
+
+          hideOverlay(reviewOverlay);
+          showOverlay(successOverlay);
+
+          submitBtn.textContent = 'Senden erfolgreich';
+          form.reset();
+
+        }catch(err){
+          console.error(err);
+          submitHint.textContent = 'Netzwerk-/CORS-Fehler.';
+          submitBtn.disabled=false; submitBtn.textContent=oldText;
+          hideOverlay(reviewOverlay);
+        }
+      });
+
+      // Zurücksetzen
+      document.getElementById('resetBtn').addEventListener('click', ()=>{
+        form.reset();
+        landOther.style.display = 'none';
+        submitHint.textContent = '';
+        document.querySelectorAll('.is-invalid').forEach(el=>el.classList.remove('is-invalid'));
+        document.querySelectorAll('.err.show').forEach(el=>el.classList.remove('show'));
+        submitBtn.textContent = 'Kundennummer anfordern';
+      });
+
+      // Overlays schließen: X oder Klick außerhalb / ESC
+      document.getElementById('closeSuccess').addEventListener('click', ()=> hideOverlay(successOverlay));
+      successOverlay.addEventListener('click', (e)=>{ if(e.target === successOverlay) hideOverlay(successOverlay); });
+      reviewOverlay.addEventListener('click', (e)=>{ if(e.target === reviewOverlay) hideOverlay(reviewOverlay); });
+      document.addEventListener('keydown', (e)=>{
+        if(e.key === 'Escape'){
+          if (reviewOverlay.classList.contains('show')) hideOverlay(reviewOverlay);
+          else if (successOverlay.classList.contains('show')) hideOverlay(successOverlay);
+        }
+      });
+    })();
+  </script>
 </body>
 </html>
