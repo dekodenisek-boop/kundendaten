@@ -134,7 +134,7 @@
           <label for="landSelect">Land <span class="req">*</span></label>
           <select id="landSelect" required>
             <option value="">Land auswählen …</option>
-            <option>Deutschland</option><option>Österreich</option><option>Schweiz</option><option>Luxemburg</option>
+            <option selected>Deutschland</option><option>Österreich</option><option>Schweiz</option><option>Luxemburg</option>
             <option>Niederlande</option><option>Belgien</option><option>Frankreich</option><option>Italien</option>
             <option>Spanien</option><option>Polen</option><option>Tschechien</option><option>Dänemark</option>
             <option>Schweden</option><option>Norwegen</option><option>Finnland</option><option>Irland</option>
@@ -268,6 +268,9 @@
         const el = document.querySelector('.err.show, .is-invalid');
         if (el) (el.closest('.checkline') || el).scrollIntoView({behavior:'smooth', block:'center'});
       }
+
+      // Standard: Deutschland vorauswählen
+      landSelect.value = 'Deutschland';
 
       landSelect.addEventListener('change', ()=>{
         const isOther = landSelect.value === 'other';
@@ -430,7 +433,11 @@ Liebe Grüße ${fullName}`;
 
       // Zurücksetzen
       document.getElementById('resetBtn').addEventListener('click', ()=>{
-        form.reset(); landOther.style.display='none'; submitHint.textContent='';
+        form.reset(); 
+        // Deutschland beibehalten und "Anderes Land" Feld sicher verbergen
+        landSelect.value = 'Deutschland';
+        landOther.style.display='none';
+        submitHint.textContent='';
         document.querySelectorAll('.is-invalid').forEach(el=>el.classList.remove('is-invalid'));
         document.querySelectorAll('.err.show').forEach(el=>el.classList.remove('show'));
         submitBtn.textContent='Kundennummer anfordern';
