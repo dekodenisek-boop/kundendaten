@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Kundennummer beantragen</title>
+  <style>
+    :root{--text:#0f172a;--muted:#6b7280;--primary:#2563eb;--primary-hover:#1d4ed8;--border:#e5e7eb;--input:#f9fafb;--danger:#b91c1c;--shadow:0 10px 30px rgba(0,0,0,.06)}
+    *{box-sizing:border-box}
+    body{margin:0;padding:24px;background:#fff;color:var(--text);font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
+    .wrap{max-width:860px;margin:0 auto}
+    h1{margin:0 0 16px;font-weight:800}
+    p.lead{margin:0 0 18px;color:var(--muted)}
+    .card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:20px;box-shadow:var(--shadow)}
+    label{font-size:14px}
+    input{width:100%;padding:12px;border-radius:10px;border:1px solid var(--border);background:var(--input);font-size:16px;outline:none}
+    input:focus{border-color:var(--primary);background:#fff}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .full{grid-column:1/-1}
+    @media (max-width:720px){.grid{grid-template-columns:1fr}}
+    .req{color:#dc2626;margin-left:4px;font-weight:700}
+    .err{display:none;color:var(--danger);font-size:12px;margin-top:6px}
+    .err.show{display:block}
+    .is-invalid{border-color:#ef4444!important;background:#fff}
+    .actions{display:flex;gap:10px;align-items:center;margin-top:8px;flex-wrap:wrap}
+    .btn{display:inline-flex;align-items:center;justify-content:center;padding:12px 16px;border-radius:10px;border:1px solid transparent;background:#e5e7eb;color:#111;font-weight:700;cursor:pointer}
+    .btn-primary{background:var(--primary);color:#fff}
+    .btn-primary:hover{background:var(--primary-hover)}
+    .muted{font-size:13px;color:var(--muted)}
+    .overlay{position:fixed;inset:0;display:none;place-items:center;background:rgba(0,0,0,.45);z-index:9999;padding:16px}
+    .overlay.show{display:grid}
+    .dialog{width:min(620px,94vw);background:#fff;border:1px solid var(--border);border-radius:16px;padding:18px;box-shadow:0 20px 60px rgba(0,0,0,.15)}
+    .dialog h2{margin:6px 0 12px;font-size:20px}
+    .ok{margin-top:12px;display:flex;gap:10px;justify-content:flex-end}
+    .btn-wa{background:#25D366;color:#fff;border-radius:999px;padding:12px 18px;font-weight:800;text-decoration:none}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Kunden-Nr. beantragen</h1>
+    <p class="lead">Bitte trage deine Daten ein. Felder mit <span class="req">*</span> sind Pflicht.</p>
+
+    <form id="form" class="card" novalidate>
+      <div class="grid">
+        <div class="full"><label for="firma">Firma</label><input id="firma" autocomplete="organization"></div>
+        <div><label for="vorname">Vorname <span class="req">*</span></label><input id="vorname" required><div class="err" id="e-vorname">Bitte Vornamen angeben.</div></div>
+        <div><label for="nachname">Nachname <span class="req">*</span></label><input id="nachname" required><div class="err" id="e-nachname">Bitte Nachnamen angeben.</div></div>
+        <div class="full"><label for="strasse">Straße &amp; Nr. <span class="req">*</span></label><input id="strasse" required autocomplete="address-line1"><div class="err" id="e-strasse">Bitte Straße &amp; Nr. angeben.</div></div>
+        <div><label for="plz">PLZ <span class="req">*</span></label><input id="plz" required pattern="^[A-Za-z0-9 \-]{1,10}$"><div class="err" id="e-plz">Bitte gültige PLZ (max. 10).</div></div>
+        <div><label for="ort">Ort <span class="req">*</span></label><input id="ort" required autocomplete="address-level2"><div class="err" id="e-ort">Bitte Ort angeben.</div></div>
+        <div class="full"><label for="land">Land <span class="req">*</span></label><input id="land" required></div>
+        <div><label for="handy">Handy (WhatsApp) <span class="req">*</span></label><input id="handy" required inputmode="tel" placeholder="+49 1525 1234567"><div class="err" id="e-handy">Bitte Handy-Nr. angeben.</div></div>
+        <div><label for="email">E-Mail <span class="req">*</span></label><input id="email" type="email" required inputmode="email" placeholder="name@example.com"><div class="err" id="e-email">Bitte gültige E-Mail.</div></div>
+        <div><label for="email2">E-Mail bestätigen <span class="req">*</span></label><input id="email2" type="email" required inputmode="email" placeholder="E-Mail erneut eingeben"><div class="err" id="e-email2">E-Mails stimmen nicht überein.</div></div>
+        <div class="full">
+          <label><input type="checkbox" id="agb"> Ich akzeptiere die AGB <span class="req">*</span></label>
+          <div class="err" id="e-agb">Bitte AGB akzeptieren.</div>
+        </div>
+        <div class="full">
+          <label><input type="checkbox" id="dsgvo"> Ich stimme der Datenschutzerklärung zu <span class="req">*</span></label>
+          <div class="err" id="e-dsgvo">Bitte Datenschutzerklärung bestätigen.</div>
+        </div>
+        <div class="full actions">
+          <button id="submitBtn" class="btn btn-primary" type="submit">Kundennummer anfordern</button>
+          <span class="muted" id="hint"></span>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div id="okOverlay" class="overlay" aria-hidden="true">
+    <div class="dialog">
+      <h2>Alles klar! ✅</h2>
+      <p>Danke, <b id="ovName"></b>! Deine Kundennummer lautet: <b id="ovKd"></b>.</p>
+      <p style="margin-top:10px">Direkt schreiben auf WhatsApp:</p>
+      <a id="waBtn" class="btn-wa" target="_blank" rel="noopener">Jetzt per WhatsApp schreiben</a>
+      <div class="ok"><button id="closeOk" class="btn">Schließen</button></div>
+    </div>
+  </div>
+
+<script>
+(function(){
+  // === CONFIG ===
+  const WEB_APP_URL = 'https://script.google.com/macros/s/DEINE-DEPLOYMENT-ID/exec'; // <- hier deine Web-App-URL eintragen
+
+  const $ = id => document.getElementById(id);
+  const form = $('form'), btn=$('submitBtn'), hint=$('hint');
+  const okOv=$('okOverlay'), ovName=$('ovName'), ovKd=$('ovKd'), waBtn=$('waBtn');
+
+  function showErr(id, ok){
+    const el=$(id); if(!el) return;
+    const inputId = id.replace('e-',''); const inp=$(inputId);
+    if(!ok){ el.classList.add('show'); inp && inp.classList.add('is-invalid'); }
+    else   { el.classList.remove('show'); inp && inp.classList.remove('is-invalid'); }
+  }
+
+  function validate(){
+    let ok=true;
+    const firma=$('firma').value.trim();
+    const vorname=$('vorname').value.trim();
+    const nachname=$('nachname').value.trim();
+    const strasse=$('strasse').value.trim();
+    const plz=$('plz').value.trim();
+    const ort=$('ort').value.trim();
+    const land=$('land').value.trim();
+    const handy=$('handy').value.trim();
+    const email=$('email').value.trim();
+    const email2=$('email2').value.trim();
+    const agb=$('agb').checked;
+    const dsgvo=$('dsgvo').checked;
+
+    showErr('e-vorname', !!vorname); ok = ok && !!vorname;
+    showErr('e-nachname',!!nachname);ok = ok && !!nachname;
+    showErr('e-strasse', !!strasse); ok = ok && !!strasse;
+    const plzOk = /^[A-Za-z0-9 \-]{1,10}$/.test(plz);
+    showErr('e-plz', plzOk);         ok = ok && plzOk;
+    showErr('e-ort', !!ort);         ok = ok && !!ort;
+    showErr('e-handy', !!handy);     ok = ok && !!handy;
+    showErr('e-agb', agb);           ok = ok && agb;
+    showErr('e-dsgvo', dsgvo);       ok = ok && dsgvo;
+
+    const emailOk = email.length && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    showErr('e-email', emailOk);     ok = ok && emailOk;
+
+    const emailMatch = emailOk && email2.length && (email.toLowerCase() === email2.toLowerCase());
+    showErr('e-email2', emailMatch); ok = ok && emailMatch;
+
+    return { ok, data:{ firma, vorname, nachname, strasse, plz, ort, land, handy, email, emailConfirm: email2, acceptAgb: agb, acceptDsgvo: dsgvo } };
+  }
+
+  function openOk(name, kd){
+    ovName.textContent = name; ovKd.textContent = kd;
+    const waNumber = '4915258164673';
+    const waText = `Hallo Denise,
+ich habe mich gerade registriert.
+Meine Kundennummer: ${kd}
+Liebe Grüße ${name}`;
+    waBtn.href = 'https://wa.me/' + waNumber + '?text=' + encodeURIComponent(waText);
+    okOv.classList.add('show'); okOv.setAttribute('aria-hidden','false');
+  }
+  $('closeOk').addEventListener('click', ()=>{ okOv.classList.remove('show'); okOv.setAttribute('aria-hidden','true'); });
+
+  form.addEventListener('submit', async (e)=>{
+    e.preventDefault();
+    const v = validate();
+    if(!v.ok){ hint.textContent='Bitte korrigieren.'; return; }
+
+    btn.disabled = true; const old = btn.textContent; btn.textContent='Sende …'; hint.textContent='';
+
+    try{
+      // Form-URL-Encoded senden → weniger CORS-Reibung (Safari)
+      const params = new URLSearchParams(v.data).toString();
+      const res = await fetch(WEB_APP_URL, {
+        method:'POST',
+        headers:{ 'Content-Type':'application/x-www-form-urlencoded' },
+        body: params
+      });
+      const json = await res.json().catch(()=>({ok:false,error:'bad_json'}));
+
+      if(!json.ok){
+        hint.textContent = (json.error || 'Fehler beim Senden.');
+        btn.disabled=false; btn.textContent=old;
+        return;
+      }
+      const name = json.fullName || (v.data.vorname + ' ' + v.data.nachname);
+      openOk(name, json.kdNr);
+      btn.textContent='Senden erfolgreich';
+      form.reset();
+
+    }catch(err){
+      console.error(err);
+      hint.textContent = 'Load failed (Netzwerk/CORS).';
+      btn.disabled=false; btn.textContent=old;
+    }
+  });
+
+  // live feedback bei E-Mail-Bestätigung
+  $('email2').addEventListener('input', ()=>{
+    const a = $('email').value.trim().toLowerCase();
+    const b = $('email2').value.trim().toLowerCase();
+    showErr('e-email2', a && b && a === b);
+  });
+
+})();
+</script>
+</body>
+</html>
