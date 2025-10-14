@@ -80,8 +80,8 @@
 
 <script>
 (function(){
-  // === EINTRAGEN: deine Apps-Script Web-App URL (endet auf /exec)
-  const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxcslNZhjXLbOeTsk8yuabOatZXQEaWSnc0cl5kiXg9ylEIwPaRohFlrDyHcqkzoV4/exec';
+  // === HIER EINTRAGEN: deine Apps-Script Web-App URL (endet auf /exec)
+  const WEB_APP_URL = 'https://script.google.com/macros/s/DEINE-DEPLOYMENT-ID/exec';
 
   const $ = id => document.getElementById(id);
   const form = $('form'), btn=$('submitBtn'), hint=$('hint');
@@ -147,20 +147,31 @@ Liebe Grüße ${name}`;
     btn.disabled=true; const old=btn.textContent; btn.textContent='Sende …'; hint.textContent='';
 
     try{
-      // Safari-freundlich: x-www-form-urlencoded (kein strenger Preflight)
+      // Safari-freundlich: x-www-form-urlencoded (vermeidet strengen Preflight)
       const body = new URLSearchParams(v.data).toString();
       const res = await fetch(WEB_APP_URL, {
         method:'POST',
         headers:{ 'Content-Type':'application/x-www-form-urlencoded' },
         body
       });
-      const json = await res.json().catch(()=>({ok:false,error:'bad_json'}));
+
+      // DEBUG-FIRST: erst Rohtext lesen, dann JSON parsen -> bessere Fehlersicht statt "bad_json"
+      const raw = await res.text();
+      let json = null;
+      try { json = JSON.parse(raw); }
+      catch (parseErr) {
+        console.error('RAW RESPONSE (keine JSON):', raw);
+        hint.textContent = `Server lieferte kein JSON (${res.status}). Inhalt (Auszug): ${raw.slice(0,200)}…`;
+        btn.disabled=false; btn.textContent=old;
+        return;
+      }
 
       if(!json.ok){
         hint.textContent = json.error || 'Fehler beim Senden.';
         btn.disabled=false; btn.textContent=old;
         return;
       }
+
       const name = json.fullName || (v.data.vorname + ' ' + v.data.nachname);
       openOk(name, json.kdNr);
       btn.textContent='Senden erfolgreich';
@@ -168,7 +179,7 @@ Liebe Grüße ${name}`;
 
     }catch(err){
       console.error(err);
-      hint.textContent='Load failed (Netzwerk/CORS).';
+      hint.textContent='Netzwerk-/CORS-Fehler.';
       btn.disabled=false; btn.textContent=old;
     }
   });
