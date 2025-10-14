@@ -6,35 +6,22 @@
   <title>Kundennummer beantragen</title>
   <style>
     :root{
-      --bg:#ffffff;          /* neutral weiß */
-      --card:#ffffff;        /* Karten ebenfalls weiß */
-      --text:#0f172a;        /* gut lesbares Dunkel */
-      --muted:#6b7280;
-      --primary:#2563eb;
-      --primary-hover:#1d4ed8;
-      --success:#16a34a;
-      --success-strong:#15803d;
-      --danger:#b91c1c;
-      --border:#e5e7eb;
-      --input:#f9fafb;
-      --shadow:0 10px 30px rgba(0,0,0,.06);
-      --radius:14px;
-      --wa:#25D366;
+      --bg:#ffffff; --card:#ffffff; --text:#0f172a; --muted:#6b7280;
+      --primary:#2563eb; --primary-hover:#1d4ed8;
+      --success:#16a34a; --success-strong:#15803d;
+      --danger:#b91c1c; --border:#e5e7eb; --input:#f9fafb;
+      --shadow:0 10px 30px rgba(0,0,0,.06); --radius:14px; --wa:#25D366;
     }
     *{box-sizing:border-box}
     html,body{height:100%}
     body{
       margin:0; padding:24px; background:var(--bg);
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      color:var(--text);
-      -webkit-text-size-adjust:100%;
-      text-size-adjust:100%;
+      font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      color:var(--text); -webkit-text-size-adjust:100%; text-size-adjust:100%;
     }
     .wrap{max-width:860px; margin:0 auto;}
     h1{margin:0 0 16px; font-size:22px; font-weight:800; letter-spacing:.3px;}
     p.lead{margin:0 0 20px; color:var(--muted)}
-
-    /* FORM-KARTE: hell/neutral */
     .card{
       background:var(--card); border:1px solid var(--border);
       border-radius:var(--radius); padding:20px; box-shadow:var(--shadow);
@@ -45,32 +32,24 @@
     .card .checkline{border-top:1px dashed rgba(0,0,0,.08);}
     .card .checkline a{color:var(--primary);}
     .card .err{color:var(--danger);}
-
-    /* Inputs: hell, guter Kontrast */
     input, select{
-      width:100%; padding:12px 12px; border-radius:10px;
+      width:100%; padding:12px; border-radius:10px;
       border:1px solid var(--border); background:var(--input); font-size:15px;
-      outline:none; transition:border-color .15s, background .15s;
-      color:var(--text);
+      outline:none; transition:border-color .15s, background .15s; color:var(--text);
     }
-    input:focus, select:focus{ border-color: var(--primary); background:#fff; }
-
+    input:focus, select:focus{ border-color:var(--primary); background:#fff; }
     .grid{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
     .full{grid-column:1 / -1;}
     @media (max-width:720px){ .grid{grid-template-columns:1fr;} }
-
-    .req{color:#dc2626; margin-left:4px; font-weight:700;} /* statt pastell für dunkel */
-
-    .row-inline{display:grid; grid-template-columns: 1fr 1fr; gap:14px;}
+    .req{color:#dc2626; margin-left:4px; font-weight:700;}
+    .row-inline{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
     @media (max-width:560px){ .row-inline{grid-template-columns:1fr;} }
-
     .actions{display:flex; gap:10px; align-items:center; margin-top:8px; flex-wrap:wrap;}
     .btn{
       display:inline-flex; align-items:center; justify-content:center;
       padding:12px 16px; border-radius:10px; border:1px solid transparent;
       background:#e5e7eb; color:#111; cursor:pointer; font-weight:700;
-      transition: background .15s, transform .04s ease;
-      text-decoration:none;
+      transition: background .15s, transform .04s ease; text-decoration:none;
     }
     .btn:active{ transform: translateY(1px); }
     .btn-primary{ background:var(--primary); color:#fff; }
@@ -78,51 +57,39 @@
     .btn-success{ background:var(--success); color:#fff; }
     .btn-success:hover{ background:var(--success-strong); }
     .btn[disabled]{ opacity:.65; pointer-events:none; }
-
-    /* WhatsApp Button */
-    .btn-wa{
-      background:var(--wa); color:#fff; border-radius:999px; padding:12px 18px;
-      gap:10px; font-weight:800;
+    .btn.loading{ position:relative; }
+    .btn.loading::after{
+      content:""; position:absolute; right:12px; width:14px; height:14px; border-radius:50%;
+      border:2px solid #fff; border-right-color:transparent; animation:spin .7s linear infinite;
     }
+    @keyframes spin{ to{ transform:rotate(360deg);} }
+    .btn-wa{ background:var(--wa); color:#fff; border-radius:999px; padding:12px 18px; gap:10px; font-weight:800;}
     .btn-wa:hover{ filter:brightness(0.95); }
     .btn-wa svg{ width:20px; height:20px; display:block; }
-
     .muted{font-size:13px; color:var(--muted);}
-
-    /* Overlays (Review + Erfolg) */
     .overlay{position:fixed; inset:0; display:none; place-items:center; background:rgba(0,0,0,.45); z-index:9999; padding:16px;}
     .overlay.show{ display:grid; }
+    .overlay.locked{ pointer-events:none; }
     .dialog{
-      width:min(620px, 94vw); max-width:620px; background:#fff;
-      border:1px solid var(--border); color:var(--text);
-      border-radius:16px; padding:18px 18px;
-      box-shadow: 0 20px 60px rgba(0,0,0,.15);
-      position:relative;
+      width:min(620px,94vw); background:#fff; border:1px solid var(--border); color:var(--text);
+      border-radius:16px; padding:18px; box-shadow:0 20px 60px rgba(0,0,0,.15); position:relative;
     }
     .dialog h2{ margin:6px 0 12px; font-size:20px; }
     .dialog p{ margin:6px 0 0; font-size:15px; }
     .dialog .ok{ margin-top:12px; display:flex; gap:10px; justify-content:flex-end; flex-wrap:wrap; }
-    .review-table{ width:100%; border-collapse: collapse; margin-top:8px; }
+    .review-table{ width:100%; border-collapse:collapse; margin-top:8px; }
     .review-table td{ padding:6px 8px; border-bottom:1px solid #f1f5f9; vertical-align:top; }
     .review-table td:first-child{ width:180px; color:#334155; font-weight:600; }
-
-    .close{position:absolute; top:10px; right:10px; background:transparent; border:0; cursor:pointer; font-size:22px; line-height:1; color:#64748b; padding:4px 8px; border-radius:8px}
+    .close{ position:absolute; top:10px; right:10px; background:transparent; border:0; cursor:pointer; font-size:22px; line-height:1; color:#64748b; padding:4px 8px; border-radius:8px;}
     .close:hover{ color:#0f172a; background:#f1f5f9; }
-
     .dialog.success{ background:#ecfdf5; border-color:#bbf7d0; color:#064e3b; }
-
     .is-invalid{ border-color:#ef4444 !important; background:#fff; }
     .err{ display:none; font-size:12px; color:var(--danger); margin-top:6px;}
     .err.show{ display:block; }
-
     .err-inline{margin-top:4px; margin-left:2px;}
-
     @media (max-width:420px){
-      body{ padding:16px; }
-      .dialog h2{ font-size:18px; }
-      input,select{ font-size:16px; } /* iOS Zoom vermeiden */
-      .btn{ padding:12px 14px; }
-      .btn-wa{ padding:12px 16px; }
+      body{ padding:16px; } .dialog h2{ font-size:18px; } input,select{ font-size:16px; }
+      .btn{ padding:12px 14px; } .btn-wa{ padding:12px 16px; }
     }
   </style>
 </head>
@@ -137,102 +104,71 @@
           <label for="firma">Firma</label>
           <input id="firma" name="firma" type="text" autocomplete="organization" />
         </div>
-
         <div>
           <label for="vorname">Vorname <span class="req">*</span></label>
           <input id="vorname" name="vorname" type="text" required autocomplete="given-name" />
           <div class="err" id="err-vorname">Bitte Vornamen angeben.</div>
         </div>
-
         <div>
           <label for="nachname">Nachname <span class="req">*</span></label>
           <input id="nachname" name="nachname" type="text" required autocomplete="family-name" />
           <div class="err" id="err-nachname">Bitte Nachnamen angeben.</div>
         </div>
-
         <div class="full">
           <label for="strasse">Straße &amp; Hausnummer <span class="req">*</span></label>
           <input id="strasse" name="strasse" type="text" required autocomplete="address-line1" />
           <div class="err" id="err-strasse">Bitte Straße &amp; Hausnummer angeben.</div>
         </div>
-
         <div>
           <label for="plz">PLZ <span class="req">*</span></label>
           <input id="plz" name="plz" type="text" required inputmode="text" pattern="^[A-Za-z0-9 \-]{1,10}$" />
           <div class="hint">International erlaubt (z. B. 10115, W1A 1HQ, 75008, 1234-AB). Max. 10 Zeichen.</div>
           <div class="err" id="err-plz">Bitte eine gültige PLZ angeben (Buchstaben/Zahlen/Leerzeichen/-, max. 10).</div>
         </div>
-
         <div>
           <label for="ort">Ort <span class="req">*</span></label>
           <input id="ort" name="ort" type="text" required autocomplete="address-level2" />
           <div class="err" id="err-ort">Bitte Ort angeben.</div>
         </div>
-
-        <!-- Land: Auswahl + optional Freitext -->
         <div class="full">
           <label for="landSelect">Land <span class="req">*</span></label>
           <select id="landSelect" required>
             <option value="">Land auswählen …</option>
-            <option>Deutschland</option>
-            <option>Österreich</option>
-            <option>Schweiz</option>
-            <option>Luxemburg</option>
-            <option>Niederlande</option>
-            <option>Belgien</option>
-            <option>Frankreich</option>
-            <option>Italien</option>
-            <option>Spanien</option>
-            <option>Polen</option>
-            <option>Tschechien</option>
-            <option>Dänemark</option>
-            <option>Schweden</option>
-            <option>Norwegen</option>
-            <option>Finnland</option>
-            <option>Irland</option>
+            <option>Deutschland</option><option>Österreich</option><option>Schweiz</option><option>Luxemburg</option>
+            <option>Niederlande</option><option>Belgien</option><option>Frankreich</option><option>Italien</option>
+            <option>Spanien</option><option>Polen</option><option>Tschechien</option><option>Dänemark</option>
+            <option>Schweden</option><option>Norwegen</option><option>Finnland</option><option>Irland</option>
             <option>Vereinigtes Königreich</option>
             <option value="other">Anderes Land …</option>
           </select>
           <input id="landOther" type="text" placeholder="Land eingeben" style="display:none; margin-top:8px;" />
           <div class="err" id="err-land">Bitte Land angeben.</div>
         </div>
-
         <div>
           <label for="handy">Handy (WhatsApp) <span class="req">*</span></label>
           <input id="handy" name="handy" type="tel" required inputmode="tel" placeholder="+49 1525 1234567" />
           <div class="err" id="err-handy">Bitte eine gültige Handy-Nr. angeben.</div>
         </div>
-
         <div>
           <label for="email">E-Mail <span class="req">*</span></label>
           <input id="email" name="email" type="email" inputmode="email" autocomplete="email" placeholder="name@example.com" required />
           <div class="err" id="err-email">Bitte eine gültige E-Mail eintragen.</div>
         </div>
-
         <div>
           <label for="emailConfirm">E-Mail bestätigen <span class="req">*</span></label>
           <input id="emailConfirm" name="emailConfirm" type="email" inputmode="email" placeholder="E-Mail erneut eingeben" required />
           <div class="err" id="err-emailConfirm">Die E-Mail-Adressen stimmen nicht überein.</div>
         </div>
-
         <div class="full checkline">
           <input id="acceptAgb" name="acceptAgb" type="checkbox" />
-          <label for="acceptAgb">
-            Ich akzeptiere die <a href="https://dekodenise.de/policies/terms-of-service" target="_blank" rel="noopener">AGB</a>.
-            <span class="req">*</span>
-          </label>
+          <label for="acceptAgb">Ich akzeptiere die <a href="https://dekodenise.de/policies/terms-of-service" target="_blank" rel="noopener">AGB</a>. <span class="req">*</span></label>
         </div>
         <div class="full"><div class="err err-inline" id="err-agb">Bitte AGB akzeptieren.</div></div>
-
         <div class="full checkline" style="margin-top:-8px;">
           <input id="acceptDsgvo" name="acceptDsgvo" type="checkbox" />
-          <label for="acceptDsgvo">
-            Ich stimme der <a href="https://dekodenise.de/policies/privacy-policy" target="_blank" rel="noopener">Datenschutzerklärung</a> zu.
-            <span class="req">*</span>
-          </label>
+          <label for="acceptDsgvo">Ich stimme der <a href="https://dekodenise.de/policies/privacy-policy" target="_blank" rel="noopener">Datenschutzerklärung</a> zu. <span class="req">*</span></label>
         </div>
         <div class="full"><div class="err err-inline" id="err-dsgvo">Bitte der Datenschutzerklärung zustimmen.</div></div>
-
         <div class="full actions">
           <button id="submitBtn" class="btn btn-primary" type="submit">Kundennummer anfordern</button>
           <button id="resetBtn" class="btn" type="button">Zurücksetzen</button>
@@ -274,16 +210,10 @@
       <h2 id="successTitle">Alles klar! ✅</h2>
       <p><b>Senden erfolgreich.</b></p>
       <p>Danke, <span id="ovName"></span>! Deine Kundennummer lautet: <b id="ovKdNr"></b>.</p>
-
-      <p style="color:#b91c1c; font-weight:700; margin-top:16px;">
-        Bitte setze dich einmal über WhatsApp mit mir in Verbindung. Werde mich morgen persönlich bei Dir zurück melden!
-      </p>
-
+      <p style="color:#b91c1c; font-weight:700; margin-top:16px;">Bitte setze dich einmal über WhatsApp mit mir in Verbindung. Werde mich morgen persönlich bei Dir zurück melden!</p>
       <div style="margin-top:10px; display:flex; justify-content:flex-start;">
         <a id="waBtn" class="btn btn-wa" href="#" target="_blank" rel="noopener">
-          <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">
-            <path fill="currentColor" d="M19.11 17.16c-.27-.14-1.6-.79-1.85-.88-.25-.09-.43-.14-.62.14s-.71.88-.87 1.06c-.16.18-.32.2-.59.07-.27-.14-1.14-.42-2.17-1.35-.8-.71-1.34-1.58-1.5-1.85-.16-.27-.02-.42.12-.56.12-.12.27-.32.41-.48.14-.16.18-.27.27-.45.09-.18.05-.34-.02-.48s-.62-1.49-.85-2.04c-.22-.53-.45-.46-.62-.46h-.53c-.18 0-.48.07-.73.34s-.96.94-.96 2.28 1 2.64 1.14 2.83c.14.18 1.97 3.02 4.76 4.23.67.29 1.19.46 1.6.58.67.21 1.28.18 1.76.11.54-.08 1.6-.65 1.83-1.28.23-.63.23-1.17.16-1.28-.07-.11-.25-.18-.52-.32zM16 3c7.18 0 13 5.82 13 13 0 2.5-.7 4.84-1.92 6.83L28 29l-6.3-1.91A12.95 12.95 0 0 1 16 29C8.82 29 3 23.18 3 16S8.82 3 16 3m0-2C7.72 1 1 7.72 1 16c0 2.74.75 5.3 2.06 7.5L1 31l7.66-2.02A14.95 14.95 0 0 0 16 31c8.28 0 15-6.72 15-15S24.28 1 16 1z"/>
-          </svg>
+          <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path fill="currentColor" d="M19.11 17.16c-.27-.14-1.6-.79-1.85-.88-.25-.09-.43-.14-.62.14s-.71.88-.87 1.06c-.16.18-.32.2-.59.07-.27-.14-1.14-.42-2.17-1.35-.8-.71-1.34-1.58-1.5-1.85-.16-.27-.02-.42.12-.56.12-.12.27-.32.41-.48.14-.16.18-.27.27-.45.09-.18.05-.34-.02-.48s-.62-1.49-.85-2.04c-.22-.53-.45-.46-.62-.46h-.53c-.18 0-.48.07-.73.34s-.96.94-.96 2.28 1 2.64 1.14 2.83c.14.18 1.97 3.02 4.76 4.23.67.29 1.19.46 1.6.58.67.21 1.28.18 1.76.11.54-.08 1.6-.65 1.83-1.28.23-.63.23-1.17.16-1.28-.07-.11-.25-.18-.52-.32zM16 3c7.18 0 13 5.82 13 13 0 2.5-.7 4.84-1.92 6.83L28 29l-6.3-1.91A12.95 12.95 0 0 1 16 29C8.82 29 3 23.18 3 16S8.82 3 16 3m0-2C7.72 1 1 7.72 1 16c0 2.74.75 5.3 2.06 7.5L1 31l7.66-2.02A14.95 14.95 0 0 0 16 31c8.28 0 15-6.72 15-15S24.28 1 16 1z"/></svg>
           Jetzt per WhatsApp schreiben
         </a>
       </div>
@@ -292,8 +222,8 @@
 
   <script>
     (function(){
-      // DEINE Apps Script Web-App URL (endet auf /exec)
-      const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxcslNZhjXLbOeTsk8yuabOatZXQEaWSnc0cl5kiXg9ylEIwPaRohFlrDyHcqkzoV4/exec';
+      const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxcslNZhjXLbOeTsk8yuabOatZXQEaWSnc0cl5kiXg9ylEIwPaRohFlrDyHcqkzoV4/exec'; // <- anpassen
+      const SUBMIT_COOLDOWN_MS = 10000; // UI-Cooldown gegen Doppelklick
 
       const form = document.getElementById('form');
       const submitBtn = document.getElementById('submitBtn');
@@ -307,7 +237,6 @@
       const successOverlay = document.getElementById('successOverlay');
       const ovName = document.getElementById('ovName');
       const ovKdNr = document.getElementById('ovKdNr');
-      const waBtn  = document.getElementById('waBtn');
 
       const closeReview  = document.getElementById('closeReview');
       const closeSuccess = document.getElementById('closeSuccess');
@@ -319,6 +248,10 @@
 
       function showOverlay(ov){ ov.classList.add('show'); ov.setAttribute('aria-hidden','false'); }
       function hideOverlay(ov){ ov.classList.remove('show'); ov.setAttribute('aria-hidden','true'); }
+
+      function lockOverlay(ov, lock){
+        if(lock) ov.classList.add('locked'); else ov.classList.remove('locked');
+      }
 
       function markInvalid(input, errId, show){
         if(!input) return;
@@ -333,10 +266,7 @@
 
       function firstErrorScroll(){
         const el = document.querySelector('.err.show, .is-invalid');
-        if (el) {
-          const target = el.closest('.checkline') || el;
-          target.scrollIntoView({behavior:'smooth', block:'center'});
-        }
+        if (el) (el.closest('.checkline') || el).scrollIntoView({behavior:'smooth', block:'center'});
       }
 
       landSelect.addEventListener('change', ()=>{
@@ -353,39 +283,31 @@
 
       function validate(){
         let ok = true;
-
-        const vorname = $('vorname'), nachname=$('nachname'), strasse=$('strasse'),
+        const vorname=$('vorname'), nachname=$('nachname'), strasse=$('strasse'),
               plz=$('plz'), ort=$('ort'), handy=$('handy'),
               email=$('email'), emailConfirm=$('emailConfirm'),
               acceptAgb=$('acceptAgb'), acceptDsgvo=$('acceptDsgvo');
 
-        [['vorname','err-vorname'],['nachname','err-nachname'],['strasse','err-strasse'],
-         ['ort','err-ort'],['handy','err-handy']].forEach(([id,err])=>{
-          const el=$(id); const bad = !el.value.trim();
-          markInvalid(el, err, bad); ok = ok && !bad;
-        });
+        [['vorname','err-vorname'],['nachname','err-nachname'],['strasse','err-strasse'],['ort','err-ort'],['handy','err-handy']]
+          .forEach(([id,err])=>{ const el=$(id); const bad=!el.value.trim(); markInvalid(el,err,bad); ok=ok && !bad; });
 
         const plzBad = !plz.value.trim() || !(new RegExp(/^[A-Za-z0-9 \-]{1,10}$/).test(plz.value.trim()));
-        markInvalid(plz, 'err-plz', plzBad); ok = ok && !plzBad;
+        markInvalid(plz,'err-plz',plzBad); ok = ok && !plzBad;
 
-        const landVal = getLandValue();
-        const landBad = !landVal;
-        markInvalid(landSelect, 'err-land', landBad && landSelect.value !== 'other');
-        markInvalid(landOther,  'err-land', landBad && landSelect.value === 'other');
+        const landVal = getLandValue(); const landBad = !landVal;
+        markInvalid(landSelect,'err-land',landBad && landSelect.value!=='other');
+        markInvalid(landOther,'err-land',landBad && landSelect.value==='other');
         ok = ok && !landBad;
 
-        const emailVal = email.value.trim();
-        const emailGood = emailVal.length && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal);
-        markInvalid(email, 'err-email', !emailGood); ok = ok && emailGood;
+        const emailVal=email.value.trim(); const emailGood = emailVal.length && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal);
+        markInvalid(email,'err-email',!emailGood); ok = ok && emailGood;
 
-        const emailConfVal = emailConfirm.value.trim();
-        const emailMatch = emailConfVal.length && (emailVal.toLowerCase() === emailConfVal.toLowerCase());
-        markInvalid(emailConfirm, 'err-emailConfirm', !emailMatch); ok = ok && emailMatch;
+        const emailConfVal=emailConfirm.value.trim(); const emailMatch = emailConfVal.length && (emailVal.toLowerCase()===emailConfVal.toLowerCase());
+        markInvalid(emailConfirm,'err-emailConfirm',!emailMatch); ok = ok && emailMatch;
 
-        const agbBad   = !acceptAgb.checked;
-        const dsgvoBad = !acceptDsgvo.checked;
-        markInvalid(acceptAgb, 'err-agb', agbBad);       ok = ok && !agbBad;
-        markInvalid(acceptDsgvo, 'err-dsgvo', dsgvoBad); ok = ok && !dsgvoBad;
+        const agbBad=!acceptAgb.checked, dsgvoBad=!acceptDsgvo.checked;
+        markInvalid(acceptAgb,'err-agb',agbBad); ok = ok && !agbBad;
+        markInvalid(acceptDsgvo,'err-dsgvo',dsgvoBad); ok = ok && !dsgvoBad;
 
         if(!ok) firstErrorScroll();
         return ok;
@@ -403,43 +325,63 @@
         $('rev-email').textContent   = $('email').value.trim();
       }
 
-      function buildPayload(){
+      function buildPayload(nonce){
         return {
-          firma:   $('firma').value.trim(),
-          vorname: $('vorname').value.trim(),
+          nonce,
+          firma:$('firma').value.trim(),
+          vorname:$('vorname').value.trim(),
           nachname:$('nachname').value.trim(),
-          strasse: $('strasse').value.trim(),
-          plz:     $('plz').value.trim(),
-          ort:     $('ort').value.trim(),
-          land:    getLandValue(),
-          handy:   $('handy').value.trim(),
-          email:   $('email').value.trim(),
-          emailConfirm: $('emailConfirm').value.trim(),
-          acceptAgb:  $('acceptAgb').checked,
+          strasse:$('strasse').value.trim(),
+          plz:$('plz').value.trim(),
+          ort:$('ort').value.trim(),
+          land:getLandValue(),
+          handy:$('handy').value.trim(),
+          email:$('email').value.trim(),
+          emailConfirm:$('emailConfirm').value.trim(),
+          acceptAgb:$('acceptAgb').checked,
           acceptDsgvo:$('acceptDsgvo').checked
         };
       }
 
       // Submit -> Review
-      form.addEventListener('submit', function(e){
+      form.addEventListener('submit', (e)=>{
         e.preventDefault();
         if(!validate()) return;
         fillReview();
         showOverlay(reviewOverlay);
       });
 
-      // Review: ändern / schließen
+      // Review schließen / ändern
       document.getElementById('editBtn').addEventListener('click', ()=> hideOverlay(reviewOverlay));
       document.getElementById('closeReview').addEventListener('click', ()=> hideOverlay(reviewOverlay));
 
-      // Review: Jetzt registrieren -> FETCH zu Apps Script
-      document.getElementById('confirmSubmitBtn').addEventListener('click', async ()=>{
-        const payload = buildPayload();
+      // === Doppel-Klick-Schutz + Idempotenz ===
+      let submitting = false;
+      function genNonce(){
+        try{ return crypto.randomUUID(); }catch(_){ return Date.now()+'-'+Math.random().toString(16).slice(2); }
+      }
 
+      document.getElementById('confirmSubmitBtn').addEventListener('click', async ()=>{
+        if(submitting) return; // zweite/r dritte Klick wird ignoriert
+        submitting = true;
+
+        // UI hart locken
+        confirmSubmitBtn.disabled = true;
+        confirmSubmitBtn.classList.add('loading');
+        editBtn.disabled = true;
+        lockOverlay(reviewOverlay, true);
+
+        // sofort schließen, damit niemand mehr klickt
+        hideOverlay(reviewOverlay);
+
+        // 10s Cooldown am Haupt-Button
         submitBtn.disabled = true;
-        const oldText = submitBtn.textContent;
-        submitBtn.textContent = 'Sende …';
+        submitBtn.classList.add('loading');
+        const cooldownTimer = setTimeout(()=>{ submitBtn.disabled=false; submitBtn.classList.remove('loading'); }, SUBMIT_COOLDOWN_MS);
+
         submitHint.textContent = '';
+        const nonce = genNonce();
+        const payload = buildPayload(nonce);
 
         try{
           const body = new URLSearchParams(payload).toString();
@@ -450,21 +392,9 @@
           });
 
           const raw = await res.text();
-          let json=null;
-          try{ json = JSON.parse(raw); }
-          catch(_){
-            submitHint.textContent = `Server lieferte kein JSON (${res.status}). Inhalt (Auszug): ${raw.slice(0,180)}…`;
-            submitBtn.disabled=false; submitBtn.textContent=oldText;
-            hideOverlay(reviewOverlay);
-            return;
-          }
+          let json=null; try{ json = JSON.parse(raw);}catch(_){ throw new Error(`Kein JSON (${res.status}): ${raw.slice(0,180)}…`); }
 
-          if(!json.ok){
-            submitHint.textContent = json.error || 'Fehler beim Senden.';
-            submitBtn.disabled=false; submitBtn.textContent=oldText;
-            hideOverlay(reviewOverlay);
-            return;
-          }
+          if(!json.ok) throw new Error(json.error || 'Fehler beim Senden.');
 
           const fullName = json.fullName || (payload.vorname + ' ' + payload.nachname);
           const kdNr = json.kdNr || '';
@@ -477,31 +407,33 @@
 ich habe mich gerade registriert.
 Meine Kundennummer: ${kdNr}
 Liebe Grüße ${fullName}`;
-          const waUrl = 'https://wa.me/' + waNumber + '?text=' + encodeURIComponent(waText);
-          document.getElementById('waBtn').setAttribute('href', waUrl);
+          document.getElementById('waBtn').setAttribute('href','https://wa.me/'+waNumber+'?text='+encodeURIComponent(waText));
 
-          hideOverlay(reviewOverlay);
           showOverlay(successOverlay);
-
           submitBtn.textContent = 'Senden erfolgreich';
           form.reset();
 
         }catch(err){
           console.error(err);
-          submitHint.textContent = 'Netzwerk-/CORS-Fehler.';
-          submitBtn.disabled=false; submitBtn.textContent=oldText;
-          hideOverlay(reviewOverlay);
+          submitHint.textContent = (err && err.message) ? err.message : 'Netzwerk-/CORS-Fehler.';
+        }finally{
+          clearTimeout(cooldownTimer);
+          submitBtn.classList.remove('loading');
+          confirmSubmitBtn.classList.remove('loading');
+          submitting = false;
+          // nicht sofort reaktivieren – Hauptbutton ist nach Cooldown wieder aktiv
+          confirmSubmitBtn.disabled = false;
+          editBtn.disabled = false;
+          lockOverlay(reviewOverlay, false);
         }
       });
 
       // Zurücksetzen
       document.getElementById('resetBtn').addEventListener('click', ()=>{
-        form.reset();
-        landOther.style.display = 'none';
-        submitHint.textContent = '';
+        form.reset(); landOther.style.display='none'; submitHint.textContent='';
         document.querySelectorAll('.is-invalid').forEach(el=>el.classList.remove('is-invalid'));
         document.querySelectorAll('.err.show').forEach(el=>el.classList.remove('show'));
-        submitBtn.textContent = 'Kundennummer anfordern';
+        submitBtn.textContent='Kundennummer anfordern';
       });
 
       // Overlays schließen
@@ -509,7 +441,7 @@ Liebe Grüße ${fullName}`;
       successOverlay.addEventListener('click', (e)=>{ if(e.target === successOverlay) hideOverlay(successOverlay); });
       reviewOverlay.addEventListener('click', (e)=>{ if(e.target === reviewOverlay) hideOverlay(reviewOverlay); });
       document.addEventListener('keydown', (e)=>{
-        if(e.key === 'Escape'){
+        if(e.key==='Escape'){
           if (reviewOverlay.classList.contains('show')) hideOverlay(reviewOverlay);
           else if (successOverlay.classList.contains('show')) hideOverlay(successOverlay);
         }
