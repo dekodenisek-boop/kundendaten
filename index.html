@@ -80,8 +80,8 @@
 
 <script>
 (function(){
-  // === CONFIG ===
-  const WEB_APP_URL = 'https://script.google.com/macros/s/DEINE-DEPLOYMENT-ID/exec'; // <- hier deine Web-App-URL eintragen
+  // === EINTRAGEN: deine Apps-Script Web-App URL (endet auf /exec)
+  const WEB_APP_URL = 'HIER-DEINE-APPS-SCRIPT-URL/exec';
 
   const $ = id => document.getElementById(id);
   const form = $('form'), btn=$('submitBtn'), hint=$('hint');
@@ -109,56 +109,55 @@
     const agb=$('agb').checked;
     const dsgvo=$('dsgvo').checked;
 
-    showErr('e-vorname', !!vorname); ok = ok && !!vorname;
-    showErr('e-nachname',!!nachname);ok = ok && !!nachname;
-    showErr('e-strasse', !!strasse); ok = ok && !!strasse;
-    const plzOk = /^[A-Za-z0-9 \-]{1,10}$/.test(plz);
-    showErr('e-plz', plzOk);         ok = ok && plzOk;
-    showErr('e-ort', !!ort);         ok = ok && !!ort;
-    showErr('e-handy', !!handy);     ok = ok && !!handy;
-    showErr('e-agb', agb);           ok = ok && agb;
-    showErr('e-dsgvo', dsgvo);       ok = ok && dsgvo;
+    showErr('e-vorname', !!vorname); ok &= !!vorname;
+    showErr('e-nachname',!!nachname);ok &= !!nachname;
+    showErr('e-strasse', !!strasse); ok &= !!strasse;
+    const plzOk=/^[A-Za-z0-9 \-]{1,10}$/.test(plz);
+    showErr('e-plz',plzOk);          ok &= plzOk;
+    showErr('e-ort', !!ort);         ok &= !!ort;
+    showErr('e-handy', !!handy);     ok &= !!handy;
+    showErr('e-agb', agb);           ok &= agb;
+    showErr('e-dsgvo', dsgvo);       ok &= dsgvo;
 
-    const emailOk = email.length && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-    showErr('e-email', emailOk);     ok = ok && emailOk;
+    const emailOk=email.length && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    showErr('e-email', emailOk);     ok &= emailOk;
+    const emailMatch=emailOk && email2.length && (email.toLowerCase()===email2.toLowerCase());
+    showErr('e-email2', emailMatch); ok &= emailMatch;
 
-    const emailMatch = emailOk && email2.length && (email.toLowerCase() === email2.toLowerCase());
-    showErr('e-email2', emailMatch); ok = ok && emailMatch;
-
-    return { ok, data:{ firma, vorname, nachname, strasse, plz, ort, land, handy, email, emailConfirm: email2, acceptAgb: agb, acceptDsgvo: dsgvo } };
+    return { ok: !!ok, data:{ firma, vorname, nachname, strasse, plz, ort, land, handy, email, emailConfirm: email2, acceptAgb: agb, acceptDsgvo: dsgvo } };
   }
 
   function openOk(name, kd){
     ovName.textContent = name; ovKd.textContent = kd;
-    const waNumber = '4915258164673';
-    const waText = `Hallo Denise,
+    const waNumber='4915258164673';
+    const waText=`Hallo Denise,
 ich habe mich gerade registriert.
 Meine Kundennummer: ${kd}
 Liebe Grüße ${name}`;
-    waBtn.href = 'https://wa.me/' + waNumber + '?text=' + encodeURIComponent(waText);
+    waBtn.href='https://wa.me/'+waNumber+'?text='+encodeURIComponent(waText);
     okOv.classList.add('show'); okOv.setAttribute('aria-hidden','false');
   }
-  $('closeOk').addEventListener('click', ()=>{ okOv.classList.remove('show'); okOv.setAttribute('aria-hidden','true'); });
+  $('closeOk').addEventListener('click',()=>{ okOv.classList.remove('show'); okOv.setAttribute('aria-hidden','true'); });
 
   form.addEventListener('submit', async (e)=>{
     e.preventDefault();
     const v = validate();
     if(!v.ok){ hint.textContent='Bitte korrigieren.'; return; }
 
-    btn.disabled = true; const old = btn.textContent; btn.textContent='Sende …'; hint.textContent='';
+    btn.disabled=true; const old=btn.textContent; btn.textContent='Sende …'; hint.textContent='';
 
     try{
-      // Form-URL-Encoded senden → weniger CORS-Reibung (Safari)
-      const params = new URLSearchParams(v.data).toString();
+      // Safari-freundlich: x-www-form-urlencoded (kein strenger Preflight)
+      const body = new URLSearchParams(v.data).toString();
       const res = await fetch(WEB_APP_URL, {
         method:'POST',
         headers:{ 'Content-Type':'application/x-www-form-urlencoded' },
-        body: params
+        body
       });
       const json = await res.json().catch(()=>({ok:false,error:'bad_json'}));
 
       if(!json.ok){
-        hint.textContent = (json.error || 'Fehler beim Senden.');
+        hint.textContent = json.error || 'Fehler beim Senden.';
         btn.disabled=false; btn.textContent=old;
         return;
       }
@@ -169,18 +168,17 @@ Liebe Grüße ${name}`;
 
     }catch(err){
       console.error(err);
-      hint.textContent = 'Load failed (Netzwerk/CORS).';
+      hint.textContent='Load failed (Netzwerk/CORS).';
       btn.disabled=false; btn.textContent=old;
     }
   });
 
-  // live feedback bei E-Mail-Bestätigung
+  // live Feedback bei E-Mail-Confirm
   $('email2').addEventListener('input', ()=>{
-    const a = $('email').value.trim().toLowerCase();
-    const b = $('email2').value.trim().toLowerCase();
-    showErr('e-email2', a && b && a === b);
+    const a=$('email').value.trim().toLowerCase();
+    const b=$('email2').value.trim().toLowerCase();
+    showErr('e-email2', a && b && a===b);
   });
-
 })();
 </script>
 </body>
