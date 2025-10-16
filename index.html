@@ -91,6 +91,17 @@
       body{ padding:16px; } .dialog h2{ font-size:18px; } input,select{ font-size:16px; }
       .btn{ padding:12px 14px; } .btn-wa{ padding:12px 16px; }
     }
+
+    /* === Processing Overlay === */
+    .dialog.processing { background:#fff; border:1px solid var(--border); }
+    .loading-wrap{display:flex; align-items:center; gap:12px; margin:8px 0 2px;}
+    .spinner{
+      width:18px; height:18px; border-radius:50%;
+      border:2px solid currentColor; border-right-color:transparent;
+      animation:spin .7s linear infinite;
+    }
+    .progress-msg{ color:#475569; font-size:14px; margin-top:8px; }
+    .progress-sub{ color:#64748b; font-size:13px; margin-top:4px; }
   </style>
 </head>
 <body>
@@ -203,6 +214,19 @@
     </div>
   </div>
 
+  <!-- Processing-Overlay -->
+  <div id="processingOverlay" class="overlay" aria-hidden="true">
+    <div class="dialog processing" role="dialog" aria-modal="true" aria-labelledby="procTitle">
+      <h2 id="procTitle">Einen Moment – wir registrieren dich …</h2>
+      <div class="loading-wrap">
+        <div class="spinner" aria-hidden="true"></div>
+        <div><strong>Bitte warten</strong></div>
+      </div>
+      <p id="procMsg" class="progress-msg">Deine Daten werden sicher übertragen.</p>
+      <p id="procSub" class="progress-sub">Schließe dieses Fenster nicht und lade die Seite nicht neu.</p>
+    </div>
+  </div>
+
   <!-- Erfolgs-Overlay -->
   <div id="successOverlay" class="overlay" aria-hidden="true">
     <div class="dialog success" role="dialog" aria-modal="true" aria-labelledby="successTitle">
@@ -234,6 +258,10 @@
       const confirmSubmitBtn = document.getElementById('confirmSubmitBtn');
       const editBtn = document.getElementById('editBtn');
 
+      const processingOverlay = document.getElementById('processingOverlay');
+      const procMsg = document.getElementById('procMsg');
+      const procSub = document.getElementById('procSub');
+
       const successOverlay = document.getElementById('successOverlay');
       const ovName = document.getElementById('ovName');
       const ovKdNr = document.getElementById('ovKdNr');
@@ -251,6 +279,26 @@
 
       function lockOverlay(ov, lock){
         if(lock) ov.classList.add('locked'); else ov.classList.remove('locked');
+      }
+
+      function showProcessing(msg, sub){
+        if (msg) procMsg.textContent = msg;
+        if (sub) procSub.textContent = sub;
+        showOverlay(processingOverlay);
+        lockOverlay(processingOverlay, true);
+      }
+      function hideProcessing(){
+        lockOverlay(processingOverlay, false);
+        hideOverlay(processingOverlay);
+      }
+
+      function preventUnload(e){
+        e.preventDefault();
+        e.returnValue = '';
+      }
+      function toggleUnloadGuard(on){
+        if(on) window.addEventListener('beforeunload', preventUnload);
+        else window.removeEventListener('beforeunload', preventUnload);
       }
 
       function markInvalid(input, errId, show){
@@ -377,10 +425,23 @@
         // sofort schließen, damit niemand mehr klickt
         hideOverlay(reviewOverlay);
 
+        // Processing sichtbar machen + Tab-Schließschutz
+        showProcessing('Deine Daten werden sicher übertragen.', 'Das kann je nach Netz 5–15 Sekunden dauern.');
+        toggleUnloadGuard(true);
+
         // 10s Cooldown am Haupt-Button
         submitBtn.disabled = true;
         submitBtn.classList.add('loading');
         const cooldownTimer = setTimeout(()=>{ submitBtn.disabled=false; submitBtn.classList.remove('loading'); }, SUBMIT_COOLDOWN_MS);
+
+        // Adaptives Messaging, falls es länger dauert
+        let slowTimer1 = setTimeout(()=>{
+          showProcessing('Noch dran …', 'Es dauert gerade länger als üblich. Bitte weiterhin warten.');
+        }, 8000);
+
+        let slowTimer2 = setTimeout(()=>{
+          showProcessing('Fast geschafft …', 'Wir haben die Registrierung im System, finalisieren gleich die Kundennummer.');
+        }, 15000);
 
         submitHint.textContent = '';
         const nonce = genNonce();
@@ -412,6 +473,10 @@ Meine Kundennummer: ${kdNr}
 Liebe Grüße ${fullName}`;
           document.getElementById('waBtn').setAttribute('href','https://wa.me/'+waNumber+'?text='+encodeURIComponent(waText));
 
+          // Processing beenden, Schließschutz entfernen
+          hideProcessing();
+          toggleUnloadGuard(false);
+
           showOverlay(successOverlay);
           submitBtn.textContent = 'Senden erfolgreich';
           form.reset();
@@ -419,7 +484,14 @@ Liebe Grüße ${fullName}`;
         }catch(err){
           console.error(err);
           submitHint.textContent = (err && err.message) ? err.message : 'Netzwerk-/CORS-Fehler.';
+
+          // Processing beenden, Schließschutz entfernen
+          hideProcessing();
+          toggleUnloadGuard(false);
+
         }finally{
+          clearTimeout(slowTimer1);
+          clearTimeout(slowTimer2);
           clearTimeout(cooldownTimer);
           submitBtn.classList.remove('loading');
           confirmSubmitBtn.classList.remove('loading');
