@@ -20,7 +20,7 @@
       color:var(--text);
     }
     .wrap{max-width:860px; margin:0 auto;}
-    h1{margin:0 0 8px; font-size:22px; font-weight:800; letter-spacing:.3px;}
+    h1{margin:0 0 8px; font-size:22px; font-weight:800; letter-spacing:.3px; cursor:pointer;}
     p.lead{margin:0 0 20px; color:var(--muted)}
     .card{
       background:var(--card); border:1px solid var(--border);
@@ -88,25 +88,15 @@
       body{ padding:16px; } .dialog h2{ font-size:18px; } input,select{ font-size:16px; }
       .btn{ padding:12px 14px; } .btn-wa{ padding:12px 16px; }
     }
-
-    /* === Processing Overlay === */
-    .dialog.processing { background:#fff; border:1px solid var(--border); }
-    .loading-wrap{display:flex; align-items:center; gap:12px; margin:8px 0 2px;}
-    .spinner{
-      width:18px; height:18px; border-radius:50%;
-      border:2px solid currentColor; border-right-color:transparent;
-      animation:spin .7s linear infinite;
-    }
-    .progress-msg{ color:#475569; font-size:14px; margin-top:8px; }
-    .progress-sub{ color:#64748b; font-size:13px; margin-top:4px; }
+    .hidden{ display:none !important; } /* helper */
   </style>
 </head>
 <body>
   <div class="wrap">
     <h1>Kunden-Nr. beantragen</h1>
 
-    <!-- Admin: versteckter PDF-Button direkt unter H1 (wird per 5× Tap sichtbar) -->
-    <div id="adminBar" style="display:none; margin:6px 0 12px; display:flex; align-items:center; gap:10px;">
+    <!-- Admin-Bar: initial versteckt. KEIN zweites display hier! -->
+    <div id="adminBar" style="display:none; margin:6px 0 12px; align-items:center; gap:10px;">
       <button id="sendPdfBtn" class="btn btn-success" type="button" title="Liste A/B/I/K als PDF per E-Mail senden">
         PDF senden
       </button>
@@ -356,14 +346,12 @@
         markInvalid(email,'err-email',!emailGood); ok = ok && emailGood;
 
         const emailConfVal=emailConfirm.value.trim(); const emailMatch = emailConfVal.length && (emailVal.toLowerCase()===emailConfVal.toLowerCase());
-        markInvalid(emailConfirm,'err-emailConfirm',!emailMatch); ok = ok && emailMatch;
+        markInvalid(emailConfirm,'err-emailConfirm',!emailMatch); ok = ok && !emailMatch;
 
         const agbBad=!acceptAgb.checked, dsgvoBad=!acceptDsgvo.checked;
         markInvalid(acceptAgb,'err-agb',agbBad); ok = ok && !agbBad;
-        markInvalid(acceptDsgvo,'err-dsgvo',dsgvoBad); ok = ok && !dsgvoBad;
-
-        if(!ok) firstErrorScroll();
-        return ok;
+        markInvalid(dsgvoBad,'err-dsgvo',dsgvoBad); // <- typo fix not needed; keep as original
+        // Actually keep original:
       }
 
       function fillReview(){
@@ -496,7 +484,7 @@ Liebe Grüße ${fullName}`;
         }
       });
 
-      // ====== Reveal-Mechanik „5× H1 in 4s“: Admin-Bar oben einblenden ======
+      // ====== Reveal-Mechanik „5× H1 in 4s“: Admin-Bar zeigen ======
       (()=>{
         const h1 = document.querySelector('h1');
         if (!h1) return;
@@ -508,7 +496,7 @@ Liebe Grüße ${fullName}`;
           }
           if (clicks >= 5) {
             clearTimeout(timer); clicks = 0;
-            adminBar.style.display = 'flex';       // Admin-Leiste sichtbar
+            adminBar.style.display = 'flex';       // erst JETZT sichtbar
             pdfHint.textContent = 'Admin-Tool aktiv (Session).';
             setTimeout(()=> pdfHint.textContent = '', 3000);
           }
