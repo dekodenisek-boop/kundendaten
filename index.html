@@ -534,7 +534,7 @@ Liebe Grüße ${fullName}`;
           if (clicks >= 5) {
             clearTimeout(timer); clicks = 0;
             adminBar.classList.remove('admin-hidden'); // sichtbar machen
-            pdfHint.textContent = 'Admin-Tools aktiv (Session).';
+            pdfHint.textContent = 'Admin-Tools aktiv.';
             setTimeout(()=> pdfHint.textContent = '', 3000);
           }
         });
