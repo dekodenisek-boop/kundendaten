@@ -11,6 +11,7 @@
       --success:#16a34a; --success-strong:#15803d;
       --danger:#b91c1c; --border:#e5e7eb; --input:#f9fafb;
       --shadow:0 10px 30px rgba(0,0,0,.06); --radius:14px; --wa:#25D366;
+      --brand:#4B134A;
     }
     *{box-sizing:border-box}
     html,body{height:100%}
@@ -20,7 +21,25 @@
       color:var(--text); -webkit-text-size-adjust:100%; text-size-adjust:100%;
     }
     .wrap{max-width:860px; margin:0 auto;}
-    h1{margin:0 0 8px; font-size:22px; font-weight:800; letter-spacing:.3px; cursor:pointer;}
+
+    /* Brand */
+    .brand{
+      display:flex; justify-content:center; align-items:center;
+      margin:0 0 10px;
+    }
+    .brand img{
+      display:block; height:64px; width:auto;
+    }
+
+    /* H1 als „Badge“ mit Brand-Farbe */
+    h1{
+      margin:0 0 8px; font-size:22px; font-weight:800; letter-spacing:.3px;
+      cursor:pointer;
+      background:var(--brand); color:#fff;
+      padding:12px 14px; border-radius:12px;
+      text-align:center;
+    }
+
     p.lead{margin:0 0 20px; color:var(--muted)}
 
     /* Card & Form */
@@ -110,12 +129,19 @@
     .admin-hidden { display: none !important; }
     .admin-bar { display:flex; gap:10px; align-items:center; margin:6px 0 12px; flex-wrap:wrap; }
 
-    /* NEU: rote, fette Statusmeldungen für Admin-Buttons */
+    /* Rote, fette Statusmeldungen für Admin-Buttons */
     .pdf-status { color:#b91c1c; font-weight:bold; }
   </style>
 </head>
 <body>
   <div class="wrap">
+
+    <!-- Logo oberhalb der H1 -->
+    <div class="brand">
+      <img src="https://dekodenise.de/cdn/shop/files/De.Ko_Logo_Rund.png?v=1749137634&width=140"
+           alt="De.Ko Denise Logo" loading="eager" decoding="async">
+    </div>
+
     <h1 id="pageTitle">Kunden-Nr. beantragen</h1>
 
     <!-- Admin-Bar: sitzt NICHT in der .card / .grid, somit kein Einfluss aufs Form-Layout -->
