@@ -30,22 +30,9 @@
     .card label{color:var(--text);}
     .card .hint{color:var(--muted);}
     .card .checkline{border-top:1px dashed rgba(0,0,0,.08);}
-    .card .checkline a{color:var(--primary);}
-    .card .err{color:var(--danger);}
-    input, select{
-      width:100%; padding:12px; border-radius:10px;
-      border:1px solid var(--border); background:var(--input); font-size:15px;
-      outline:none; transition:border-color .15s, background .15s; color:var(--text);
-    }
-    input:focus, select:focus{ border-color:var(--primary); background:#fff; }
-    .grid{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
-    .full{grid-column:1 / -1;}
-    @media (max-width:720px){ .grid{grid-template-columns:1fr;} }
-    .req{color:#dc2626; margin-left:4px; font-weight:700;}
-    .actions{display:flex; gap:10px; align-items:center; margin-top:8px; flex-wrap:wrap;}
     .btn{
       display:inline-flex; align-items:center; justify-content:center;
-      padding:12px 16px; border-radius:10px; border:1px solid transparent;
+      padding:10px 14px; border-radius:10px; border:1px solid transparent;
       background:#e5e7eb; color:#111; cursor:pointer; font-weight:700;
       transition: background .15s, transform .04s ease; text-decoration:none;
     }
@@ -62,43 +49,44 @@
     }
     @keyframes spin{ to{ transform:rotate(360deg);} }
     .btn-wa{ background:var(--wa); color:#fff; border-radius:999px; padding:12px 18px; gap:10px; font-weight:800;}
-    .btn-wa:hover{ filter:brightness(0.95); }
-    .btn-wa svg{ width:20px; height:20px; display:block; }
     .muted{font-size:13px; color:var(--muted);}
+
+    .grid{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+    .full{grid-column:1 / -1;}
+    @media (max-width:720px){ .grid{grid-template-columns:1fr;} }
     .overlay{position:fixed; inset:0; display:none; place-items:center; background:rgba(0,0,0,.45); z-index:9999; padding:16px;}
     .overlay.show{ display:grid; }
     .overlay.locked{ pointer-events:none; }
-    .dialog{
-      width:min(620px,94vw); background:#fff; border:1px solid var(--border); color:var(--text);
-      border-radius:16px; padding:18px; box-shadow:var(--shadow); position:relative;
-    }
+    .dialog{ width:min(620px,94vw); background:#fff; border:1px solid var(--border);
+      color:var(--text); border-radius:16px; padding:18px; box-shadow:var(--shadow); position:relative;}
     .dialog h2{ margin:6px 0 12px; font-size:20px; }
-    .dialog p{ margin:6px 0 0; font-size:15px; }
     .dialog .ok{ margin-top:12px; display:flex; gap:10px; justify-content:flex-end; flex-wrap:wrap; }
     .review-table{ width:100%; border-collapse:collapse; margin-top:8px; }
     .review-table td{ padding:6px 8px; border-bottom:1px solid #f1f5f9; vertical-align:top; }
     .review-table td:first-child{ width:180px; color:#334155; font-weight:600; }
     .close{ position:absolute; top:10px; right:10px; background:transparent; border:0; cursor:pointer; font-size:22px; line-height:1; color:#64748b; padding:4px 8px; border-radius:8px;}
-    .close:hover{ color:#0f172a; background:#f1f5f9; }
     .dialog.success{ background:#ecfdf5; border-color:#bbf7d0; color:#064e3b; }
     .is-invalid{ border-color:#ef4444 !important; background:#fff; }
     .err{ display:none; font-size:12px; color:var(--danger); margin-top:6px;}
     .err.show{ display:block; }
     @media (max-width:420px){
       body{ padding:16px; } .dialog h2{ font-size:18px; } input,select{ font-size:16px; }
-      .btn{ padding:12px 14px; } .btn-wa{ padding:12px 16px; }
     }
-    .hidden{ display:none !important; } /* helper */
+    .admin-hidden { display: none !important; }
+    .admin-bar { display:flex; align-items:center; gap:10px; margin:6px 0 12px; flex-wrap:wrap; }
   </style>
 </head>
 <body>
   <div class="wrap">
-    <h1>Kunden-Nr. beantragen</h1>
+    <h1 id="pageTitle">Kunden-Nr. beantragen</h1>
 
-    <!-- Admin-Bar: initial versteckt. KEIN zweites display hier! -->
-    <div id="adminBar" style="display:none; margin:6px 0 12px; align-items:center; gap:10px;">
-      <button id="sendPdfBtn" class="btn btn-success" type="button" title="Liste A/B/I/K als PDF per E-Mail senden">
+    <!-- Admin-Bar: 5× Tap auf H1 -> sichtbar -->
+    <div id="adminBar" class="admin-hidden admin-bar">
+      <button id="sendPdfAllBtn" class="btn btn-success" type="button" title="Komplette Liste senden">
         Alle senden
+      </button>
+      <button id="sendPdfNewBtn" class="btn btn-primary" type="button" title="Nur neue seit letztem Versand senden">
+        Nur neue
       </button>
       <span class="muted" id="pdfHint"></span>
     </div>
@@ -130,7 +118,7 @@
           <label for="plz">PLZ <span class="req">*</span></label>
           <input id="plz" name="plz" type="text" required inputmode="text" pattern="^[A-Za-z0-9 \-]{1,10}$" />
           <div class="hint">International erlaubt (z. B. 10115, W1A 1HQ, 75008, 1234-AB). Max. 10 Zeichen.</div>
-          <div class="err" id="err-plz">Bitte eine gültige PLZ angeben (Buchstaben/Zahlen/Leerzeichen/-, max. 10).</div>
+          <div class="err" id="err-plz">Bitte eine gültige PLZ angeben.</div>
         </div>
         <div>
           <label for="ort">Ort <span class="req">*</span></label>
@@ -176,7 +164,7 @@
           <label for="acceptDsgvo">Ich stimme der <a href="https://dekodenise.de/policies/privacy-policy" target="_blank" rel="noopener">Datenschutzerklärung</a> zu. <span class="req">*</span></label>
         </div>
         <div class="full"><div class="err err-inline" id="err-dsgvo">Bitte der Datenschutzerklärung zustimmen.</div></div>
-        <div class="full actions">
+        <div class="full" style="display:flex; gap:10px; align-items:center; margin-top:8px; flex-wrap:wrap;">
           <button id="submitBtn" class="btn btn-primary" type="submit">Kundennummer anfordern</button>
           <button id="resetBtn" class="btn" type="button">Zurücksetzen</button>
           <span class="muted" id="submitHint"></span>
@@ -233,7 +221,6 @@
       <p style="color:#b91c1c; font-weight:700; margin-top:16px;">Bitte setze dich einmal über WhatsApp mit mir in Verbindung. Werde mich morgen persönlich bei Dir zurück melden!</p>
       <div style="margin-top:10px; display:flex; justify-content:flex-start;">
         <a id="waBtn" class="btn btn-wa" href="#" target="_blank" rel="noopener">
-          <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path fill="currentColor" d="M19.11 17.16c-.27-.14-1.6-.79-1.85-.88-.25-.09-.43-.14-.62.14s-.71.88-.87 1.06c-.16.18-.32.2-.59.07-.27-.14-1.14-.42-2.17-1.35-.8-.71-1.34-1.58-1.5-1.85-.16-.27-.02-.42.12-.56.12-.12.27-.32.41-.48.14-.16.18-.27.27-.45.09-.18.05-.34-.02-.48s-.62-1.49-.85-2.04c-.22-.53-.45-.46-.62-.46h-.53c-.18 0-.48.07-.73.34s-.96.94-.96 2.28 1 2.64 1.14 2.83c.14.18 1.97 3.02 4.76 4.23.67.29 1.19.46 1.6.58.67.21 1.28.18 1.76.11.54-.08 1.6-.65 1.83-1.28.23-.63.23-1.17.16-1.28-.07-.11-.25-.18-.52-.32zM16 3c7.18 0 13 5.82 13 13 0 2.5-.7 4.84-1.92 6.83L28 29l-6.3-1.91A12.95 12.95 0 0 1 16 29C8.82 29 3 23.18 3 16S8.82 3 16 3m0-2C7.72 1 1 7.72 1 16c0 2.74.75 5.3 2.06 7.5L1 31l7.66-2.02A14.95 14.95 0 0 0 16 31c8.28 0 15-6.72 15-15S24.28 1 16 1z"/></svg>
           Jetzt per WhatsApp schreiben
         </a>
       </div>
@@ -262,36 +249,23 @@
       const ovName = document.getElementById('ovName');
       const ovKdNr = document.getElementById('ovKdNr');
 
-      const closeReview  = document.getElementById('closeReview');
-      const closeSuccess = document.getElementById('closeSuccess');
-
       const landSelect = document.getElementById('landSelect');
       const landOther  = document.getElementById('landOther');
 
-      // Admin-Leiste oben (unter H1)
-      const adminBar   = document.getElementById('adminBar');
-      const sendPdfBtn = document.getElementById('sendPdfBtn');
-      const pdfHint    = document.getElementById('pdfHint');
+      // Admin-Bar
+      const adminBar      = document.getElementById('adminBar');
+      const sendPdfAllBtn = document.getElementById('sendPdfAllBtn');
+      const sendPdfNewBtn = document.getElementById('sendPdfNewBtn');
+      const pdfHint       = document.getElementById('pdfHint');
+      const pageTitle     = document.getElementById('pageTitle');
 
       const $ = (id) => document.getElementById(id);
 
+      // Hard-hide admin bar at load
+      adminBar.classList.add('admin-hidden');
+
       function showOverlay(ov){ ov.classList.add('show'); ov.setAttribute('aria-hidden','false'); }
       function hideOverlay(ov){ ov.classList.remove('show'); ov.setAttribute('aria-hidden','true'); }
-      function lockOverlay(ov, lock){ if(lock) ov.classList.add('locked'); else ov.classList.remove('locked'); }
-
-      function showProcessing(msg, sub){
-        if (msg) procMsg.textContent = msg;
-        if (sub) procSub.textContent = sub;
-        showOverlay(processingOverlay);
-        lockOverlay(processingOverlay, true);
-      }
-      function hideProcessing(){ lockOverlay(processingOverlay, false); hideOverlay(processingOverlay); }
-
-      function preventUnload(e){ e.preventDefault(); e.returnValue = ''; }
-      function toggleUnloadGuard(on){
-        if(on) window.addEventListener('beforeunload', preventUnload);
-        else window.removeEventListener('beforeunload', preventUnload);
-      }
 
       function markInvalid(input, errId, show){
         if(!input) return;
@@ -309,9 +283,8 @@
         if (el) (el.closest('.checkline') || el).scrollIntoView({behavior:'smooth', block:'center'});
       }
 
-      // Standard: Deutschland vorauswählen
+      // Default
       landSelect.value = 'Deutschland';
-
       landSelect.addEventListener('change', ()=>{
         const isOther = landSelect.value === 'other';
         landOther.style.display = isOther ? 'block' : 'none';
@@ -346,12 +319,13 @@
         markInvalid(email,'err-email',!emailGood); ok = ok && emailGood;
 
         const emailConfVal=emailConfirm.value.trim(); const emailMatch = emailConfVal.length && (emailVal.toLowerCase()===emailConfVal.toLowerCase());
-        markInvalid(emailConfirm,'err-emailConfirm',!emailMatch); ok = ok && !emailMatch;
+        markInvalid(emailConfirm,'err-emailConfirm',!emailMatch); ok = ok && emailMatch;
 
         const agbBad=!acceptAgb.checked, dsgvoBad=!acceptDsgvo.checked;
         markInvalid(acceptAgb,'err-agb',agbBad); ok = ok && !agbBad;
-        markInvalid(dsgvoBad,'err-dsgvo',dsgvoBad); // <- typo fix not needed; keep as original
-        // Actually keep original:
+        markInvalid(dsgvoBad,'err-dsgvo',dsgvoBad); // visuelle Markierung
+        if(!ok) firstErrorScroll();
+        return ok;
       }
 
       function fillReview(){
@@ -392,39 +366,27 @@
         showOverlay(reviewOverlay);
       });
 
-      // Review schließen / ändern
-      document.getElementById('editBtn').addEventListener('click', ()=> hideOverlay(reviewOverlay));
-      document.getElementById('closeReview').addEventListener('click', ()=> hideOverlay(reviewOverlay));
-
-      // === Doppel-Klick-Schutz + Idempotenz ===
-      let submitting = false;
-      function genNonce(){
-        try{ return crypto.randomUUID(); }catch(_){ return Date.now()+'-'+Math.random().toString(16).slice(2); }
-      }
-
-      document.getElementById('confirmSubmitBtn').addEventListener('click', async ()=>{
-        if(submitting) return;
-        submitting = true;
-
+      // Confirm submit
+      confirmSubmitBtn.addEventListener('click', async ()=>{
         confirmSubmitBtn.disabled = true;
         confirmSubmitBtn.classList.add('loading');
         editBtn.disabled = true;
-        showOverlay(processingOverlay); lockOverlay(processingOverlay, true);
-        hideOverlay(reviewOverlay);
 
-        showProcessing('Deine Daten werden sicher übertragen.', 'Das kann je nach Netz 5–15 Sekunden dauern.');
-        toggleUnloadGuard(true);
+        const processingOverlay = document.getElementById('processingOverlay');
+        processingOverlay.classList.add('show'); processingOverlay.classList.add('locked');
+        reviewOverlay.classList.remove('show');
+
+        procMsg.textContent = 'Deine Daten werden sicher übertragen.';
+        procSub.textContent = 'Das kann je nach Netz 5–15 Sekunden dauern.';
 
         submitBtn.disabled = true;
         submitBtn.classList.add('loading');
         const cooldownTimer = setTimeout(()=>{ submitBtn.disabled=false; submitBtn.classList.remove('loading'); }, SUBMIT_COOLDOWN_MS);
 
-        let slowTimer1 = setTimeout(()=>{ showProcessing('Noch dran …', 'Es dauert gerade länger als üblich. Bitte weiterhin warten.'); }, 8000);
-        let slowTimer2 = setTimeout(()=>{ showProcessing('Fast geschafft …', 'Wir haben die Registrierung im System, finalisieren gleich die Kundennummer.'); }, 15000);
+        let slowTimer1 = setTimeout(()=>{ procMsg.textContent='Noch dran …'; procSub.textContent='Es dauert gerade länger als üblich. Bitte weiterhin warten.'; }, 8000);
+        let slowTimer2 = setTimeout(()=>{ procMsg.textContent='Fast geschafft …'; procSub.textContent='Wir haben die Registrierung im System, finalisieren gleich die Kundennummer.'; }, 15000);
 
-        submitHint.textContent = '';
-        const nonce = genNonce();
-        const payload = buildPayload(nonce);
+        const payload = buildPayload(crypto.randomUUID ? crypto.randomUUID() : (Date.now()+'-'+Math.random().toString(16).slice(2)));
 
         try{
           const body = new URLSearchParams(payload).toString();
@@ -435,8 +397,8 @@
 
           const fullName = json.fullName || (payload.vorname + ' ' + payload.nachname);
           const kdNr = json.kdNr || '';
-          document.getElementById('ovName').textContent = fullName;
-          document.getElementById('ovKdNr').textContent = kdNr;
+          ovName.textContent = fullName;
+          ovKdNr.textContent = kdNr;
 
           const waNumber = '4915258164673';
           const waText = `Hallo Denise, 
@@ -445,24 +407,65 @@ Meine Kundennummer: ${kdNr}
 Liebe Grüße ${fullName}`;
           document.getElementById('waBtn').setAttribute('href','https://wa.me/'+waNumber+'?text='+encodeURIComponent(waText));
 
-          hideProcessing(); toggleUnloadGuard(false);
-          showOverlay(successOverlay);
+          processingOverlay.classList.remove('locked'); processingOverlay.classList.remove('show');
+          successOverlay.classList.add('show');
           submitBtn.textContent = 'Senden erfolgreich';
           form.reset();
 
         }catch(err){
           console.error(err);
           submitHint.textContent = (err && err.message) ? err.message : 'Netzwerk-/CORS-Fehler.';
-          hideProcessing(); toggleUnloadGuard(false);
+          processingOverlay.classList.remove('locked'); processingOverlay.classList.remove('show');
         }finally{
           clearTimeout(slowTimer1); clearTimeout(slowTimer2); clearTimeout(cooldownTimer);
           submitBtn.classList.remove('loading'); confirmSubmitBtn.classList.remove('loading');
-          submitting = false; confirmSubmitBtn.disabled = false; editBtn.disabled = false;
-          lockOverlay(reviewOverlay, false);
+          confirmSubmitBtn.disabled = false; editBtn.disabled = false;
         }
       });
 
-      // Zurücksetzen
+      // Reveal: 5× Tap auf H1
+      (()=>{
+        let clicks = 0, timer = null;
+        pageTitle.addEventListener('click', ()=>{
+          clicks++;
+          if (clicks === 1) {
+            timer = setTimeout(()=>{ clicks = 0; }, 4000);
+          }
+          if (clicks >= 5) {
+            clearTimeout(timer); clicks = 0;
+            adminBar.classList.remove('admin-hidden');
+            pdfHint.textContent = 'Admin-Tools aktiv.';
+            setTimeout(()=> pdfHint.textContent = '', 2500);
+          }
+        });
+      })();
+
+      // Helper: API Call
+      async function sendPdf(scope){
+        const btn = (scope === 'new') ? sendPdfNewBtn : sendPdfAllBtn;
+        btn.disabled = true; btn.classList.add('loading');
+        pdfHint.textContent = (scope === 'new') ? 'Sende nur neue …' : 'Sende alle …';
+        try{
+          const body = new URLSearchParams({ action: 'sendPdfNow', scope }).toString();
+          const res = await fetch(WEB_APP_URL, { method:'POST', headers:{ 'Content-Type':'application/x-www-form-urlencoded' }, body });
+          const raw = await res.text();
+          let json=null; try{ json = JSON.parse(raw);}catch(_){ throw new Error(`Unerwartete Antwort: ${raw.slice(0,200)}…`); }
+          if (!json.ok) throw new Error(json.error || 'Fehler beim PDF-Versand.');
+          pdfHint.textContent = `Gesendet: ${json.fileName} → ${json.mailedTo} (${json.exported?.rows ?? '?'} Zeilen)`;
+        } catch(err){
+          console.error(err);
+          pdfHint.textContent = (err && err.message) ? err.message : 'Netzwerkfehler.';
+        } finally{
+          btn.disabled = false; btn.classList.remove('loading');
+          setTimeout(()=> pdfHint.textContent = '', 8000);
+        }
+      }
+
+      // Button Events
+      sendPdfAllBtn.addEventListener('click', ()=> sendPdf('all'));
+      sendPdfNewBtn.addEventListener('click', ()=> sendPdf('new'));
+
+      // Reset
       document.getElementById('resetBtn').addEventListener('click', ()=>{
         form.reset();
         landSelect.value = 'Deutschland';
@@ -471,63 +474,6 @@ Liebe Grüße ${fullName}`;
         document.querySelectorAll('.is-invalid').forEach(el=>el.classList.remove('is-invalid'));
         document.querySelectorAll('.err.show').forEach(el=>el.classList.remove('show'));
         submitBtn.textContent='Kundennummer anfordern';
-      });
-
-      // Overlays schließen
-      document.getElementById('closeSuccess').addEventListener('click', ()=> hideOverlay(successOverlay));
-      successOverlay.addEventListener('click', (e)=>{ if(e.target === successOverlay) hideOverlay(successOverlay); });
-      reviewOverlay.addEventListener('click', (e)=>{ if(e.target === reviewOverlay) hideOverlay(reviewOverlay); });
-      document.addEventListener('keydown', (e)=>{
-        if(e.key==='Escape'){
-          if (reviewOverlay.classList.contains('show')) hideOverlay(reviewOverlay);
-          else if (successOverlay.classList.contains('show')) hideOverlay(successOverlay);
-        }
-      });
-
-      // ====== Reveal-Mechanik „5× H1 in 4s“: Admin-Bar zeigen ======
-      (()=>{
-        const h1 = document.querySelector('h1');
-        if (!h1) return;
-        let clicks = 0, timer = null;
-        h1.addEventListener('click', ()=>{
-          clicks++;
-          if (clicks === 1) {
-            timer = setTimeout(()=>{ clicks = 0; }, 4000);
-          }
-          if (clicks >= 5) {
-            clearTimeout(timer); clicks = 0;
-            adminBar.style.display = 'flex';       // erst JETZT sichtbar
-            pdfHint.textContent = 'Admin-Tool aktiv (Session).';
-            setTimeout(()=> pdfHint.textContent = '', 3000);
-          }
-        });
-      })();
-
-      // ====== PDF-Versand (ohne PIN) ======
-      sendPdfBtn.addEventListener('click', async ()=>{
-        sendPdfBtn.disabled = true;
-        sendPdfBtn.classList.add('loading');
-        pdfHint.textContent = 'PDF wird generiert und gemailt …';
-
-        try{
-          const body = new URLSearchParams({ action: 'sendPdfNow' }).toString();
-          const res = await fetch(WEB_APP_URL, {
-            method: 'POST',
-            headers: { 'Content-Type':'application/x-www-form-urlencoded' },
-            body
-          });
-          const raw = await res.text();
-          let json=null; try{ json = JSON.parse(raw);}catch(_){ throw new Error(`Unerwartete Antwort: ${raw.slice(0,200)}…`); }
-          if(!json.ok) throw new Error(json.error || 'Fehler beim PDF-Versand.');
-          pdfHint.textContent = `Gesendet an ${json.mailedTo} (${json.fileName}).`;
-        } catch(err){
-          console.error(err);
-          pdfHint.textContent = (err && err.message) ? err.message : 'Netzwerkfehler.';
-        } finally{
-          sendPdfBtn.disabled = false;
-          sendPdfBtn.classList.remove('loading');
-          setTimeout(()=> pdfHint.textContent = '', 9000);
-        }
       });
 
     })();
