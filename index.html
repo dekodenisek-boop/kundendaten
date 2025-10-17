@@ -30,7 +30,7 @@
       color:var(--text);
     }
     label{
-      display:block;            /* <-- sorgt dafür, dass Labels über dem Feld stehen */
+      display:block;            /* Labels stehen über dem Feld */
       margin:0 0 6px;
       font-weight:600;
       color:var(--text);
@@ -109,6 +109,9 @@
     /* Admin-Bar (hart versteckt, eigener Flex-Container) */
     .admin-hidden { display: none !important; }
     .admin-bar { display:flex; gap:10px; align-items:center; margin:6px 0 12px; flex-wrap:wrap; }
+
+    /* NEU: rote, fette Statusmeldungen für Admin-Buttons */
+    .pdf-status { color:#b91c1c; font-weight:bold; }
   </style>
 </head>
 <body>
@@ -119,7 +122,7 @@
     <div id="adminBar" class="admin-hidden admin-bar">
       <button id="sendPdfAllBtn" class="btn btn-success" type="button" title="Komplette Liste senden">Alle senden</button>
       <button id="sendPdfNewBtn" class="btn btn-primary" type="button" title="Nur neue seit letztem Versand senden">Nur neue</button>
-      <span class="muted" id="pdfHint"></span>
+      <span id="pdfHint" class="pdf-status"></span>
     </div>
 
     <p class="lead">Bitte trage deine Daten ein. Felder mit <span class="req" style="color:#dc2626; font-weight:700;">*</span> sind Pflicht.</p>
