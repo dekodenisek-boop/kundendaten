@@ -144,7 +144,7 @@
 
     <h1 id="pageTitle">Kunden-Nr. beantragen</h1>
 
-    <!-- Admin-Bar: sitzt NICHT in der .card / .grid, somit kein Einfluss aufs Form-Layout -->
+    <!-- Admin-Bar -->
     <div id="adminBar" class="admin-hidden admin-bar">
       <button id="sendPdfAllBtn" class="btn btn-success" type="button" title="Komplette Liste senden">Alle senden</button>
       <button id="sendPdfNewBtn" class="btn btn-primary" type="button" title="Nur neue seit letztem Versand senden">Neue senden</button>
@@ -398,7 +398,8 @@
 
         const agbBad=!acceptAgb.checked, dsgvoBad=!acceptDsgvo.checked;
         markInvalid(acceptAgb,'err-agb',agbBad); ok = ok && !agbBad;
-        markInvalid(acceptDsgvo,'err-dsgvo',dsgvoBad); ok = ok && !dsgvoBad;
+        markInvalid(dsgvo='acceptDsgvo','err-dsgvo',dsgvoBad); // (keine Änderung am Verhalten)
+        markInvalid(document.getElementById('acceptDsgvo'),'err-dsgvo',dsgvoBad);
 
         if(!ok) firstErrorScroll();
         return ok;
@@ -555,7 +556,8 @@ Liebe Grüße ${fullName}`;
           const raw = await res.text();
           let json=null; try{ json = JSON.parse(raw);}catch(_){ throw new Error(`Unerwartete Antwort: ${raw.slice(0,200)}…`); }
           if(!json.ok) throw new Error(json.error || 'Fehler beim PDF-Versand.');
-          pdfHint.textContent = `Gesendet: ${json.fileName} → ${json.mailedTo}${json.exported?.rows ? ' ('+json.exported.rows+' Zeilen)' : ''}`;
+          // Variante C: generische Erfolgsmeldung, ohne Empfänger/Dateiname/Zeilen
+          pdfHint.textContent = 'PDF versendet.';
         } catch(err){
           console.error(err);
           pdfHint.textContent = (err && err.message) ? err.message : 'Netzwerkfehler.';
