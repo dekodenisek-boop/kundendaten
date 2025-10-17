@@ -494,7 +494,32 @@
 ich habe mich gerade registriert und soll mich bei dir melden.
 Meine Kundennummer: ${kdNr}
 Liebe Grüße ${fullName}`;
-          document.getElementById('waBtn').setAttribute('href','https://wa.me/'+waNumber+'?text='+encodeURIComponent(waText));
+          document.getElementById('waBtn').setAttribute('href','https://wa.me/'+waNumber+'?text='+encodeURIComponent(waText));const waNumber = '4915258164673'; // ohne +
+
+const lines = [
+  'Hallo Denise,',
+  'ich habe mich gerade registriert und soll mich bei dir melden.',
+  `Meine Kundennummer: ${kdNr}`,
+  `Name: ${fullName}`
+];
+
+if (payload.firma) lines.push(`Firma: ${payload.firma}`);
+
+const adrTop = (payload.strasse || '').trim();
+const adrBottom = `${(payload.plz || '').trim()} ${(payload.ort || '').trim()}`.trim();
+if (adrTop)    lines.push(`Adresse: ${adrTop}`);
+if (adrBottom) lines.push(adrBottom);
+
+if (payload.email) lines.push(`E-Mail: ${payload.email}`);
+
+lines.push('Liebe Grüße');
+
+const waText = lines.join('\n');
+
+document.getElementById('waBtn').setAttribute(
+  'href',
+  'https://wa.me/' + waNumber + '?text=' + encodeURIComponent(waText)
+);
 
           processingOverlay.classList.remove('locked'); processingOverlay.classList.remove('show');
           successOverlay.classList.add('show');
