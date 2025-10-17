@@ -72,7 +72,7 @@
     .overlay.locked{ pointer-events:none; }
     .dialog{
       width:min(620px,94vw); background:#fff; border:1px solid var(--border); color:var(--text);
-      border-radius:16px; padding:18px; box-shadow:0 20px 60px rgba(0,0,0,.15); position:relative;
+      border-radius:16px; padding:18px; box-shadow:var(--shadow); position:relative;
     }
     .dialog h2{ margin:6px 0 12px; font-size:20px; }
     .dialog p{ margin:6px 0 0; font-size:15px; }
@@ -183,6 +183,11 @@
         <div class="full actions">
           <button id="submitBtn" class="btn btn-primary" type="submit">Kundennummer anfordern</button>
           <button id="resetBtn" class="btn" type="button">Zurücksetzen</button>
+
+          <!-- Admin: versteckter PDF-Button (nur via „5× H1“ sichtbar) -->
+          <button id="sendPdfBtn" class="btn btn-success" type="button" style="display:none" title="Liste A/B/I/K als PDF per E-Mail senden">PDF senden</button>
+          <span class="muted" id="pdfHint"></span>
+
           <span class="muted" id="submitHint"></span>
         </div>
       </div>
@@ -271,6 +276,10 @@
 
       const landSelect = document.getElementById('landSelect');
       const landOther  = document.getElementById('landOther');
+
+      // === NEU: Admin PDF-Button (hidden) ===
+      const sendPdfBtn = document.getElementById('sendPdfBtn');
+      const pdfHint    = document.getElementById('pdfHint');
 
       const $ = (id) => document.getElementById(id);
 
@@ -525,6 +534,56 @@ Liebe Grüße ${fullName}`;
           else if (successOverlay.classList.contains('show')) hideOverlay(successOverlay);
         }
       });
+
+      // ====== NEU: Reveal-Mechanik „5× H1 in 4s“ (Admin-Button) ======
+      (()=>{
+        const h1 = document.querySelector('h1');
+        if (!h1) return;
+        let clicks = 0, timer = null;
+        h1.addEventListener('click', ()=>{
+          clicks++;
+          if (clicks === 1) {
+            timer = setTimeout(()=>{ clicks = 0; }, 4000);
+          }
+          if (clicks >= 5) {
+            clearTimeout(timer); clicks = 0;
+            sendPdfBtn.style.display = 'inline-flex';  // Button sichtbar machen
+            pdfHint.textContent = 'Admin-Tool aktiv (Session).';
+            setTimeout(()=> pdfHint.textContent = '', 3000);
+          }
+        });
+      })();
+
+      // ====== NEU: PIN-geschützter PDF-Versand ======
+      sendPdfBtn.addEventListener('click', async ()=>{
+        const pin = (prompt('Admin-PIN für PDF-Versand eingeben:') || '').trim();
+        if (!pin) return;
+
+        sendPdfBtn.disabled = true;
+        sendPdfBtn.classList.add('loading');
+        pdfHint.textContent = 'PDF wird generiert und gemailt …';
+
+        try{
+          const body = new URLSearchParams({ action: 'sendPdfNow', pin }).toString();
+          const res = await fetch(WEB_APP_URL, {
+            method: 'POST',
+            headers: { 'Content-Type':'application/x-www-form-urlencoded' },
+            body
+          });
+          const raw = await res.text();
+          let json=null; try{ json = JSON.parse(raw);}catch(_){ throw new Error(`Unerwartete Antwort: ${raw.slice(0,200)}…`); }
+          if(!json.ok) throw new Error(json.error || 'Fehler beim PDF-Versand.');
+          pdfHint.textContent = `Gesendet an ${json.mailedTo} (${json.fileName}).`;
+        } catch(err){
+          console.error(err);
+          pdfHint.textContent = (err && err.message) ? err.message : 'Netzwerkfehler.';
+        } finally{
+          sendPdfBtn.disabled = false;
+          sendPdfBtn.classList.remove('loading');
+          setTimeout(()=> pdfHint.textContent = '', 9000);
+        }
+      });
+
     })();
   </script>
 </body>
