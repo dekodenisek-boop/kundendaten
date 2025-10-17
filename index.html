@@ -17,7 +17,7 @@
     body{
       margin:0; padding:24px; background:var(--bg);
       font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-      color:var(--text); -webkit-text-size-adjust:100%; text-size-adjust:100%;
+      color:var(--text);
     }
     .wrap{max-width:860px; margin:0 auto;}
     h1{margin:0 0 16px; font-size:22px; font-weight:800; letter-spacing:.3px;}
@@ -42,8 +42,6 @@
     .full{grid-column:1 / -1;}
     @media (max-width:720px){ .grid{grid-template-columns:1fr;} }
     .req{color:#dc2626; margin-left:4px; font-weight:700;}
-    .row-inline{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
-    @media (max-width:560px){ .row-inline{grid-template-columns:1fr;} }
     .actions{display:flex; gap:10px; align-items:center; margin-top:8px; flex-wrap:wrap;}
     .btn{
       display:inline-flex; align-items:center; justify-content:center;
@@ -70,10 +68,8 @@
     .overlay{position:fixed; inset:0; display:none; place-items:center; background:rgba(0,0,0,.45); z-index:9999; padding:16px;}
     .overlay.show{ display:grid; }
     .overlay.locked{ pointer-events:none; }
-    .dialog{
-      width:min(620px,94vw); background:#fff; border:1px solid var(--border); color:var(--text);
-      border-radius:16px; padding:18px; box-shadow:var(--shadow); position:relative;
-    }
+    .dialog{ width:min(620px,94vw); background:#fff; border:1px solid var(--border);
+      color:var(--text); border-radius:16px; padding:18px; box-shadow:var(--shadow); position:relative;}
     .dialog h2{ margin:6px 0 12px; font-size:20px; }
     .dialog p{ margin:6px 0 0; font-size:15px; }
     .dialog .ok{ margin-top:12px; display:flex; gap:10px; justify-content:flex-end; flex-wrap:wrap; }
@@ -86,22 +82,10 @@
     .is-invalid{ border-color:#ef4444 !important; background:#fff; }
     .err{ display:none; font-size:12px; color:var(--danger); margin-top:6px;}
     .err.show{ display:block; }
-    .err-inline{margin-top:4px; margin-left:2px;}
     @media (max-width:420px){
       body{ padding:16px; } .dialog h2{ font-size:18px; } input,select{ font-size:16px; }
       .btn{ padding:12px 14px; } .btn-wa{ padding:12px 16px; }
     }
-
-    /* === Processing Overlay === */
-    .dialog.processing { background:#fff; border:1px solid var(--border); }
-    .loading-wrap{display:flex; align-items:center; gap:12px; margin:8px 0 2px;}
-    .spinner{
-      width:18px; height:18px; border-radius:50%;
-      border:2px solid currentColor; border-right-color:transparent;
-      animation:spin .7s linear infinite;
-    }
-    .progress-msg{ color:#475569; font-size:14px; margin-top:8px; }
-    .progress-sub{ color:#64748b; font-size:13px; margin-top:4px; }
   </style>
 </head>
 <body>
@@ -252,7 +236,7 @@
   <script>
     (function(){
       const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxcslNZhjXLbOeTsk8yuabOatZXQEaWSnc0cl5kiXg9ylEIwPaRohFlrDyHcqkzoV4/exec'; // <- anpassen
-      const SUBMIT_COOLDOWN_MS = 10000; // UI-Cooldown gegen Doppelklick
+      const SUBMIT_COOLDOWN_MS = 10000;
 
       const form = document.getElementById('form');
       const submitBtn = document.getElementById('submitBtn');
@@ -277,7 +261,7 @@
       const landSelect = document.getElementById('landSelect');
       const landOther  = document.getElementById('landOther');
 
-      // === NEU: Admin PDF-Button (hidden) ===
+      // Admin PDF-Button (hidden)
       const sendPdfBtn = document.getElementById('sendPdfBtn');
       const pdfHint    = document.getElementById('pdfHint');
 
@@ -286,9 +270,7 @@
       function showOverlay(ov){ ov.classList.add('show'); ov.setAttribute('aria-hidden','false'); }
       function hideOverlay(ov){ ov.classList.remove('show'); ov.setAttribute('aria-hidden','true'); }
 
-      function lockOverlay(ov, lock){
-        if(lock) ov.classList.add('locked'); else ov.classList.remove('locked');
-      }
+      function lockOverlay(ov, lock){ if(lock) ov.classList.add('locked'); else ov.classList.remove('locked'); }
 
       function showProcessing(msg, sub){
         if (msg) procMsg.textContent = msg;
@@ -296,15 +278,9 @@
         showOverlay(processingOverlay);
         lockOverlay(processingOverlay, true);
       }
-      function hideProcessing(){
-        lockOverlay(processingOverlay, false);
-        hideOverlay(processingOverlay);
-      }
+      function hideProcessing(){ lockOverlay(processingOverlay, false); hideOverlay(processingOverlay); }
 
-      function preventUnload(e){
-        e.preventDefault();
-        e.returnValue = '';
-      }
+      function preventUnload(e){ e.preventDefault(); e.returnValue = ''; }
       function toggleUnloadGuard(on){
         if(on) window.addEventListener('beforeunload', preventUnload);
         else window.removeEventListener('beforeunload', preventUnload);
@@ -422,35 +398,24 @@
       }
 
       document.getElementById('confirmSubmitBtn').addEventListener('click', async ()=>{
-        if(submitting) return; // zweite/r dritte Klick wird ignoriert
+        if(submitting) return;
         submitting = true;
 
-        // UI hart locken
         confirmSubmitBtn.disabled = true;
         confirmSubmitBtn.classList.add('loading');
         editBtn.disabled = true;
-        lockOverlay(reviewOverlay, true);
-
-        // sofort schließen, damit niemand mehr klickt
+        showOverlay(processingOverlay); lockOverlay(processingOverlay, true);
         hideOverlay(reviewOverlay);
 
-        // Processing sichtbar machen + Tab-Schließschutz
         showProcessing('Deine Daten werden sicher übertragen.', 'Das kann je nach Netz 5–15 Sekunden dauern.');
         toggleUnloadGuard(true);
 
-        // 10s Cooldown am Haupt-Button
         submitBtn.disabled = true;
         submitBtn.classList.add('loading');
         const cooldownTimer = setTimeout(()=>{ submitBtn.disabled=false; submitBtn.classList.remove('loading'); }, SUBMIT_COOLDOWN_MS);
 
-        // Adaptives Messaging, falls es länger dauert
-        let slowTimer1 = setTimeout(()=>{
-          showProcessing('Noch dran …', 'Es dauert gerade länger als üblich. Bitte weiterhin warten.');
-        }, 8000);
-
-        let slowTimer2 = setTimeout(()=>{
-          showProcessing('Fast geschafft …', 'Wir haben die Registrierung im System, finalisieren gleich die Kundennummer.');
-        }, 15000);
+        let slowTimer1 = setTimeout(()=>{ showProcessing('Noch dran …', 'Es dauert gerade länger als üblich. Bitte weiterhin warten.'); }, 8000);
+        let slowTimer2 = setTimeout(()=>{ showProcessing('Fast geschafft …', 'Wir haben die Registrierung im System, finalisieren gleich die Kundennummer.'); }, 15000);
 
         submitHint.textContent = '';
         const nonce = genNonce();
@@ -458,20 +423,13 @@
 
         try{
           const body = new URLSearchParams(payload).toString();
-          const res = await fetch(WEB_APP_URL, {
-            method:'POST',
-            headers:{ 'Content-Type':'application/x-www-form-urlencoded' },
-            body
-          });
-
+          const res = await fetch(WEB_APP_URL, { method:'POST', headers:{ 'Content-Type':'application/x-www-form-urlencoded' }, body });
           const raw = await res.text();
           let json=null; try{ json = JSON.parse(raw);}catch(_){ throw new Error(`Kein JSON (${res.status}): ${raw.slice(0,180)}…`); }
-
           if(!json.ok) throw new Error(json.error || 'Fehler beim Senden.');
 
           const fullName = json.fullName || (payload.vorname + ' ' + payload.nachname);
           const kdNr = json.kdNr || '';
-
           document.getElementById('ovName').textContent = fullName;
           document.getElementById('ovKdNr').textContent = kdNr;
 
@@ -482,10 +440,7 @@ Meine Kundennummer: ${kdNr}
 Liebe Grüße ${fullName}`;
           document.getElementById('waBtn').setAttribute('href','https://wa.me/'+waNumber+'?text='+encodeURIComponent(waText));
 
-          // Processing beenden, Schließschutz entfernen
-          hideProcessing();
-          toggleUnloadGuard(false);
-
+          hideProcessing(); toggleUnloadGuard(false);
           showOverlay(successOverlay);
           submitBtn.textContent = 'Senden erfolgreich';
           form.reset();
@@ -493,21 +448,11 @@ Liebe Grüße ${fullName}`;
         }catch(err){
           console.error(err);
           submitHint.textContent = (err && err.message) ? err.message : 'Netzwerk-/CORS-Fehler.';
-
-          // Processing beenden, Schließschutz entfernen
-          hideProcessing();
-          toggleUnloadGuard(false);
-
+          hideProcessing(); toggleUnloadGuard(false);
         }finally{
-          clearTimeout(slowTimer1);
-          clearTimeout(slowTimer2);
-          clearTimeout(cooldownTimer);
-          submitBtn.classList.remove('loading');
-          confirmSubmitBtn.classList.remove('loading');
-          submitting = false;
-          // nicht sofort reaktivieren – Hauptbutton ist nach Cooldown wieder aktiv
-          confirmSubmitBtn.disabled = false;
-          editBtn.disabled = false;
+          clearTimeout(slowTimer1); clearTimeout(slowTimer2); clearTimeout(cooldownTimer);
+          submitBtn.classList.remove('loading'); confirmSubmitBtn.classList.remove('loading');
+          submitting = false; confirmSubmitBtn.disabled = false; editBtn.disabled = false;
           lockOverlay(reviewOverlay, false);
         }
       });
@@ -515,7 +460,6 @@ Liebe Grüße ${fullName}`;
       // Zurücksetzen
       document.getElementById('resetBtn').addEventListener('click', ()=>{
         form.reset(); 
-        // Deutschland beibehalten und "Anderes Land" Feld sicher verbergen
         landSelect.value = 'Deutschland';
         landOther.style.display='none';
         submitHint.textContent='';
@@ -535,7 +479,7 @@ Liebe Grüße ${fullName}`;
         }
       });
 
-      // ====== NEU: Reveal-Mechanik „5× H1 in 4s“ (Admin-Button) ======
+      // ====== Reveal-Mechanik „5× H1 in 4s“ (Admin-Button) ======
       (()=>{
         const h1 = document.querySelector('h1');
         if (!h1) return;
@@ -554,17 +498,14 @@ Liebe Grüße ${fullName}`;
         });
       })();
 
-      // ====== NEU: PIN-geschützter PDF-Versand ======
+      // ====== PDF-Versand (ohne PIN) ======
       sendPdfBtn.addEventListener('click', async ()=>{
-        const pin = (prompt('Admin-PIN für PDF-Versand eingeben:') || '').trim();
-        if (!pin) return;
-
         sendPdfBtn.disabled = true;
         sendPdfBtn.classList.add('loading');
         pdfHint.textContent = 'PDF wird generiert und gemailt …';
 
         try{
-          const body = new URLSearchParams({ action: 'sendPdfNow', pin }).toString();
+          const body = new URLSearchParams({ action: 'sendPdfNow' }).toString();
           const res = await fetch(WEB_APP_URL, {
             method: 'POST',
             headers: { 'Content-Type':'application/x-www-form-urlencoded' },
