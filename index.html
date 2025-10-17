@@ -398,8 +398,7 @@
 
         const agbBad=!acceptAgb.checked, dsgvoBad=!acceptDsgvo.checked;
         markInvalid(acceptAgb,'err-agb',agbBad); ok = ok && !agbBad;
-        markInvalid(dsgvo='acceptDsgvo','err-dsgvo',dsgvoBad); // (keine Änderung am Verhalten)
-        markInvalid(document.getElementById('acceptDsgvo'),'err-dsgvo',dsgvoBad);
+        markInvalid(document.getElementById('acceptDsgvo'),'err-dsgvo',dsgvoBad); ok = ok && !dsgvoBad;
 
         if(!ok) firstErrorScroll();
         return ok;
