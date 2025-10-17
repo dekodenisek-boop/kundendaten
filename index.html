@@ -489,12 +489,28 @@
           ovName.textContent = fullName;
           ovKdNr.textContent = kdNr;
 
-          const waNumber = '4915258164673';
-          const waText = `Hallo Denise, 
-ich habe mich gerade registriert und soll mich bei dir melden.
-Meine Kundennummer: ${kdNr}
-Liebe Grüße ${fullName}`;
-          document.getElementById('waBtn').setAttribute('href','https://wa.me/'+waNumber+'?text='+encodeURIComponent(waText));
+          // ===== WhatsApp-Text: nur gefüllte Felder, keine Platzhalter =====
+          const waNumber = '4915258164673'; // ohne "+"
+          const rows = [
+            'Hallo Denise,',
+            'ich habe mich gerade registriert und soll mich bei dir melden.',
+            `Meine Kundennummer: ${kdNr}`,
+            payload.firma ? `Firmenname: ${payload.firma}` : '',
+            `Name: ${fullName}`,
+            payload.strasse ? `Straße & Nr.: ${payload.strasse}` : '',
+            payload.plz ? `PLZ: ${payload.plz}` : '',
+            payload.ort ? `Ort: ${payload.ort}` : '',
+            payload.land ? `Land: ${payload.land}` : '',
+            payload.email ? `E-Mail: ${payload.email}` : ''
+          ].filter(Boolean);
+
+          rows.push('Liebe Grüße');
+
+          const waText = rows.join('\n');
+          document.getElementById('waBtn').setAttribute(
+            'href',
+            'https://wa.me/' + waNumber + '?text=' + encodeURIComponent(waText)
+          );
 
           processingOverlay.classList.remove('locked'); processingOverlay.classList.remove('show');
           successOverlay.classList.add('show');
