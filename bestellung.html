@@ -1,1 +1,223 @@
-ffcw
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Bestellung prüfen</title>
+  <style>
+    body {
+      font-family: system-ui, Arial, sans-serif;
+      max-width: 720px;
+      margin: 20px auto;
+      color: #111;
+    }
+    .box {
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 12px;
+      background: #fafafa;
+    }
+    label {
+      font-size: 14px;
+      color: #333;
+      display: block;
+      margin: 8px 0 4px;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 15px;
+    }
+    button {
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid #1976d2;
+      background: #1976d2;
+      color: #fff;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    th, td {
+      padding: 8px 10px;
+      border-bottom: 1px solid #eee;
+    }
+    th {
+      background: #f6f7f9;
+      font-weight: 600;
+      font-size: 13px;
+    }
+    td.right, th.right { text-align: right; }
+    #msg { display: none; color: #b91c1c; margin: 10px 0; }
+    #result { display: none; }
+  </style>
+</head>
+<body>
+  <div id="bestellbox">
+    <div id="msg"></div>
+    <div class="box">
+      <label for="inpKd">Bitte gib hier deine Kunden­nummer ein</label>
+      <input id="inpKd" type="text" inputmode="text" placeholder="z. B. 12345">
+      <button id="btnShow" type="button">Bestellung anzeigen</button>
+    </div>
+
+    <div id="result">
+      <div id="custMeta" style="margin-top:8px;color:#555;font-size:14px;"></div>
+      <table style="width:100%;border-collapse:collapse;margin-top:12px">
+        <thead>
+          <tr>
+            <th>Produkt</th>
+            <th class="right">Stück</th>
+            <th class="right">Einzel (€)</th>
+            <th class="right">Summe (€)</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+        <tfoot>
+          <tr>
+            <th colspan="3" class="right" style="border-top:1px solid #eee">Gesamtsumme</th>
+            <th id="sum" class="right" style="border-top:1px solid #eee">0,00</th>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+
+  <script>
+  (function(){
+    'use strict';
+
+    // 👉 HIER deine Apps Script EXEC-URL eintragen (endet auf /exec)
+    var WEB_APP_BASE_URL = 'https://script.google.com/macros/s/AKfycbwQACxhn3XTn_YpEwwUy3CZjXjKtsLY1NdIj5sTtYxql_1H_TMqjId_2nJmErPAoaIy/exec';
+
+    function getTokenFromUrl(){
+      try {
+        var p = new URL(window.location.href).searchParams.get('token');
+        if (p) return p;
+      } catch(_){}
+      var m = String(window.location.href).match(/[?&]token=([^&#]+)/i);
+      return m ? decodeURIComponent(m[1]) : '';
+    }
+
+    var msg = document.getElementById('msg'),
+        inp = document.getElementById('inpKd'),
+        btn = document.getElementById('btnShow'),
+        res = document.getElementById('result'),
+        meta = document.getElementById('custMeta'),
+        tbody = document.getElementById('tbody'),
+        sumEl = document.getElementById('sum');
+
+    function eur(n){
+      n = (typeof n === 'number' && isFinite(n)) ? n : 0;
+      return n.toLocaleString('de-DE', {minimumFractionDigits:2, maximumFractionDigits:2});
+    }
+
+    function showError(t){
+      msg.textContent = t || 'Fehler';
+      msg.style.display = '';
+      res.style.display = 'none';
+    }
+
+    function clearError(){
+      msg.textContent = '';
+      msg.style.display = 'none';
+    }
+
+    function render(data){
+      var c = data.customer || {};
+      var o = data.order || { items:[], sum:0 };
+
+      var first = (c.name||'').trim().split(/\s+/)[0] || '';
+      meta.textContent = (data.kdnr ? 'Kdnr: '+data.kdnr : '') + (first ? ' — '+first : '');
+
+      tbody.innerHTML = '';
+      (o.items||[]).forEach(function(it){
+        var tr = document.createElement('tr');
+        tr.innerHTML =
+          '<td>'+ (it.name||'') +'</td>'+
+          '<td class="right">'+ (it.qty||0) +'</td>'+
+          '<td class="right">'+ eur(it.price||0) +'</td>'+
+          '<td class="right">'+ eur((it.qty||0)*(it.price||0)) +'</td>';
+        tbody.appendChild(tr);
+      });
+
+      sumEl.textContent = eur(o.sum||0);
+      res.style.display = '';
+    }
+
+    function mapError(reason){
+      switch(reason){
+        case 'unknown_token': return 'Der Link ist ungültig.';
+        case 'expired': return 'Der Link ist abgelaufen.';
+        case 'kdnr_mismatch': return 'Kunden­nummer passt nicht zu diesem Link.';
+        case 'no_orders': return 'Keine Bestellungen gefunden.';
+        case 'invalid_input': return 'Bitte exakt Kunden­nummer oder gespeicherten Namen eingeben.';
+        default: return 'Konnte Bestellung nicht laden.';
+      }
+    }
+
+    // JSONP Loader (umgeht CORS)
+    function jsonp(url, timeoutMs){
+      timeoutMs = timeoutMs || 12000;
+      return new Promise(function(resolve, reject){
+        var cb = '__ordercb_' + Date.now() + '_' + Math.floor(Math.random()*1e6);
+        var done = false;
+        var timer = setTimeout(function(){
+          if(done) return; done = true;
+          try{ delete window[cb]; }catch(_){}
+          try{ if(script && script.parentNode) script.parentNode.removeChild(script); }catch(_){}
+          reject(new Error('timeout'));
+        }, timeoutMs);
+
+        window[cb] = function(payload){
+          if(done) return; done = true; clearTimeout(timer);
+          try{ delete window[cb]; }catch(_){}
+          try{ if(script && script.parentNode) script.parentNode.removeChild(script); }catch(_){}
+          resolve(payload);
+        };
+
+        var sep = url.indexOf('?') === -1 ? '?' : '&';
+        var script = document.createElement('script');
+        script.src = url + sep + 'callback=' + encodeURIComponent(cb);
+        script.async = true;
+        script.onerror = function(){
+          if(done) return; done = true; clearTimeout(timer);
+          try{ delete window[cb]; }catch(_){}
+          reject(new Error('network'));
+        };
+        document.head.appendChild(script);
+      });
+    }
+
+    function load(){
+      clearError();
+      var token = getTokenFromUrl();
+      if(!token){ showError('Ungültiger Link (kein Token).'); return; }
+      var q = (inp.value||'').trim();
+      if(!q){ showError('Bitte gib deine Kunden­nummer ein.'); return; }
+
+      btn.disabled = true;
+      var url = WEB_APP_BASE_URL
+        + '?api=order'
+        + '&token=' + encodeURIComponent(token)
+        + '&q='     + encodeURIComponent(q)
+        + '&ts='    + Date.now(); // Cache-Buster
+
+      jsonp(url).then(function(data){
+        btn.disabled = false;
+        if(!data || !data.ok){ showError(mapError(data && data.reason)); return; }
+        render(data);
+      }).catch(function(){
+        btn.disabled = false;
+        showError('Netzwerkfehler.');
+      });
+    }
+
+    btn.addEventListener('click', load);
+    inp.addEventListener('keydown', function(e){ if(e.key==='Enter') load(); });
+  })();
+  </script>
+</body>
+</html>
