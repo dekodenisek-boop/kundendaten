@@ -310,7 +310,9 @@
     (function(){
       const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxcslNZhjXLbOeTsk8yuabOatZXQEaWSnc0cl5kiXg9ylEIwPaRohFlrDyHcqkzoV4/exec'; // <- anpassen
       const SUBMIT_COOLDOWN_MS = 10000;
-
+      // === WARTUNGSSCHALTER: Registrierung hart pausieren ===
+const REGISTRATION_PAUSED = true; // <- bei Reaktivierung auf false setzen
+     
       const form = document.getElementById('form');
       const submitBtn = document.getElementById('submitBtn');
       const resetBtn  = document.getElementById('resetBtn');
@@ -338,7 +340,19 @@
       const pdfHint       = document.getElementById('pdfHint');
 
       const $ = (id) => document.getElementById(id);
+      // Registrierung pausieren: Buttons deaktivieren + Hinweis setzen
+if (REGISTRATION_PAUSED) {
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Registrierung pausiert';
+  submitBtn.title = 'Vorübergehend deaktiviert';
 
+  confirmSubmitBtn.disabled = true;
+  confirmSubmitBtn.textContent = 'Derzeit nicht verfügbar';
+  confirmSubmitBtn.title = 'Vorübergehend deaktiviert';
+
+  submitHint.textContent = 'Registrierung ist vorübergehend deaktiviert.';
+}
+      
       // Hard-hide Admin-Bar on load
       adminBar.classList.add('admin-hidden');
 
@@ -439,7 +453,8 @@
 
       // Submit -> Review
       form.addEventListener('submit', (e)=>{
-        e.preventDefault();
+    e.preventDefault();
+    if (REGISTRATION_PAUSED) return;
         if(!validate()) return;
         fillReview();
         showOverlay(reviewOverlay);
@@ -456,6 +471,7 @@
       }
 
       document.getElementById('confirmSubmitBtn').addEventListener('click', async ()=>{
+          if (REGISTRATION_PAUSED) return;
         if(submitting) return;
         submitting = true;
 
@@ -589,15 +605,27 @@
 
       // Zurücksetzen (Form UI)
       resetBtn.addEventListener('click', ()=>{
-        form.reset();
-        landSelect.value = 'Deutschland';
-        landOther.style.display='none';
-        submitHint.textContent='';
-        document.querySelectorAll('.is-invalid').forEach(el=>el.classList.remove('is-invalid'));
-        document.querySelectorAll('.err.show').forEach(el=>el.classList.remove('show'));
-        submitBtn.textContent='Kundennummer anfordern';
-      });
+  form.reset();
+  landSelect.value = 'Deutschland';
+  landOther.style.display='none';
+  submitHint.textContent='';
+  document.querySelectorAll('.is-invalid').forEach(el=>el.classList.remove('is-invalid'));
+  document.querySelectorAll('.err.show').forEach(el=>el.classList.remove('show'));
+
+  if (REGISTRATION_PAUSED) {
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Registrierung pausiert';
+    submitBtn.title = 'Vorübergehend deaktiviert';
+  } else {
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Kundennummer anfordern';
+    submitBtn.title = '';
+  }
+});
     })();
   </script>
 </body>
 </html>
+
+
+ist das jetzt korrekt?
