@@ -151,6 +151,7 @@
       <a id="liveBtn" href="https://script.google.com/macros/s/AKfycbwahhpXp-34saIoElpBdZB1l2Z5Bo23KsnYU435wlMtmTjoJyYbtN_QEqM1VGdLcBUQ/exec" class="btn btn-danger" title="Live" target="_blank" rel="noopener">
   Live
 </a>
+      <button id="toggleRegBtn" class="btn" type="button" title="Registrierung umschalten"></button>
       <span id="pdfHint" class="pdf-status"></span>
     </div>
 
@@ -341,6 +342,7 @@
       const sendPdfAllBtn = document.getElementById('sendPdfAllBtn');
       const sendPdfNewBtn = document.getElementById('sendPdfNewBtn');
       const pdfHint       = document.getElementById('pdfHint');
+      const toggleRegBtn  = document.getElementById('toggleRegBtn');
 
       const $ = (id) => document.getElementById(id);
 
@@ -363,7 +365,33 @@
           submitHint.textContent='';
           const rs = document.getElementById('regStatus');
           if(rs) rs.textContent = 'Registrierung ist vorübergehend deaktiviert.';
+
+          if (toggleRegBtn){
+            toggleRegBtn.textContent = 'Registrierung aktivieren';
+            toggleRegBtn.classList.remove('btn-danger');
+            toggleRegBtn.classList.add('btn-success');
+            toggleRegBtn.title = 'Registrierung einschalten';
+          }
         } else {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Kundennummer anfordern';
+          submitBtn.title = '';
+
+          confirmSubmitBtn.disabled = false;
+          confirmSubmitBtn.textContent = 'Jetzt registrieren';
+          confirmSubmitBtn.title = '';
+
+          submitHint.textContent='';
+          const rs = document.getElementById('regStatus'); if(rs) rs.textContent='';
+
+          if (toggleRegBtn){
+            toggleRegBtn.textContent = 'Registrierung deaktivieren';
+            toggleRegBtn.classList.remove('btn-success');
+            toggleRegBtn.classList.add('btn-danger');
+            toggleRegBtn.title = 'Registrierung ausschalten';
+          }
+        }
+      } else {
           submitBtn.disabled = false;
           submitBtn.textContent = 'Kundennummer anfordern';
           submitBtn.title = '';
@@ -600,9 +628,11 @@
             // Registrierung umschalten (toggle)
             setRegPaused(!regPaused);
             // kurzer Status
-            pdfHint.textContent = regPaused ? 'Registrierung deaktiviert.' : 'Registrierung aktiviert.';
+            pdfHint.textContent = 'Admin-Tools sichtbar. Nutzung: Schalter oben.';
             setTimeout(()=> pdfHint.textContent = '', 3000);
           }
+        });
+      })();
         });
       })();
 
@@ -633,6 +663,15 @@
       }
       sendPdfAllBtn.addEventListener('click', ()=> sendPdf('all'));
       sendPdfNewBtn.addEventListener('click', ()=> sendPdf('new'));
+
+      // Registrierung explizit umschalten über Button
+      if (toggleRegBtn){
+        toggleRegBtn.addEventListener('click', ()=>{
+          setRegPaused(!regPaused);
+          pdfHint.textContent = regPaused ? 'Registrierung deaktiviert.' : 'Registrierung aktiviert.';
+          setTimeout(()=> pdfHint.textContent = '', 3000);
+        });
+      }
 
       // Zurücksetzen (Form UI)
       resetBtn.addEventListener('click', ()=>{
