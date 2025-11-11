@@ -447,6 +447,10 @@ async function setRegistrationState(paused) {
     if (toggleRegBtn) { toggleRegBtn.disabled = false; toggleRegBtn.classList.remove('loading'); }
   }
 }
+     // === PATCH B: Boot-Handler – lade den Registrierungsstatus beim Seitenstart
+document.addEventListener('DOMContentLoaded', () => {
+  fetchRegistrationState();
+});
 
       function validate(){
         let ok = true;
@@ -675,18 +679,17 @@ if (toggleRegBtn) {
 }
 
       // Zurücksetzen (Form UI)
-      resetBtn.addEventListener('click', ()=>{
-        form.reset();
-        landSelect.value = 'Deutschland';
-        landOther.style.display='none';
-        submitHint.textContent='';
-        document.querySelectorAll('.is-invalid').forEach(el=>el.classList.remove('is-invalid'));
-        document.querySelectorAll('.err.show').forEach(el=>el.classList.remove('show'));
-        submitBtn.textContent='Kundennummer anfordern';
-        fetchRegistrationState();
-        // Beim Laden: Status vom Server holen (unabhängig vom Admin-Menü)
-fetchRegistrationState();
-      });
+resetBtn.addEventListener('click', ()=>{
+  form.reset();
+  landSelect.value = 'Deutschland';
+  landOther.style.display='none';
+  submitHint.textContent='';
+  document.querySelectorAll('.is-invalid').forEach(el=>el.classList.remove('is-invalid'));
+  document.querySelectorAll('.err.show').forEach(el=>el.classList.remove('show'));
+  submitBtn.textContent='Kundennummer anfordern';
+  // Status nach Reset einmal neu laden
+  fetchRegistrationState();
+});
     })();
   </script>
 </body>
