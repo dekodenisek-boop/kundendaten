@@ -151,11 +151,10 @@
       <a id="liveBtn" href="https://script.google.com/macros/s/AKfycbwahhpXp-34saIoElpBdZB1l2Z5Bo23KsnYU435wlMtmTjoJyYbtN_QEqM1VGdLcBUQ/exec" class="btn btn-danger" title="Live" target="_blank" rel="noopener">
   Live
 </a>
-      <button id="toggleRegBtn" class="btn" type="button" title="Registrierung umschalten"></button>
       <span id="pdfHint" class="pdf-status"></span>
     </div>
 
-    <p class="lead">Bitte trage deine Daten ein.<span id="regStatus" style="color:#b91c1c; font-weight:700; margin-left:8px;"></span> Felder mit <span class="req" style="color:#dc2626; font-weight:700;">*</span> sind Pflicht.</p>
+    <p class="lead">Bitte trage deine Daten ein. Felder mit <span class="req" style="color:#dc2626; font-weight:700;">*</span> sind Pflicht.</p>
 
     <form id="form" class="card" novalidate>
       <div class="grid">
@@ -311,12 +310,9 @@
     (function(){
       const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxcslNZhjXLbOeTsk8yuabOatZXQEaWSnc0cl5kiXg9ylEIwPaRohFlrDyHcqkzoV4/exec'; // <- anpassen
       const SUBMIT_COOLDOWN_MS = 10000;
-
-      // --- Runtime-Schalter: in localStorage persistiert ---
-      const REG_KEY = 'regPaused';
-      let regPaused = JSON.parse(localStorage.getItem(REG_KEY) ?? 'false'); // Default: pausiert = true
-
-      // Form-/UI-Refs
+      // === WARTUNGSSCHALTER: Registrierung hart pausieren ===
+const REGISTRATION_PAUSED = true; // <- bei Reaktivierung auf false setzen
+     
       const form = document.getElementById('form');
       const submitBtn = document.getElementById('submitBtn');
       const resetBtn  = document.getElementById('resetBtn');
@@ -342,52 +338,21 @@
       const sendPdfAllBtn = document.getElementById('sendPdfAllBtn');
       const sendPdfNewBtn = document.getElementById('sendPdfNewBtn');
       const pdfHint       = document.getElementById('pdfHint');
-      const toggleRegBtn  = document.getElementById('toggleRegBtn');
 
       const $ = (id) => document.getElementById(id);
+      // Registrierung pausieren: Buttons deaktivieren + Hinweis setzen
+if (REGISTRATION_PAUSED) {
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Registrierung pausiert';
+  submitBtn.title = 'Vorübergehend deaktiviert';
 
-      function setRegPaused(val){
-        regPaused = !!val;
-        localStorage.setItem(REG_KEY, JSON.stringify(regPaused));
-        applyRegUi();
-      }
+  confirmSubmitBtn.disabled = true;
+  confirmSubmitBtn.textContent = 'Derzeit nicht verfügbar';
+  confirmSubmitBtn.title = 'Vorübergehend deaktiviert';
 
-      function applyRegUi(){
-        if (regPaused){
-          submitBtn.disabled = true;
-          submitBtn.textContent = 'Registrierung pausiert';
-          submitBtn.title = 'Vorübergehend deaktiviert';
-
-          confirmSubmitBtn.disabled = true;
-          confirmSubmitBtn.textContent = 'Derzeit nicht verfügbar';
-          confirmSubmitBtn.title = 'Vorübergehend deaktiviert';
-
-          submitHint.textContent='';
-          const rs = document.getElementById('regStatus');
-          if(rs) rs.textContent = 'Registrierung ist vorübergehend deaktiviert.';
-
-          if (toggleRegBtn){
-            toggleRegBtn.textContent = 'Registrierung aktivieren';
-            toggleRegBtn.classList.remove('btn-danger');
-            toggleRegBtn.classList.add('btn-success');
-            toggleRegBtn.title = 'Registrierung einschalten';
-          }
-        }
-        }
-      } else {
-          submitBtn.disabled = false;
-          submitBtn.textContent = 'Kundennummer anfordern';
-          submitBtn.title = '';
-
-          confirmSubmitBtn.disabled = false;
-          confirmSubmitBtn.textContent = 'Jetzt registrieren';
-          confirmSubmitBtn.title = '';
-
-          submitHint.textContent='';
-          const rs = document.getElementById('regStatus'); if(rs) rs.textContent='';
-        }
-      }
-
+  submitHint.textContent = 'Registrierung ist vorübergehend deaktiviert.';
+}
+      
       // Hard-hide Admin-Bar on load
       adminBar.classList.add('admin-hidden');
 
@@ -486,13 +451,10 @@
         };
       }
 
-      // Initial UI-State anwenden
-      applyRegUi();
-
       // Submit -> Review
       form.addEventListener('submit', (e)=>{
-        e.preventDefault();
-        if (regPaused) return;
+    e.preventDefault();
+    if (REGISTRATION_PAUSED) return;
         if(!validate()) return;
         fillReview();
         showOverlay(reviewOverlay);
@@ -509,7 +471,7 @@
       }
 
       document.getElementById('confirmSubmitBtn').addEventListener('click', async ()=>{
-        if (regPaused) return;
+          if (REGISTRATION_PAUSED) return;
         if(submitting) return;
         submitting = true;
 
@@ -596,32 +558,24 @@
         }
       });
 
-      // ====== Reveal-Mechanik „5× H1 in 4s“: Admin-Bar & Toggle ======
+      // ====== Reveal-Mechanik „5× H1 in 4s“: Admin-Bar zeigen ======
       (()=>{
-        const MAX_WINDOW_MS = 4000;
-        let clicks = 0;
-        let firstTs = 0;
-        function resetClicks(){ clicks = 0; firstTs = 0; }
-        if (pageTitle){
-          pageTitle.addEventListener('click', ()=>{
-            const now = Date.now();
-            if (!firstTs || (now - firstTs) > MAX_WINDOW_MS){
-              firstTs = now; clicks = 0;
-            }
-            clicks++;
-            if (clicks >= 5){
-              resetClicks();
-              if (adminBar && adminBar.classList.contains('admin-hidden')){
-                adminBar.classList.remove('admin-hidden');
-              }
-              pdfHint.textContent = 'Admin-Tools sichtbar. Nutzung: Schalter oben.';
-              setTimeout(()=> pdfHint.textContent = '', 3000);
-            }
-          });
-        }
+        let clicks = 0, timer = null;
+        pageTitle.addEventListener('click', ()=>{
+          clicks++;
+          if (clicks === 1) {
+            timer = setTimeout(()=>{ clicks = 0; }, 4000);
+          }
+          if (clicks >= 5) {
+            clearTimeout(timer); clicks = 0;
+            adminBar.classList.remove('admin-hidden'); // sichtbar machen
+            pdfHint.textContent = 'Admin-Tools aktiv.';
+            setTimeout(()=> pdfHint.textContent = '', 3000);
+          }
+        });
       })();
 
-      // ====== PDF-Versand (Alle / Nur neue) ====== (Alle / Nur neue) ======
+      // ====== PDF-Versand (Alle / Nur neue) ======
       async function sendPdf(scope){
         const btn = (scope === 'new') ? sendPdfNewBtn : sendPdfAllBtn;
         btn.disabled = true; btn.classList.add('loading');
@@ -649,25 +603,25 @@
       sendPdfAllBtn.addEventListener('click', ()=> sendPdf('all'));
       sendPdfNewBtn.addEventListener('click', ()=> sendPdf('new'));
 
-      // Registrierung explizit umschalten über Button
-      if (toggleRegBtn){
-        toggleRegBtn.addEventListener('click', ()=>{
-          setRegPaused(!regPaused);
-          pdfHint.textContent = regPaused ? 'Registrierung deaktiviert.' : 'Registrierung aktiviert.';
-          setTimeout(()=> pdfHint.textContent = '', 3000);
-        });
-      }
-
       // Zurücksetzen (Form UI)
       resetBtn.addEventListener('click', ()=>{
-        form.reset();
-        landSelect.value = 'Deutschland';
-        landOther.style.display='none';
-        submitHint.textContent='';
-        document.querySelectorAll('.is-invalid').forEach(el=>el.classList.remove('is-invalid'));
-        document.querySelectorAll('.err.show').forEach(el=>el.classList.remove('show'));
-        applyRegUi();
-      });
+  form.reset();
+  landSelect.value = 'Deutschland';
+  landOther.style.display='none';
+  submitHint.textContent='';
+  document.querySelectorAll('.is-invalid').forEach(el=>el.classList.remove('is-invalid'));
+  document.querySelectorAll('.err.show').forEach(el=>el.classList.remove('show'));
+
+  if (REGISTRATION_PAUSED) {
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Registrierung pausiert';
+    submitBtn.title = 'Vorübergehend deaktiviert';
+  } else {
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Kundennummer anfordern';
+    submitBtn.title = '';
+  }
+});
     })();
   </script>
 </body>
