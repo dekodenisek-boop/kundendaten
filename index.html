@@ -524,6 +524,22 @@ toggleRegBtn.addEventListener('click', async ()=>{
   if (!json.ok) throw new Error('Config set failed');
   return String(json.status || '').toLowerCase().includes('deaktiv');
 }
+      // --- REG get/set via Web-App (JSON + JSONP tolerant) ---
+async function getRegStatusFromServer(){
+  const url = REG_APP_URL + '?api=reg&action=get&_=' + Date.now();
+  const json = await fetchJsonGET(url);
+  if (!json || !json.ok) throw new Error('Config get failed');
+  // Server liefert "aktiviert" | "deaktiviert"
+  return String(json.status || '').toLowerCase().includes('deaktiv');
+}
+
+async function setRegStatusOnServer(paused){
+  const value = paused ? 'deaktiviert' : 'aktiviert';
+  const url = REG_APP_URL + '?api=reg&action=set&value=' + encodeURIComponent(value) + '&_=' + Date.now();
+  const json = await fetchJsonGET(url);
+  if (!json || !json.ok) throw new Error('Config set failed');
+  return String(json.status || '').toLowerCase().includes('deaktiv');
+}
 
       // Submit -> Review
       form.addEventListener('submit', (e)=>{
