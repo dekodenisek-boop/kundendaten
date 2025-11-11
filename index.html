@@ -154,7 +154,7 @@
       <span id="pdfHint" class="pdf-status"></span>
     </div>
 
-    <p class="lead">Bitte trage deine Daten ein. Felder mit <span class="req" style="color:#dc2626; font-weight:700;">*</span> sind Pflicht.</p>
+    <p class="lead">Bitte trage deine Daten ein.<span id="regStatus" style="color:#b91c1c; font-weight:700; margin-left:8px;"></span> Felder mit <span class="req" style="color:#dc2626; font-weight:700;">*</span> sind Pflicht.</p>
 
     <form id="form" class="card" novalidate>
       <div class="grid">
@@ -360,7 +360,9 @@
           confirmSubmitBtn.textContent = 'Derzeit nicht verfügbar';
           confirmSubmitBtn.title = 'Vorübergehend deaktiviert';
 
-          submitHint.textContent = 'Registrierung ist vorübergehend deaktiviert.';
+          submitHint.textContent='';
+          const rs = document.getElementById('regStatus');
+          if(rs) rs.textContent = 'Registrierung ist vorübergehend deaktiviert.';
         } else {
           submitBtn.disabled = false;
           submitBtn.textContent = 'Kundennummer anfordern';
@@ -370,7 +372,8 @@
           confirmSubmitBtn.textContent = 'Jetzt registrieren';
           confirmSubmitBtn.title = '';
 
-          submitHint.textContent = '';
+          submitHint.textContent='';
+          const rs = document.getElementById('regStatus'); if(rs) rs.textContent='';
         }
       }
 
