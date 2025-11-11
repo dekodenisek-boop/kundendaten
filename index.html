@@ -22,38 +22,23 @@
     }
     .wrap{max-width:860px; margin:0 auto;}
 
-    /* Brand */
-    .brand{
-      display:flex; justify-content:center; align-items:center;
-      margin:0 0 10px;
-    }
-    .brand img{
-      display:block; height:64px; width:auto;
-    }
+    .brand{ display:flex; justify-content:center; align-items:center; margin:0 0 10px; }
+    .brand img{ display:block; height:64px; width:auto; }
 
-    /* H1 als „Badge“ mit Brand-Farbe */
     h1{
       margin:0 0 8px; font-size:22px; font-weight:800; letter-spacing:.3px;
-      cursor:pointer;
-      background:var(--brand); color:#fff;
-      padding:12px 14px; border-radius:12px;
-      text-align:center;
+      cursor:pointer; background:var(--brand); color:#fff;
+      padding:12px 14px; border-radius:12px; text-align:center;
     }
 
     p.lead{margin:0 0 20px; color:var(--muted)}
 
-    /* Card & Form */
     .card{
       background:var(--card); border:1px solid var(--border);
       border-radius:var(--radius); padding:20px; box-shadow:var(--shadow);
       color:var(--text);
     }
-    label{
-      display:block;            /* Labels stehen über dem Feld */
-      margin:0 0 6px;
-      font-weight:600;
-      color:var(--text);
-    }
+    label{ display:block; margin:0 0 6px; font-weight:600; color:var(--text); }
     .hint{color:var(--muted); font-size:13px; margin-top:6px;}
     .checkline{border-top:1px dashed rgba(0,0,0,.08); padding-top:8px;}
 
@@ -68,7 +53,6 @@
     .full{grid-column:1 / -1;}
     @media (max-width:720px){ .grid{grid-template-columns:1fr;} }
 
-    /* Buttons */
     .actions{display:flex; gap:10px; align-items:center; margin-top:8px; flex-wrap:wrap;}
     .btn{
       display:inline-flex; align-items:center; justify-content:center;
@@ -92,9 +76,8 @@
     .btn-wa{ background:var(--wa); color:#fff; border-radius:999px; padding:12px 18px; gap:10px; font-weight:800;}
     .btn-wa svg{ width:20px; height:20px; display:block; }
 
-    .muted{font-size:13px; color:#muted;}
+    .muted{font-size:13px; color:var(--muted);}
 
-    /* Overlays */
     .overlay{position:fixed; inset:0; display:none; place-items:center; background:rgba(0,0,0,.45); z-index:9999; padding:16px;}
     .overlay.show{ display:grid; }
     .overlay.locked{ pointer-events:none; }
@@ -111,10 +94,9 @@
     .review-table td:first-child{ width:180px; color:#334155; font-weight:600; }
 
     .close{ position:absolute; top:10px; right:10px; background:transparent; border:0; cursor:pointer; font-size:22px; line-height:1; color:#64748b; padding:4px 8px; border-radius:8px;}
-    .close:hover{ color:#0f172a; background:#f1f5f9; }
+    .close:hover{ color:#0f172a; background:#f1f9; }
     .dialog.success{ background:#ecfdf5; border-color:#bbf7d0; color:#064e3b; }
 
-    /* Errors */
     .is-invalid{ border-color:#ef4444 !important; background:#fff; }
     .err{ display:none; font-size:12px; color:var(--danger); margin-top:6px;}
     .err.show{ display:block; }
@@ -125,7 +107,6 @@
       .btn{ padding:12px 14px; } .btn-wa{ padding:12px 16px; }
     }
 
-    /* Admin-Bar */
     .admin-hidden { display: none !important; }
     .admin-bar { display:flex; gap:10px; align-items:center; margin:6px 0 12px; flex-wrap:wrap; }
 
@@ -134,24 +115,17 @@
 </head>
 <body>
   <div class="wrap">
-
-    <!-- Logo oberhalb der H1 -->
     <div class="brand">
-      <img src="https://dekodenise.de/cdn/shop/files/De.Ko_Logo_Rund.png?v=1749137634&width=140"
-           alt="De.Ko Denise Logo" loading="eager" decoding="async">
+      <img src="https://dekodenise.de/cdn/shop/files/De.Ko_Logo_Rund.png?v=1749137634&width=140" alt="De.Ko Denise Logo" loading="eager" decoding="async">
     </div>
 
     <h1 id="pageTitle">Kunden-Nr. beantragen</h1>
 
-    <!-- Admin-Bar -->
     <div id="adminBar" class="admin-hidden admin-bar">
       <button id="sendPdfAllBtn" class="btn btn-success" type="button" title="Komplette Liste senden">Alle senden</button>
       <button id="sendPdfNewBtn" class="btn btn-primary" type="button" title="Nur neue seit letztem Versand senden">Neue senden</button>
-
-      <!-- Toggle für Registrierungsstatus -->
       <button id="toggleRegBtn" class="btn" type="button" title="Registrierung temporär deaktivieren/aktivieren">Registrierung pausieren</button>
       <span id="regStateHint" class="muted"></span>
-
       <a id="liveBtn" href="https://script.google.com/macros/s/AKfycbwahhpXp-34saIoElpBdZB1l2Z5Bo23KsnYU435wlMtmTjoJyYbtN_QEqM1VGdLcBUQ/exec" class="btn btn-danger" title="Live" target="_blank" rel="noopener">Live</a>
       <span id="pdfHint" class="pdf-status"></span>
     </div>
@@ -254,7 +228,6 @@
     </form>
   </div>
 
-  <!-- Review-Overlay -->
   <div id="reviewOverlay" class="overlay" aria-hidden="true">
     <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="reviewTitle">
       <button type="button" class="close" id="closeReview" aria-label="Schließen">×</button>
@@ -279,7 +252,6 @@
     </div>
   </div>
 
-  <!-- Processing-Overlay -->
   <div id="processingOverlay" class="overlay" aria-hidden="true">
     <div class="dialog processing" role="dialog" aria-modal="true" aria-labelledby="procTitle">
       <h2 id="procTitle">Einen Moment – wir registrieren dich …</h2>
@@ -292,7 +264,6 @@
     </div>
   </div>
 
-  <!-- Erfolgs-Overlay -->
   <div id="successOverlay" class="overlay" aria-hidden="true">
     <div class="dialog success" role="dialog" aria-modal="true" aria-labelledby="successTitle">
       <button type="button" class="close" id="closeSuccess" aria-label="Schließen">×</button>
@@ -301,392 +272,355 @@
       <p>Danke, <span id="ovName"></span>! Deine Kundennummer lautet: <b id="ovKdNr"></b>.</p>
       <p style="color:#b91c1c; font-weight:700; margin-top:16px;">Bitte setze dich einmal über WhatsApp mit mir in Verbindung. Werde mich morgen persönlich bei Dir zurück melden!</p>
       <div style="margin-top:10px; display:flex; justify-content:flex-start;">
-        <a id="waBtn" class="btn btn-wa" href="#" target="_blank" rel="noopener">
-          Jetzt per WhatsApp schreiben
-        </a>
+        <a id="waBtn" class="btn btn-wa" href="#" target="_blank" rel="noopener">Jetzt per WhatsApp schreiben</a>
       </div>
     </div>
   </div>
 
   <script>
-    (function(){
-      const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxcslNZhjXLbOeTsk8yuabOatZXQEaWSnc0cl5kiXg9ylEIwPaRohFlrDyHcqkzoV4/exec';
-      const SUBMIT_COOLDOWN_MS = 10000;
+  (function(){
+    const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxcslNZhjXLbOeTsk8yuabOatZXQEaWSnc0cl5kiXg9ylEIwPaRohFlrDyHcqkzoV4/exec';
+    const SUBMIT_COOLDOWN_MS = 10000;
 
-      const form = document.getElementById('form');
-      const submitBtn = document.getElementById('submitBtn');
-      const resetBtn  = document.getElementById('resetBtn');
-      const submitHint= document.getElementById('submitHint');
+    const form = document.getElementById('form');
+    const submitBtn = document.getElementById('submitBtn');
+    const resetBtn  = document.getElementById('resetBtn');
+    const submitHint= document.getElementById('submitHint');
 
-      const reviewOverlay = document.getElementById('reviewOverlay');
-      const confirmSubmitBtn = document.getElementById('confirmSubmitBtn');
-      const editBtn = document.getElementById('editBtn');
+    const reviewOverlay = document.getElementById('reviewOverlay');
+    const confirmSubmitBtn = document.getElementById('confirmSubmitBtn');
+    const editBtn = document.getElementById('editBtn');
 
-      const processingOverlay = document.getElementById('processingOverlay');
-      const procMsg = document.getElementById('procMsg');
-      const procSub = document.getElementById('procSub');
+    const processingOverlay = document.getElementById('processingOverlay');
+    const procMsg = document.getElementById('procMsg');
+    const procSub = document.getElementById('procSub');
 
-      const successOverlay = document.getElementById('successOverlay');
-      const ovName = document.getElementById('ovName');
-      const ovKdNr = document.getElementById('ovKdNr');
+    const successOverlay = document.getElementById('successOverlay');
+    const ovName = document.getElementById('ovName');
+    const ovKdNr = document.getElementById('ovKdNr');
 
-      const landSelect = document.getElementById('landSelect');
-      const landOther  = document.getElementById('landOther');
+    const landSelect = document.getElementById('landSelect');
+    const landOther  = document.getElementById('landOther');
 
-      const pageTitle     = document.getElementById('pageTitle');
-      const adminBar      = document.getElementById('adminBar');
-      const sendPdfAllBtn = document.getElementById('sendPdfAllBtn');
-      const sendPdfNewBtn = document.getElementById('sendPdfNewBtn');
-      const pdfHint       = document.getElementById('pdfHint');
+    const pageTitle     = document.getElementById('pageTitle');
+    const adminBar      = document.getElementById('adminBar');
+    const sendPdfAllBtn = document.getElementById('sendPdfAllBtn');
+    const sendPdfNewBtn = document.getElementById('sendPdfNewBtn');
+    const pdfHint       = document.getElementById('pdfHint');
+    const toggleRegBtn  = document.getElementById('toggleRegBtn');
+    const regStateHint  = document.getElementById('regStateHint');
 
-      // Boot-Guard: bis der Serverstatus geladen ist, nichts abschicken
+    // Boot-Guard
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Status wird geladen…';
+
+    let REGISTRATION_PAUSED = false;
+    const $ = (id) => document.getElementById(id);
+
+    adminBar.classList.add('admin-hidden');
+
+    function showOverlay(ov){ ov.classList.add('show'); ov.setAttribute('aria-hidden','false'); }
+    function hideOverlay(ov){ ov.classList.remove('show'); ov.setAttribute('aria-hidden','true'); }
+
+    function markInvalid(input, errId, show){
+      if(!input) return;
+      if(show){
+        if (input.type !== 'checkbox') input.classList.add('is-invalid');
+        if(errId) $(errId).classList.add('show');
+      } else {
+        if (input.type !== 'checkbox') input.classList.remove('is-invalid');
+        if(errId) $(errId).classList.remove('show');
+      }
+    }
+
+    function firstErrorScroll(){
+      const el = document.querySelector('.err.show, .is-invalid');
+      if (el) (el.closest('.checkline') || el).scrollIntoView({behavior:'smooth', block:'center'});
+    }
+
+    landSelect.value = 'Deutschland';
+    landSelect.addEventListener('change', ()=>{
+      const isOther = landSelect.value === 'other';
+      landOther.style.display = isOther ? 'block' : 'none';
+      if (!isOther) landOther.value = '';
+      markInvalid(landSelect, 'err-land', false);
+      markInvalid(landOther,  'err-land', false);
+    });
+
+    function getLandValue(){
+      return (landSelect.value === 'other') ? landOther.value.trim() : landSelect.value.trim();
+    }
+
+    function applyRegistrationStateUI() {
+      const locked = REGISTRATION_PAUSED === true;
+      submitBtn.disabled = locked;
+      submitBtn.textContent = locked ? 'Registrierung pausiert' : 'Kundennummer anfordern';
+      submitHint.textContent = locked ? 'Registrierungen sind vorübergehend deaktiviert.' : '';
+      if (toggleRegBtn) toggleRegBtn.textContent = locked ? 'Registrierung aktivieren' : 'Registrierung pausieren';
+      if (regStateHint) regStateHint.textContent = locked ? 'Status: pausiert' : 'Status: aktiv';
+    }
+
+    async function fetchRegistrationState() {
+      try {
+        const body = new URLSearchParams({ action:'getRegState', _ts:String(Date.now()) }).toString();
+        const res  = await fetch(WEB_APP_URL, {
+          method: 'POST',
+          headers: { 'Content-Type':'application/x-www-form-urlencoded', 'Cache-Control':'no-store' },
+          body
+        });
+        const raw = await res.text();
+        let json = null;
+        try { json = JSON.parse(raw); } catch(_) { throw new Error(`Unerwartete Antwort: ${raw.slice(0,180)}…`); }
+        if (!json.ok) throw new Error(json.error || 'getRegState fehlgeschlagen.');
+        REGISTRATION_PAUSED = (json.state === 'paused' || json.paused === true);
+      } catch (err) {
+        console.error(err);
+        REGISTRATION_PAUSED = false;
+      } finally {
+        applyRegistrationStateUI();
+      }
+    }
+
+    async function setRegistrationState(nextStateStr) {
+      try {
+        if (toggleRegBtn) { toggleRegBtn.disabled = true; toggleRegBtn.classList.add('loading'); }
+        const body = new URLSearchParams({ action:'setRegState', state:nextStateStr, _ts:String(Date.now()) }).toString();
+        const res  = await fetch(WEB_APP_URL, {
+          method: 'POST',
+          headers: { 'Content-Type':'application/x-www-form-urlencoded', 'Cache-Control':'no-store' },
+          body
+        });
+        const raw = await res.text();
+        let json = null;
+        try { json = JSON.parse(raw); } catch(_) { throw new Error(`Unerwartete Antwort: ${raw.slice(0,180)}…`); }
+        if (!json.ok) throw new Error(json.error || 'setRegState fehlgeschlagen.');
+        REGISTRATION_PAUSED = (json.state === 'paused' || json.paused === true);
+        applyRegistrationStateUI();
+        if (pdfHint) { pdfHint.textContent = `Status: ${json.state}`; setTimeout(()=> pdfHint.textContent='', 3000); }
+      } catch (err) {
+        console.error(err);
+        submitHint.textContent = (err && err.message) ? err.message : 'Netzwerk-/CORS-Fehler.';
+      } finally {
+        if (toggleRegBtn) { toggleRegBtn.disabled = false; toggleRegBtn.classList.remove('loading'); }
+      }
+    }
+
+    function validate(){
+      let ok = true;
+      const vorname=$('vorname'), nachname=$('nachname'), strasse=$('strasse'),
+            plz=$('plz'), ort=$('ort'), handy=$('handy'),
+            email=$('email'), emailConfirm=$('emailConfirm'),
+            acceptAgb=$('acceptAgb'), acceptDsgvo=$('acceptDsgvo');
+
+      [['vorname','err-vorname'],['nachname','err-nachname'],['strasse','err-strasse'],['ort','err-ort'],['handy','err-handy']]
+        .forEach(([id,err])=>{ const el=$(id); const bad=!el.value.trim(); markInvalid(el,err,bad); ok=ok && !bad; });
+
+      const plzBad = !plz.value.trim() || !(new RegExp(/^[A-Za-z0-9 \-]{1,10}$/).test(plz.value.trim()));
+      markInvalid(plz,'err-plz',plzBad); ok = ok && !plzBad;
+
+      const landVal = getLandValue(); const landBad = !landVal;
+      markInvalid(landSelect,'err-land',landBad && landSelect.value!=='other');
+      markInvalid(landOther,'err-land',landBad && landSelect.value==='other'); ok = ok && !landBad;
+
+      const emailVal=email.value.trim(); const emailGood = emailVal.length && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal);
+      markInvalid(email,'err-email',!emailGood); ok = ok && emailGood;
+
+      const emailConfVal=emailConfirm.value.trim(); const emailMatch = emailConfVal.length && (emailVal.toLowerCase()===emailConfVal.toLowerCase());
+      markInvalid(emailConfirm,'err-emailConfirm',!emailMatch); ok = ok && emailMatch;
+
+      const agbBad=!acceptAgb.checked, dsgvoBad=!acceptDsgvo.checked;
+      markInvalid(acceptAgb,'err-agb',agbBad); ok = ok && !agbBad;
+      markInvalid(document.getElementById('acceptDsgvo'),'err-dsgvo',dsgvoBad); ok = ok && !dsgvoBad;
+
+      if(!ok) firstErrorScroll();
+      return ok;
+    }
+
+    function fillReview(){
+      $('rev-firma').textContent   = $('firma').value.trim() || '—';
+      $('rev-vorname').textContent = $('vorname').value.trim();
+      $('rev-nachname').textContent= $('nachname').value.trim();
+      $('rev-strasse').textContent = $('strasse').value.trim();
+      $('rev-plz').textContent     = $('plz').value.trim();
+      $('rev-ort').textContent     = $('ort').value.trim();
+      $('rev-land').textContent    = getLandValue();
+      $('rev-handy').textContent   = $('handy').value.trim();
+      $('rev-email').textContent   = $('email').value.trim();
+    }
+
+    function buildPayload(nonce){
+      return {
+        nonce,
+        firma:$('firma').value.trim(),
+        vorname:$('vorname').value.trim(),
+        nachname:$('nachname').value.trim(),
+        strasse:$('strasse').value.trim(),
+        plz:$('plz').value.trim(),
+        ort:$('ort').value.trim(),
+        land:getLandValue(),
+        handy:$('handy').value.trim(),
+        email:$('email').value.trim(),
+        emailConfirm:$('emailConfirm').value.trim(),
+        acceptAgb:$('acceptAgb').checked,
+        acceptDsgvo:$('acceptDsgvo').checked
+      };
+    }
+
+    form.addEventListener('submit', (e)=>{
+      e.preventDefault();
+      if (REGISTRATION_PAUSED) { submitHint.textContent = 'Registrierungen sind vorübergehend deaktiviert.'; return; }
+      if(!validate()) return;
+      fillReview();
+      showOverlay(reviewOverlay);
+    });
+
+    document.getElementById('editBtn').addEventListener('click', ()=> reviewOverlay.classList.remove('show'));
+    document.getElementById('closeReview').addEventListener('click', ()=> reviewOverlay.classList.remove('show'));
+
+    let submitting = false;
+    function genNonce(){ try{ return crypto.randomUUID(); }catch(_){ return Date.now()+'-'+Math.random().toString(16).slice(2); } }
+
+    document.getElementById('confirmSubmitBtn').addEventListener('click', async ()=>{
+      if(submitting) return;
+      submitting = true;
+
+      confirmSubmitBtn.disabled = true;
+      confirmSubmitBtn.classList.add('loading');
+      editBtn.disabled = true;
+
+      reviewOverlay.classList.remove('show');
+      processingOverlay.classList.add('show','locked');
+
+      procMsg.textContent = 'Deine Daten werden sicher übertragen.';
+      procSub.textContent = 'Das kann je nach Netz 5–15 Sekunden dauern.';
+
       submitBtn.disabled = true;
-      submitBtn.textContent = 'Status wird geladen…';
+      submitBtn.classList.add('loading');
+      const cooldownTimer = setTimeout(()=>{ submitBtn.disabled=false; submitBtn.classList.remove('loading'); }, SUBMIT_COOLDOWN_MS);
 
-      // Registrierungsstatus (UI + Flag)
-      let REGISTRATION_PAUSED = false;
-      const toggleRegBtn = document.getElementById('toggleRegBtn');
-      const regStateHint = document.getElementById('regStateHint');
+      let slowTimer1 = setTimeout(()=>{ procMsg.textContent='Noch dran …'; procSub.textContent='Es dauert gerade länger als üblich. Bitte weiterhin warten.'; }, 8000);
+      let slowTimer2 = setTimeout(()=>{ procMsg.textContent='Fast geschafft …'; procSub.textContent='Wir haben die Registrierung im System, finalisieren gleich die Kundennummer.'; }, 15000);
 
-      const $ = (id) => document.getElementById(id);
+      const nonce = genNonce();
+      const payload = buildPayload(nonce);
 
-      // Admin-Bar initial verstecken
-      adminBar.classList.add('admin-hidden');
+      try{
+        const body = new URLSearchParams(payload).toString();
+        const res = await fetch(WEB_APP_URL, { method:'POST', headers:{ 'Content-Type':'application/x-www-form-urlencoded' }, body });
+        const raw = await res.text();
+        let json=null; try{ json = JSON.parse(raw);}catch(_){ throw new Error(`Kein JSON (${res.status}): ${raw.slice(0,180)}…`); }
+        if(!json.ok) throw new Error(json.error || 'Fehler beim Senden.');
 
-      function showOverlay(ov){ ov.classList.add('show'); ov.setAttribute('aria-hidden','false'); }
-      function hideOverlay(ov){ ov.classList.remove('show'); ov.setAttribute('aria-hidden','true'); }
+        const fullName = json.fullName || (payload.vorname + ' ' + payload.nachname);
+        const kdNr = json.kdNr || '';
+        ovName.textContent = fullName;
+        ovKdNr.textContent = kdNr;
 
-      function markInvalid(input, errId, show){
-        if(!input) return;
-        if(show){
-          if (input.type !== 'checkbox') input.classList.add('is-invalid');
-          if(errId) $(errId).classList.add('show');
-        } else {
-          if (input.type !== 'checkbox') input.classList.remove('is-invalid');
-          if(errId) $(errId).classList.remove('show');
-        }
-      }
+        const waNumber = '4915258164673';
+        const rows = [
+          'Hallo Denise,',
+          'ich habe mich gerade registriert und soll mich bei dir melden.',
+          `Meine Kundennummer: ${kdNr}`,
+          payload.firma ? `Firmenname: ${payload.firma}` : '',
+          `Name: ${fullName}`,
+          payload.strasse ? `Straße & Nr.: ${payload.strasse}` : '',
+          payload.plz ? `PLZ: ${payload.plz}` : '',
+          payload.ort ? `Ort: ${payload.ort}` : '',
+          payload.land ? `Land: ${payload.land}` : '',
+          payload.email ? `E-Mail: ${payload.email}` : ''
+        ].filter(Boolean);
+        rows.push('Liebe Grüße');
 
-      function firstErrorScroll(){
-        const el = document.querySelector('.err.show, .is-invalid');
-        if (el) (el.closest('.checkline') || el).scrollIntoView({behavior:'smooth', block:'center'});
-      }
+        const waText = rows.join('\n');
+        document.getElementById('waBtn').setAttribute('href','https://wa.me/' + waNumber + '?text=' + encodeURIComponent(waText));
 
-      // Standard: Deutschland vorauswählen
-      landSelect.value = 'Deutschland';
-      landSelect.addEventListener('change', ()=>{
-        const isOther = landSelect.value === 'other';
-        landOther.style.display = isOther ? 'block' : 'none';
-        if (!isOther) landOther.value = '';
-        markInvalid(landSelect, 'err-land', false);
-        markInvalid(landOther,  'err-land', false);
-      });
-
-      function getLandValue(){
-        return (landSelect.value === 'other') ? landOther.value.trim() : landSelect.value.trim();
-      }
-
-      // UI je nach Status sperren/freigeben
-      function applyRegistrationStateUI() {
-        const locked = REGISTRATION_PAUSED === true;
-        submitBtn.disabled = locked;
-        submitBtn.textContent = locked ? 'Registrierung pausiert' : 'Kundennummer anfordern';
-        submitHint.textContent = locked ? 'Registrierungen sind vorübergehend deaktiviert.' : '';
-
-        if (toggleRegBtn) toggleRegBtn.textContent = locked ? 'Registrierung aktivieren' : 'Registrierung pausieren';
-        if (regStateHint) regStateHint.textContent = locked ? 'Status: pausiert' : 'Status: aktiv';
-      }
-
-      // Status vom Server lesen (mit Cache-Buster)
-      async function fetchRegistrationState() {
-        try {
-          const body = new URLSearchParams({ action: 'getRegState', _ts: String(Date.now()) }).toString();
-          const res  = await fetch(WEB_APP_URL, {
-            method: 'POST',
-            headers: { 'Content-Type':'application/x-www-form-urlencoded', 'Cache-Control':'no-store' },
-            body
-          });
-          const raw = await res.text();
-          let json = null; try { json = JSON.parse(raw); } catch(_) {
-            throw new Error(`Unerwartete Antwort: ${raw.slice(0,180)}…`);
-          }
-          if (!json.ok) throw new Error(json.error || 'getRegState fehlgeschlagen.');
-          REGISTRATION_PAUSED = (json.state === 'paused' || json.paused === true);
-        } catch (err) {
-          console.error(err);
-          // Fallback: lieber offen lassen als fälschlich sperren
-          REGISTRATION_PAUSED = false;
-        } finally {
-          applyRegistrationStateUI();
-        }
-      }
-
-      // Status am Server setzen – nextStateStr: 'active' | 'paused'
-      async function setRegistrationState(nextStateStr) {
-        try {
-          if (toggleRegBtn) { toggleRegBtn.disabled = true; toggleRegBtn.classList.add('loading'); }
-          const body = new URLSearchParams({ action: 'setRegState', state: nextStateStr, _ts: String(Date.now()) }).toString();
-          const res  = await fetch(WEB_APP_URL, {
-            method: 'POST',
-            headers: { 'Content-Type':'application/x-www-form-urlencoded', 'Cache-Control':'no-store' },
-            body
-          });
-          const raw = await res.text();
-          let json = null; try { json = JSON.parse(raw); } catch(_) {
-            throw new Error(`Unerwartete Antwort: ${raw.slice(0,180)}…`);
-          }
-          if (!json.ok) throw new Error(json.error || 'setRegState fehlgeschlagen.');
-          REGISTRATION_PAUSED = (json.state === 'paused' || json.paused === true);
-          applyRegistrationStateUI();
-          if (pdfHint) { pdfHint.textContent = `Status: ${json.state}`; setTimeout(()=> pdfHint.textContent='', 3000); }
-        } catch (err) {
-          console.error(err);
-          submitHint.textContent = (err && err.message) ? err.message : 'Netzwerk-/CORS-Fehler.';
-        } finally {
-          if (toggleRegBtn) { toggleRegBtn.disabled = false; toggleRegBtn.classList.remove('loading'); }
-        }
-      }
-
-      function validate(){
-        let ok = true;
-        const vorname=$('vorname'), nachname=$('nachname'), strasse=$('strasse'),
-              plz=$('plz'), ort=$('ort'), handy=$('handy'),
-              email=$('email'), emailConfirm=$('emailConfirm'),
-              acceptAgb=$('acceptAgb'), acceptDsgvo=$('acceptDsgvo');
-
-        [['vorname','err-vorname'],['nachname','err-nachname'],['strasse','err-strasse'],['ort','err-ort'],['handy','err-handy']]
-          .forEach(([id,err])=>{ const el=$(id); const bad=!el.value.trim(); markInvalid(el,err,bad); ok=ok && !bad; });
-
-        const plzBad = !plz.value.trim() || !(new RegExp(/^[A-Za-z0-9 \-]{1,10}$/).test(plz.value.trim()));
-        markInvalid(plz,'err-plz',plzBad); ok = ok && !plzBad;
-
-        const landVal = getLandValue(); const landBad = !landVal;
-        markInvalid(landSelect,'err-land',landBad && landSelect.value!=='other');
-        markInvalid(landOther,'err-land',landBad && landSelect.value==='other');
-        ok = ok && !landBad;
-
-        const emailVal=email.value.trim(); const emailGood = emailVal.length && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal);
-        markInvalid(email,'err-email',!emailGood); ok = ok && emailGood;
-
-        const emailConfVal=emailConfirm.value.trim(); const emailMatch = emailConfVal.length && (emailVal.toLowerCase()===emailConfVal.toLowerCase());
-        markInvalid(emailConfirm,'err-emailConfirm',!emailMatch); ok = ok && emailMatch;
-
-        const agbBad=!acceptAgb.checked, dsgvoBad=!acceptDsgvo.checked;
-        markInvalid(acceptAgb,'err-agb',agbBad); ok = ok && !agbBad;
-        markInvalid(document.getElementById('acceptDsgvo'),'err-dsgvo',dsgvoBad); ok = ok && !dsgvoBad;
-
-        if(!ok) firstErrorScroll();
-        return ok;
-      }
-
-      function fillReview(){
-        $('rev-firma').textContent   = $('firma').value.trim() || '—';
-        $('rev-vorname').textContent = $('vorname').value.trim();
-        $('rev-nachname').textContent= $('nachname').value.trim();
-        $('rev-strasse').textContent = $('strasse').value.trim();
-        $('rev-plz').textContent     = $('plz').value.trim();
-        $('rev-ort').textContent     = $('ort').value.trim();
-        $('rev-land').textContent    = getLandValue();
-        $('rev-handy').textContent   = $('handy').value.trim();
-        $('rev-email').textContent   = $('email').value.trim();
-      }
-
-      function buildPayload(nonce){
-        return {
-          nonce,
-          firma:$('firma').value.trim(),
-          vorname:$('vorname').value.trim(),
-          nachname:$('nachname').value.trim(),
-          strasse:$('strasse').value.trim(),
-          plz:$('plz').value.trim(),
-          ort:$('ort').value.trim(),
-          land:getLandValue(),
-          handy:$('handy').value.trim(),
-          email:$('email').value.trim(),
-          emailConfirm:$('emailConfirm').value.trim(),
-          acceptAgb:$('acceptAgb').checked,
-          acceptDsgvo:$('acceptDsgvo').checked
-        };
-      }
-
-      // Submit -> Review
-      form.addEventListener('submit', (e)=>{
-        e.preventDefault(); // immer zuerst verhindern
-        if (REGISTRATION_PAUSED) {
-          submitHint.textContent = 'Registrierungen sind vorübergehend deaktiviert.';
-          return;
-        }
-        if(!validate()) return;
-        fillReview();
-        showOverlay(reviewOverlay);
-      });
-
-      // Review schließen / ändern
-      document.getElementById('editBtn').addEventListener('click', ()=> reviewOverlay.classList.remove('show'));
-      document.getElementById('closeReview').addEventListener('click', ()=> reviewOverlay.classList.remove('show'));
-
-      // Doppel-Klick-Schutz + Idempotenz
-      let submitting = false;
-      function genNonce(){
-        try{ return crypto.randomUUID(); }catch(_){ return Date.now()+'-'+Math.random().toString(16).slice(2); }
-      }
-
-      document.getElementById('confirmSubmitBtn').addEventListener('click', async ()=>{
-        if(submitting) return;
-        submitting = true;
-
-        confirmSubmitBtn.disabled = true;
-        confirmSubmitBtn.classList.add('loading');
-        editBtn.disabled = true;
-
-        reviewOverlay.classList.remove('show');
-        processingOverlay.classList.add('show');
-        processingOverlay.classList.add('locked');
-
-        procMsg.textContent = 'Deine Daten werden sicher übertragen.';
-        procSub.textContent = 'Das kann je nach Netz 5–15 Sekunden dauern.';
-
-        submitBtn.disabled = true;
-        submitBtn.classList.add('loading');
-        const cooldownTimer = setTimeout(()=>{ submitBtn.disabled=false; submitBtn.classList.remove('loading'); }, SUBMIT_COOLDOWN_MS);
-
-        let slowTimer1 = setTimeout(()=>{ procMsg.textContent='Noch dran …'; procSub.textContent='Es dauert gerade länger als üblich. Bitte weiterhin warten.'; }, 8000);
-        let slowTimer2 = setTimeout(()=>{ procMsg.textContent='Fast geschafft …'; procSub.textContent='Wir haben die Registrierung im System, finalisieren gleich die Kundennummer.'; }, 15000);
-
-        const nonce = genNonce();
-        const payload = buildPayload(nonce);
-
-        try{
-          const body = new URLSearchParams(payload).toString();
-          const res = await fetch(WEB_APP_URL, { method:'POST', headers:{ 'Content-Type':'application/x-www-form-urlencoded' }, body });
-          const raw = await res.text();
-          let json=null; try{ json = JSON.parse(raw);}catch(_){ throw new Error(`Kein JSON (${res.status}): ${raw.slice(0,180)}…`); }
-          if(!json.ok) throw new Error(json.error || 'Fehler beim Senden.');
-
-          const fullName = json.fullName || (payload.vorname + ' ' + payload.nachname);
-          const kdNr = json.kdNr || '';
-          ovName.textContent = fullName;
-          ovKdNr.textContent = kdNr;
-
-          const waNumber = '4915258164673'; // ohne "+"
-          const rows = [
-            'Hallo Denise,',
-            'ich habe mich gerade registriert und soll mich bei dir melden.',
-            `Meine Kundennummer: ${kdNr}`,
-            payload.firma ? `Firmenname: ${payload.firma}` : '',
-            `Name: ${fullName}`,
-            payload.strasse ? `Straße & Nr.: ${payload.strasse}` : '',
-            payload.plz ? `PLZ: ${payload.plz}` : '',
-            payload.ort ? `Ort: ${payload.ort}` : '',
-            payload.land ? `Land: ${payload.land}` : '',
-            payload.email ? `E-Mail: ${payload.email}` : ''
-          ].filter(Boolean);
-          rows.push('Liebe Grüße');
-
-          const waText = rows.join('\n');
-          document.getElementById('waBtn').setAttribute(
-            'href',
-            'https://wa.me/' + waNumber + '?text=' + encodeURIComponent(waText)
-          );
-
-          processingOverlay.classList.remove('locked'); processingOverlay.classList.remove('show');
-          successOverlay.classList.add('show');
-          submitBtn.textContent = 'Senden erfolgreich';
-          form.reset();
-
-        }catch(err){
-          console.error(err);
-          submitHint.textContent = (err && err.message) ? err.message : 'Netzwerk-/CORS-Fehler.';
-          processingOverlay.classList.remove('locked'); processingOverlay.classList.remove('show');
-        }finally{
-          clearTimeout(slowTimer1); clearTimeout(slowTimer2); clearTimeout(cooldownTimer);
-          submitBtn.classList.remove('loading'); confirmSubmitBtn.classList.remove('loading');
-          submitting = false; confirmSubmitBtn.disabled = false; editBtn.disabled = false;
-        }
-      });
-
-      // Overlays schließen
-      document.getElementById('closeSuccess').addEventListener('click', ()=> successOverlay.classList.remove('show'));
-      successOverlay.addEventListener('click', (e)=>{ if(e.target === successOverlay) successOverlay.classList.remove('show'); });
-      reviewOverlay.addEventListener('click', (e)=>{ if(e.target === reviewOverlay) reviewOverlay.classList.remove('show'); });
-      document.addEventListener('keydown', (e)=>{
-        if(e.key==='Escape'){
-          if (reviewOverlay.classList.contains('show')) reviewOverlay.classList.remove('show');
-          else if (successOverlay.classList.contains('show')) successOverlay.classList.remove('show');
-        }
-      });
-
-      // Reveal-Mechanik „5× H1 in 4s“: Admin-Bar zeigen
-      (()=>{
-        let clicks = 0, timer = null;
-        pageTitle.addEventListener('click', ()=>{
-          clicks++;
-          if (clicks === 1) {
-            timer = setTimeout(()=>{ clicks = 0; }, 4000);
-          }
-          if (clicks >= 5) {
-            clearTimeout(timer); clicks = 0;
-            adminBar.classList.remove('admin-hidden'); // sichtbar machen
-            pdfHint.textContent = 'Admin-Tools aktiv.';
-            setTimeout(()=> pdfHint.textContent = '', 3000);
-
-            // Beim Sichtbarwerden der Admin-Bar Status laden
-            fetchRegistrationState();
-          }
-        });
-      })();
-
-      // PDF-Versand (Alle / Nur neue)
-      async function sendPdf(scope){
-        const btn = (scope === 'new') ? sendPdfNewBtn : sendPdfAllBtn;
-        btn.disabled = true; btn.classList.add('loading');
-        pdfHint.textContent = (scope === 'new') ? 'Sende nur neue …' : 'Sende alle …';
-        try{
-          const body = new URLSearchParams({ action: 'sendPdfNow', scope }).toString();
-          const res = await fetch(WEB_APP_URL, {
-            method: 'POST',
-            headers: { 'Content-Type':'application/x-www-form-urlencoded' },
-            body
-          });
-          const raw = await res.text();
-          let json=null; try{ json = JSON.parse(raw);}catch(_){ throw new Error(`Unerwartete Antwort: ${raw.slice(0,200)}…`); }
-          if(!json.ok) throw new Error(json.error || 'Fehler beim PDF-Versand.');
-          pdfHint.textContent = 'PDF versendet.';
-        } catch(err){
-          console.error(err);
-          pdfHint.textContent = (err && err.message) ? err.message : 'Netzwerkfehler.';
-        } finally{
-          btn.disabled = false; btn.classList.remove('loading');
-          setTimeout(()=> pdfHint.textContent = '', 8000);
-        }
-      }
-      sendPdfAllBtn.addEventListener('click', ()=> sendPdf('all'));
-      sendPdfNewBtn.addEventListener('click', ()=> sendPdf('new'));
-
-      // Registrierungsstatus toggeln (deterministisch)
-      if (toggleRegBtn) {
-        toggleRegBtn.addEventListener('click', () => {
-          const next = REGISTRATION_PAUSED ? 'active' : 'paused';
-          setRegistrationState(next);
-        });
-      }
-
-      // Zurücksetzen (Form UI)
-      resetBtn.addEventListener('click', ()=>{
+        processingOverlay.classList.remove('locked','show');
+        successOverlay.classList.add('show');
+        submitBtn.textContent = 'Senden erfolgreich';
         form.reset();
-        landSelect.value = 'Deutschland';
-        landOther.style.display='none';
-        submitHint.textContent='';
-        document.querySelectorAll('.is-invalid').forEach(el=>el.classList.remove('is-invalid'));
-        document.querySelectorAll('.err.show').forEach(el=>el.classList.remove('show'));
-        submitBtn.textContent='Kundennummer anfordern';
-        fetchRegistrationState();
-      });
 
-      // *** WICHTIG: Status beim Laden ziehen + periodisch aktualisieren ***
-      fetchRegistrationState();
-      setInterval(fetchRegistrationState, 300000); // alle 5 Minuten
+      }catch(err){
+        console.error(err);
+        submitHint.textContent = (err && err.message) ? err.message : 'Netzwerk-/CORS-Fehler.';
+        processingOverlay.classList.remove('locked','show');
+      }finally{
+        clearTimeout(slowTimer1); clearTimeout(slowTimer2); clearTimeout(cooldownTimer);
+        submitBtn.classList.remove('loading'); confirmSubmitBtn.classList.remove('loading');
+        submitting = false; confirmSubmitBtn.disabled = false; editBtn.disabled = false;
+      }
+    });
+
+    document.getElementById('closeSuccess').addEventListener('click', ()=> successOverlay.classList.remove('show'));
+    successOverlay.addEventListener('click', (e)=>{ if(e.target === successOverlay) successOverlay.classList.remove('show'); });
+    reviewOverlay.addEventListener('click', (e)=>{ if(e.target === reviewOverlay) reviewOverlay.classList.remove('show'); });
+    document.addEventListener('keydown', (e)=>{
+      if(e.key==='Escape'){
+        if (reviewOverlay.classList.contains('show')) reviewOverlay.classList.remove('show');
+        else if (successOverlay.classList.contains('show')) successOverlay.classList.remove('show');
+      }
+    });
+
+    (()=>{
+      let clicks = 0, timer = null;
+      pageTitle.addEventListener('click', ()=>{
+        clicks++;
+        if (clicks === 1) { timer = setTimeout(()=>{ clicks = 0; }, 4000); }
+        if (clicks >= 5) {
+          clearTimeout(timer); clicks = 0;
+          adminBar.classList.remove('admin-hidden');
+          pdfHint.textContent = 'Admin-Tools aktiv.';
+          setTimeout(()=> pdfHint.textContent = '', 3000);
+          fetchRegistrationState();
+        }
+      });
     })();
+
+    async function sendPdf(scope){
+      const btn = (scope === 'new') ? sendPdfNewBtn : sendPdfAllBtn;
+      btn.disabled = true; btn.classList.add('loading');
+      pdfHint.textContent = (scope === 'new') ? 'Sende nur neue …' : 'Sende alle …';
+      try{
+        const body = new URLSearchParams({ action: 'sendPdfNow', scope }).toString();
+        const res = await fetch(WEB_APP_URL, { method: 'POST', headers: { 'Content-Type':'application/x-www-form-urlencoded' }, body });
+        const raw = await res.text();
+        let json=null; try{ json = JSON.parse(raw);}catch(_){ throw new Error(`Unerwartete Antwort: ${raw.slice(0,200)}…`); }
+        if(!json.ok) throw new Error(json.error || 'Fehler beim PDF-Versand.');
+        pdfHint.textContent = 'PDF versendet.';
+      } catch(err){
+        console.error(err);
+        pdfHint.textContent = (err && err.message) ? err.message : 'Netzwerkfehler.';
+      } finally{
+        btn.disabled = false; btn.classList.remove('loading');
+        setTimeout(()=> pdfHint.textContent = '', 8000);
+      }
+    }
+    sendPdfAllBtn.addEventListener('click', ()=> sendPdf('all'));
+    sendPdfNewBtn.addEventListener('click', ()=> sendPdf('new'));
+
+    if (toggleRegBtn) {
+      toggleRegBtn.addEventListener('click', () => {
+        const next = REGISTRATION_PAUSED ? 'active' : 'paused';
+        setRegistrationState(next);
+      });
+    }
+
+    resetBtn.addEventListener('click', ()=>{
+      form.reset();
+      landSelect.value = 'Deutschland';
+      landOther.style.display='none';
+      submitHint.textContent='';
+      document.querySelectorAll('.is-invalid').forEach(el=>el.classList.remove('is-invalid'));
+      document.querySelectorAll('.err.show').forEach(el=>el.classList.remove('show'));
+      submitBtn.textContent='Kundennummer anfordern';
+      fetchRegistrationState();
+    });
+
+    // === WICHTIG: Status sofort beim Laden holen + zyklisch aktualisieren ===
+    document.addEventListener('DOMContentLoaded', fetchRegistrationState);
+    // Falls DOMContentLoaded schon durch ist:
+    if (document.readyState === 'interactive' || document.readyState === 'complete') { fetchRegistrationState(); }
+    setInterval(fetchRegistrationState, 300000); // alle 5 Min
+  })();
   </script>
 </body>
 </html>
