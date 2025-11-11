@@ -92,7 +92,7 @@
     .btn-wa{ background:var(--wa); color:#fff; border-radius:999px; padding:12px 18px; gap:10px; font-weight:800;}
     .btn-wa svg{ width:20px; height:20px; display:block; }
 
-    .muted{font-size:13px; color:var(--muted);}
+    .muted{font-size:13px; color:#muted;}
 
     /* Overlays */
     .overlay{position:fixed; inset:0; display:none; place-items:center; background:rgba(0,0,0,.45); z-index:9999; padding:16px;}
@@ -125,11 +125,10 @@
       .btn{ padding:12px 14px; } .btn-wa{ padding:12px 16px; }
     }
 
-    /* Admin-Bar (hart versteckt, eigener Flex-Container) */
+    /* Admin-Bar */
     .admin-hidden { display: none !important; }
     .admin-bar { display:flex; gap:10px; align-items:center; margin:6px 0 12px; flex-wrap:wrap; }
 
-    /* Rote, fette Statusmeldungen für Admin-Buttons */
     .pdf-status { color:#b91c1c; font-weight:bold; }
   </style>
 </head>
@@ -147,15 +146,13 @@
     <!-- Admin-Bar -->
     <div id="adminBar" class="admin-hidden admin-bar">
       <button id="sendPdfAllBtn" class="btn btn-success" type="button" title="Komplette Liste senden">Alle senden</button>
-     <button id="sendPdfNewBtn" class="btn btn-primary" type="button" title="Nur neue seit letztem Versand senden">Neue senden</button>
+      <button id="sendPdfNewBtn" class="btn btn-primary" type="button" title="Nur neue seit letztem Versand senden">Neue senden</button>
 
-<!-- NEU: Toggle für Registrierungsstatus -->
-<button id="toggleRegBtn" class="btn" type="button" title="Registrierung temporär deaktivieren/aktivieren">Registrierung pausieren</button>
-<span id="regStateHint" class="muted"></span>
+      <!-- Toggle für Registrierungsstatus -->
+      <button id="toggleRegBtn" class="btn" type="button" title="Registrierung temporär deaktivieren/aktivieren">Registrierung pausieren</button>
+      <span id="regStateHint" class="muted"></span>
 
-<a id="liveBtn" href="https://script.google.com/macros/s/AKfycbwahhpXp-34saIoElpBdZB1l2Z5Bo23KsnYU435wlMtmTjoJyYbtN_QEqM1VGdLcBUQ/exec" class="btn btn-danger" title="Live" target="_blank" rel="noopener">
-  Live
-</a>
+      <a id="liveBtn" href="https://script.google.com/macros/s/AKfycbwahhpXp-34saIoElpBdZB1l2Z5Bo23KsnYU435wlMtmTjoJyYbtN_QEqM1VGdLcBUQ/exec" class="btn btn-danger" title="Live" target="_blank" rel="noopener">Live</a>
       <span id="pdfHint" class="pdf-status"></span>
     </div>
 
@@ -313,7 +310,7 @@
 
   <script>
     (function(){
-      const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxcslNZhjXLbOeTsk8yuabOatZXQEaWSnc0cl5kiXg9ylEIwPaRohFlrDyHcqkzoV4/exec'; // <- anpassen
+      const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxcslNZhjXLbOeTsk8yuabOatZXQEaWSnc0cl5kiXg9ylEIwPaRohFlrDyHcqkzoV4/exec';
       const SUBMIT_COOLDOWN_MS = 10000;
 
       const form = document.getElementById('form');
@@ -341,14 +338,19 @@
       const sendPdfAllBtn = document.getElementById('sendPdfAllBtn');
       const sendPdfNewBtn = document.getElementById('sendPdfNewBtn');
       const pdfHint       = document.getElementById('pdfHint');
-      // === NEU: Registrierungsstatus (UI + Flag)
-let REGISTRATION_PAUSED = false;
-const toggleRegBtn = document.getElementById('toggleRegBtn');
-const regStateHint = document.getElementById('regStateHint');
+
+      // Boot-Guard: bis der Serverstatus geladen ist, nichts abschicken
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Status wird geladen…';
+
+      // Registrierungsstatus (UI + Flag)
+      let REGISTRATION_PAUSED = false;
+      const toggleRegBtn = document.getElementById('toggleRegBtn');
+      const regStateHint = document.getElementById('regStateHint');
 
       const $ = (id) => document.getElementById(id);
 
-      // Hard-hide Admin-Bar on load
+      // Admin-Bar initial verstecken
       adminBar.classList.add('admin-hidden');
 
       function showOverlay(ov){ ov.classList.add('show'); ov.setAttribute('aria-hidden','false'); }
@@ -383,67 +385,67 @@ const regStateHint = document.getElementById('regStateHint');
       function getLandValue(){
         return (landSelect.value === 'other') ? landOther.value.trim() : landSelect.value.trim();
       }
-      // === UI je nach Status sperren/freigeben
-function applyRegistrationStateUI() {
-  const locked = REGISTRATION_PAUSED === true;
-  submitBtn.disabled = locked;
-  submitBtn.textContent = locked ? 'Registrierung pausiert' : 'Kundennummer anfordern';
-  submitHint.textContent = locked ? 'Registrierungen sind vorübergehend deaktiviert.' : '';
 
-  if (toggleRegBtn) toggleRegBtn.textContent = locked ? 'Registrierung aktivieren' : 'Registrierung pausieren';
-  if (regStateHint) regStateHint.textContent = locked ? 'Status: pausiert' : 'Status: aktiv';
-}
+      // UI je nach Status sperren/freigeben
+      function applyRegistrationStateUI() {
+        const locked = REGISTRATION_PAUSED === true;
+        submitBtn.disabled = locked;
+        submitBtn.textContent = locked ? 'Registrierung pausiert' : 'Kundennummer anfordern';
+        submitHint.textContent = locked ? 'Registrierungen sind vorübergehend deaktiviert.' : '';
 
-// === Status vom Server lesen
-async function fetchRegistrationState() {
-  try {
-    const body = new URLSearchParams({ action: 'getRegState' }).toString();
-    const res  = await fetch(WEB_APP_URL, {
-      method: 'POST',
-      headers: { 'Content-Type':'application/x-www-form-urlencoded' },
-      body
-    });
-    const raw = await res.text();
-    let json = null; try { json = JSON.parse(raw); } catch(_) {
-      throw new Error(`Unerwartete Antwort: ${raw.slice(0,180)}…`);
-    }
-    if (!json.ok) throw new Error(json.error || 'getRegState fehlgeschlagen.');
-    REGISTRATION_PAUSED = (json.state === 'paused' || json.paused === true);
-  } catch (err) {
-    console.error(err);
-    // Fallback: lieber offen lassen als fälschlich sperren
-    REGISTRATION_PAUSED = false;
-  } finally {
-    applyRegistrationStateUI();
-  }
-}
+        if (toggleRegBtn) toggleRegBtn.textContent = locked ? 'Registrierung aktivieren' : 'Registrierung pausieren';
+        if (regStateHint) regStateHint.textContent = locked ? 'Status: pausiert' : 'Status: aktiv';
+      }
 
-// === Status am Server setzen
-async function setRegistrationState(paused) {
-  try {
-    if (toggleRegBtn) { toggleRegBtn.disabled = true; toggleRegBtn.classList.add('loading'); }
-    const state = paused ? 'paused' : 'active';
-    const body = new URLSearchParams({ action: 'setRegState', state }).toString();
-    const res  = await fetch(WEB_APP_URL, {
-      method: 'POST',
-      headers: { 'Content-Type':'application/x-www-form-urlencoded' },
-      body
-    });
-    const raw = await res.text();
-    let json = null; try { json = JSON.parse(raw); } catch(_) {
-      throw new Error(`Unerwartete Antwort: ${raw.slice(0,180)}…`);
-    }
-    if (!json.ok) throw new Error(json.error || 'setRegState fehlgeschlagen.');
-    REGISTRATION_PAUSED = (json.state === 'paused' || json.paused === true);
-    applyRegistrationStateUI();
-    if (pdfHint) { pdfHint.textContent = 'Status aktualisiert.'; setTimeout(()=> pdfHint.textContent='', 3000); }
-  } catch (err) {
-    console.error(err);
-    submitHint.textContent = (err && err.message) ? err.message : 'Netzwerk-/CORS-Fehler.';
-  } finally {
-    if (toggleRegBtn) { toggleRegBtn.disabled = false; toggleRegBtn.classList.remove('loading'); }
-  }
-}
+      // Status vom Server lesen (mit Cache-Buster)
+      async function fetchRegistrationState() {
+        try {
+          const body = new URLSearchParams({ action: 'getRegState', _ts: String(Date.now()) }).toString();
+          const res  = await fetch(WEB_APP_URL, {
+            method: 'POST',
+            headers: { 'Content-Type':'application/x-www-form-urlencoded', 'Cache-Control':'no-store' },
+            body
+          });
+          const raw = await res.text();
+          let json = null; try { json = JSON.parse(raw); } catch(_) {
+            throw new Error(`Unerwartete Antwort: ${raw.slice(0,180)}…`);
+          }
+          if (!json.ok) throw new Error(json.error || 'getRegState fehlgeschlagen.');
+          REGISTRATION_PAUSED = (json.state === 'paused' || json.paused === true);
+        } catch (err) {
+          console.error(err);
+          // Fallback: lieber offen lassen als fälschlich sperren
+          REGISTRATION_PAUSED = false;
+        } finally {
+          applyRegistrationStateUI();
+        }
+      }
+
+      // Status am Server setzen – nextStateStr: 'active' | 'paused'
+      async function setRegistrationState(nextStateStr) {
+        try {
+          if (toggleRegBtn) { toggleRegBtn.disabled = true; toggleRegBtn.classList.add('loading'); }
+          const body = new URLSearchParams({ action: 'setRegState', state: nextStateStr, _ts: String(Date.now()) }).toString();
+          const res  = await fetch(WEB_APP_URL, {
+            method: 'POST',
+            headers: { 'Content-Type':'application/x-www-form-urlencoded', 'Cache-Control':'no-store' },
+            body
+          });
+          const raw = await res.text();
+          let json = null; try { json = JSON.parse(raw); } catch(_) {
+            throw new Error(`Unerwartete Antwort: ${raw.slice(0,180)}…`);
+          }
+          if (!json.ok) throw new Error(json.error || 'setRegState fehlgeschlagen.');
+          REGISTRATION_PAUSED = (json.state === 'paused' || json.paused === true);
+          applyRegistrationStateUI();
+          if (pdfHint) { pdfHint.textContent = `Status: ${json.state}`; setTimeout(()=> pdfHint.textContent='', 3000); }
+        } catch (err) {
+          console.error(err);
+          submitHint.textContent = (err && err.message) ? err.message : 'Netzwerk-/CORS-Fehler.';
+        } finally {
+          if (toggleRegBtn) { toggleRegBtn.disabled = false; toggleRegBtn.classList.remove('loading'); }
+        }
+      }
 
       function validate(){
         let ok = true;
@@ -509,11 +511,11 @@ async function setRegistrationState(paused) {
 
       // Submit -> Review
       form.addEventListener('submit', (e)=>{
+        e.preventDefault(); // immer zuerst verhindern
         if (REGISTRATION_PAUSED) {
-  submitHint.textContent = 'Registrierungen sind vorübergehend deaktiviert.';
-  return;
-}
-        e.preventDefault();
+          submitHint.textContent = 'Registrierungen sind vorübergehend deaktiviert.';
+          return;
+        }
         if(!validate()) return;
         fillReview();
         showOverlay(reviewOverlay);
@@ -523,7 +525,7 @@ async function setRegistrationState(paused) {
       document.getElementById('editBtn').addEventListener('click', ()=> reviewOverlay.classList.remove('show'));
       document.getElementById('closeReview').addEventListener('click', ()=> reviewOverlay.classList.remove('show'));
 
-      // === Doppel-Klick-Schutz + Idempotenz ===
+      // Doppel-Klick-Schutz + Idempotenz
       let submitting = false;
       function genNonce(){
         try{ return crypto.randomUUID(); }catch(_){ return Date.now()+'-'+Math.random().toString(16).slice(2); }
@@ -566,7 +568,6 @@ async function setRegistrationState(paused) {
           ovName.textContent = fullName;
           ovKdNr.textContent = kdNr;
 
-          // ===== WhatsApp-Text: nur gefüllte Felder, keine Platzhalter =====
           const waNumber = '4915258164673'; // ohne "+"
           const rows = [
             'Hallo Denise,',
@@ -580,7 +581,6 @@ async function setRegistrationState(paused) {
             payload.land ? `Land: ${payload.land}` : '',
             payload.email ? `E-Mail: ${payload.email}` : ''
           ].filter(Boolean);
-
           rows.push('Liebe Grüße');
 
           const waText = rows.join('\n');
@@ -616,7 +616,7 @@ async function setRegistrationState(paused) {
         }
       });
 
-      // ====== Reveal-Mechanik „5× H1 in 4s“: Admin-Bar zeigen ======
+      // Reveal-Mechanik „5× H1 in 4s“: Admin-Bar zeigen
       (()=>{
         let clicks = 0, timer = null;
         pageTitle.addEventListener('click', ()=>{
@@ -626,18 +626,17 @@ async function setRegistrationState(paused) {
           }
           if (clicks >= 5) {
             clearTimeout(timer); clicks = 0;
-                  clearTimeout(timer); clicks = 0;
-      adminBar.classList.remove('admin-hidden'); // sichtbar machen
-      pdfHint.textContent = 'Admin-Tools aktiv.';
-      setTimeout(()=> pdfHint.textContent = '', 3000);
+            adminBar.classList.remove('admin-hidden'); // sichtbar machen
+            pdfHint.textContent = 'Admin-Tools aktiv.';
+            setTimeout(()=> pdfHint.textContent = '', 3000);
 
-      // NEU: Beim Sichtbarwerden der Admin-Bar Status laden
-      fetchRegistrationState();
+            // Beim Sichtbarwerden der Admin-Bar Status laden
+            fetchRegistrationState();
           }
         });
       })();
 
-      // ====== PDF-Versand (Alle / Nur neue) ======
+      // PDF-Versand (Alle / Nur neue)
       async function sendPdf(scope){
         const btn = (scope === 'new') ? sendPdfNewBtn : sendPdfAllBtn;
         btn.disabled = true; btn.classList.add('loading');
@@ -652,7 +651,6 @@ async function setRegistrationState(paused) {
           const raw = await res.text();
           let json=null; try{ json = JSON.parse(raw);}catch(_){ throw new Error(`Unerwartete Antwort: ${raw.slice(0,200)}…`); }
           if(!json.ok) throw new Error(json.error || 'Fehler beim PDF-Versand.');
-          // Variante C: generische Erfolgsmeldung, ohne Empfänger/Dateiname/Zeilen
           pdfHint.textContent = 'PDF versendet.';
         } catch(err){
           console.error(err);
@@ -664,12 +662,14 @@ async function setRegistrationState(paused) {
       }
       sendPdfAllBtn.addEventListener('click', ()=> sendPdf('all'));
       sendPdfNewBtn.addEventListener('click', ()=> sendPdf('new'));
-      // NEU: Registrierungsstatus toggeln
-if (toggleRegBtn) {
-  toggleRegBtn.addEventListener('click', () => {
-    setRegistrationState(!REGISTRATION_PAUSED);
-  });
-}
+
+      // Registrierungsstatus toggeln (deterministisch)
+      if (toggleRegBtn) {
+        toggleRegBtn.addEventListener('click', () => {
+          const next = REGISTRATION_PAUSED ? 'active' : 'paused';
+          setRegistrationState(next);
+        });
+      }
 
       // Zurücksetzen (Form UI)
       resetBtn.addEventListener('click', ()=>{
@@ -682,6 +682,10 @@ if (toggleRegBtn) {
         submitBtn.textContent='Kundennummer anfordern';
         fetchRegistrationState();
       });
+
+      // *** WICHTIG: Status beim Laden ziehen + periodisch aktualisieren ***
+      fetchRegistrationState();
+      setInterval(fetchRegistrationState, 300000); // alle 5 Minuten
     })();
   </script>
 </body>
