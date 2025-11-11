@@ -314,7 +314,7 @@
     (function(){
       const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxcslNZhjXLbOeTsk8yuabOatZXQEaWSnc0cl5kiXg9ylEIwPaRohFlrDyHcqkzoV4/exec'; // <- anpassen
       const SUBMIT_COOLDOWN_MS = 10000;
-      let REGISTRATION_PAUSED = JSON.parse(localStorage.getItem('regPaused') ?? 'true');
+      let REGISTRATION_PAUSED = true; // Serverwert wird gleich geladen
      
       const form = document.getElementById('form');
       const submitBtn = document.getElementById('submitBtn');
@@ -343,11 +343,46 @@
       const pdfHint       = document.getElementById('pdfHint');
       const regStatus     = document.getElementById('regStatus');
       const toggleRegBtn  = document.getElementById('toggleRegBtn');
+      // === Server-Status API ===
+async function fetchRegStatus(){
+  try{
+    const body = new URLSearchParams({ action: 'getRegStatus' }).toString();
+    const res  = await fetch(WEB_APP_URL, { method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body });
+    const raw  = await res.text();
+    let json=null; try{ json = JSON.parse(raw);}catch(_){ throw new Error('Ungültige Server-Antwort'); }
+    if(!json.ok || typeof json.paused!=='boolean') throw new Error(json.error || 'Status konnte nicht geladen werden.');
+    REGISTRATION_PAUSED = json.paused;
+    applyRegistrationState(REGISTRATION_PAUSED);
+  }catch(err){
+    console.warn(err);
+    // Fallback: bleibt auf true (pausiert), damit nichts Unbeabsichtigtes passiert
+    applyRegistrationState(true);
+  }
+}
+
+async function setRegStatus(nextPaused){
+  try{
+    // Optionaler PIN-Guard; falls im Backend gefordert: pin=465676
+    const body = new URLSearchParams({ action:'setRegStatus', paused: String(!!nextPaused), pin:'465676' }).toString();
+    const res  = await fetch(WEB_APP_URL, { method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body });
+    const raw  = await res.text();
+    let json=null; try{ json = JSON.parse(raw);}catch(_){ throw new Error('Ungültige Server-Antwort'); }
+    if(!json.ok || typeof json.paused!=='boolean') throw new Error(json.error || 'Status konnte nicht gesetzt werden.');
+    REGISTRATION_PAUSED = json.paused;
+    applyRegistrationState(REGISTRATION_PAUSED);
+    pdfHint.textContent = REGISTRATION_PAUSED ? 'Registrierung deaktiviert.' : 'Registrierung aktiviert.';
+    setTimeout(()=> pdfHint.textContent='', 3000);
+  }catch(err){
+    console.error(err);
+    pdfHint.textContent = err.message || 'Netzwerkfehler.';
+    setTimeout(()=> pdfHint.textContent='', 5000);
+  }
+}
 
       const $ = (id) => document.getElementById(id);
            function applyRegistrationState(paused){
         REGISTRATION_PAUSED = paused;
-        localStorage.setItem('regPaused', JSON.stringify(paused));
+      
 
         // Submit-Button
         submitBtn.disabled   = paused;
@@ -370,13 +405,19 @@
   regStatus.textContent = paused ? ' – Registrierung pausiert' : '';
       }
 
-      // Initial anwenden (liest Startzustand aus Variable / localStorage)
-      applyRegistrationState(REGISTRATION_PAUSED);
+      // Initial: UI konservativ sperren, dann Serverstatus laden
+applyRegistrationState(true);
+fetchRegStatus();
 
-      // Toggle-Handler
-      toggleRegBtn.addEventListener('click', ()=>{
-        applyRegistrationState(!REGISTRATION_PAUSED);
-      });
+     // Toggle-Handler (schreibt auf Server)
+toggleRegBtn.addEventListener('click', async ()=>{
+  toggleRegBtn.disabled = true;
+  try{
+    await setRegStatus(!REGISTRATION_PAUSED);
+  }finally{
+    toggleRegBtn.disabled = false;
+  }
+});
       
       // Hard-hide Admin-Bar on load
       adminBar.classList.add('admin-hidden');
