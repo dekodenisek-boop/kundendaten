@@ -313,6 +313,7 @@
   <script>
     (function(){
       const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxcslNZhjXLbOeTsk8yuabOatZXQEaWSnc0cl5kiXg9ylEIwPaRohFlrDyHcqkzoV4/exec'; // <- anpassen
+      const SUBMIT_COOLDOWN_MS = 10000;
       let REGISTRATION_PAUSED = JSON.parse(localStorage.getItem('regPaused') ?? 'true');
      
       const form = document.getElementById('form');
@@ -510,9 +511,14 @@
         procMsg.textContent = 'Deine Daten werden sicher übertragen.';
         procSub.textContent = 'Das kann je nach Netz 5–15 Sekunden dauern.';
 
-        submitBtn.disabled = true;
-        submitBtn.classList.add('loading');
-        const cooldownTimer = setTimeout(()=>{ submitBtn.disabled=false; submitBtn.classList.remove('loading'); }, SUBMIT_COOLDOWN_MS);
+       submitBtn.disabled = true;
+submitBtn.classList.add('loading');
+// Failsafe, falls SUBMIT_COOLDOWN_MS mal fehlt/fehlerhaft ist:
+const COOLDOWN = (typeof SUBMIT_COOLDOWN_MS === 'number' && isFinite(SUBMIT_COOLDOWN_MS)) ? SUBMIT_COOLDOWN_MS : 10000;
+const cooldownTimer = setTimeout(()=>{
+  submitBtn.disabled = false;
+  submitBtn.classList.remove('loading');
+}, COOLDOWN);
 
         let slowTimer1 = setTimeout(()=>{ procMsg.textContent='Noch dran …'; procSub.textContent='Es dauert gerade länger als üblich. Bitte weiterhin warten.'; }, 8000);
         let slowTimer2 = setTimeout(()=>{ procMsg.textContent='Fast geschafft …'; procSub.textContent='Wir haben die Registrierung im System, finalisieren gleich die Kundennummer.'; }, 15000);
