@@ -314,7 +314,7 @@
 
       // --- Runtime-Schalter: in localStorage persistiert ---
       const REG_KEY = 'regPaused';
-      let regPaused = JSON.parse(localStorage.getItem(REG_KEY) ?? 'true'); // Default: pausiert = true
+      let regPaused = JSON.parse(localStorage.getItem(REG_KEY) ?? 'false'); // Default: pausiert = true
 
       // Form-/UI-Refs
       const form = document.getElementById('form');
@@ -372,24 +372,7 @@
             toggleRegBtn.classList.add('btn-success');
             toggleRegBtn.title = 'Registrierung einschalten';
           }
-        } else {
-          submitBtn.disabled = false;
-          submitBtn.textContent = 'Kundennummer anfordern';
-          submitBtn.title = '';
-
-          confirmSubmitBtn.disabled = false;
-          confirmSubmitBtn.textContent = 'Jetzt registrieren';
-          confirmSubmitBtn.title = '';
-
-          submitHint.textContent='';
-          const rs = document.getElementById('regStatus'); if(rs) rs.textContent='';
-
-          if (toggleRegBtn){
-            toggleRegBtn.textContent = 'Registrierung deaktivieren';
-            toggleRegBtn.classList.remove('btn-success');
-            toggleRegBtn.classList.add('btn-danger');
-            toggleRegBtn.title = 'Registrierung ausschalten';
-          }
+        }
         }
       } else {
           submitBtn.disabled = false;
@@ -459,13 +442,10 @@
         markInvalid(landOther,'err-land',landBad && landSelect.value==='other');
         ok = ok && !landBad;
 
-        let emailVal = email.value.replace(/\u00A0/g, ' ').trim(); // NBSP -> Space
-email.value = emailVal; // normalisierten Wert zurück ins Feld
-const emailGood = emailVal.length && email.checkValidity(); // Native HTML5-Emailprüfung
+        const emailVal=email.value.trim(); const emailGood = emailVal.length && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal);
         markInvalid(email,'err-email',!emailGood); ok = ok && emailGood;
 
-        const emailConfVal = emailConfirm.value.replace(/\u00A0/g, ' ').trim();
-        const emailMatch = emailConfVal.length && (emailVal.toLowerCase()===emailConfVal.toLowerCase());
+        const emailConfVal=emailConfirm.value.trim(); const emailMatch = emailConfVal.length && (emailVal.toLowerCase()===emailConfVal.toLowerCase());
         markInvalid(emailConfirm,'err-emailConfirm',!emailMatch); ok = ok && emailMatch;
 
         const agbBad=!acceptAgb.checked, dsgvoBad=!acceptDsgvo.checked;
