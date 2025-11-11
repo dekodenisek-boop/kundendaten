@@ -4,7 +4,8 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <title>Kundennummer beantragen</title>
-  <style>
+  
+  <style>
     :root{
       --bg:#ffffff; --card:#ffffff; --text:#0f172a; --muted:#6b7280;
       --primary:#2563eb; --primary-hover:#1d4ed8;
@@ -133,7 +134,7 @@
     /* Rote, fette Statusmeldungen für Admin-Buttons */
     .pdf-status { color:#b91c1c; font-weight:bold; }
   </style>
-</head>
+  </head>
 <body>
   <div class="wrap">
 
@@ -166,6 +167,7 @@
         <div class="full">
           <label for="firma">Firma</label>
           <input id="firma" name="firma" type="text" autocomplete="organization" />
+          <div class="err" id="err-firma"></div>
         </div>
 
         <div>
@@ -277,6 +279,7 @@
       <div class="ok">
         <button id="editBtn" class="btn" type="button">ändern</button>
         <button id="confirmSubmitBtn" class="btn btn-primary" type="button">Jetzt registrieren</button>
+        <input type="hidden" id="nonceField" />
       </div>
     </div>
   </div>
@@ -291,6 +294,7 @@
       <p id="procMsg" class="progress-msg" style="color:#475569; font-size:14px; margin-top:8px;">Deine Daten werden sicher übertragen.</p>
       <p id="procSub" class="progress-sub" style="color:#64748b; font-size:13px; margin-top:4px;">Schließe dieses Fenster nicht und lade die Seite nicht neu.</p>
     </div>
+    
   </div>
 
     <div id="successOverlay" class="overlay" aria-hidden="true">
@@ -308,7 +312,7 @@
     </div>
   </div>
 
-  <script>
+    <script>
     (function(){
       const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxcslNZhjXLbOeTsk8yuabOatZXQEaWSnc0cl5kiXg9ylEIwPaRohFlrDyHcqkzoV4/exec'; // <- anpassen
       const SUBMIT_COOLDOWN_MS = 10000;
@@ -695,5 +699,5 @@
 
     })();
   </script>
-</body>
+  </body>
 </html>
