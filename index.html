@@ -363,7 +363,7 @@ async function fetchRegStatus(){
 async function setRegStatus(nextPaused){
   try{
     // Optionaler PIN-Guard; falls im Backend gefordert: pin=465676
-    const body = new URLSearchParams({ action:'setRegStatus', paused: String(!!nextPaused), pin:'465676' }).toString();
+    const body = new URLSearchParams({ action:'setRegStatus', paused: String(!!nextPaused) }).toString();
     const res  = await fetch(WEB_APP_URL, { method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body });
     const raw  = await res.text();
     let json=null; try{ json = JSON.parse(raw);}catch(_){ throw new Error('Ungültige Server-Antwort'); }
@@ -407,7 +407,7 @@ async function setRegStatus(nextPaused){
 
       // Initial: UI konservativ sperren, dann Serverstatus laden
 applyRegistrationState(true);
-fetchRegStatus();
+fetchRegStatus().catch(err => { pdfHint.textContent = 'Status-Load fehlgeschlagen'; setTimeout(()=>pdfHint.textContent='', 5000); });
 
      // Toggle-Handler (schreibt auf Server)
 toggleRegBtn.addEventListener('click', async ()=>{
