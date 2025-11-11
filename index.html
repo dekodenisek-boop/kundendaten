@@ -23,21 +23,14 @@
     .wrap{max-width:860px; margin:0 auto;}
 
     /* Brand */
-    .brand{
-      display:flex; justify-content:center; align-items:center;
-      margin:0 0 10px;
-    }
-    .brand img{
-      display:block; height:64px; width:auto;
-    }
+    .brand{ display:flex; justify-content:center; align-items:center; margin:0 0 10px; }
+    .brand img{ display:block; height:64px; width:auto; }
 
     /* H1 als „Badge“ mit Brand-Farbe */
     h1{
       margin:0 0 8px; font-size:22px; font-weight:800; letter-spacing:.3px;
-      cursor:pointer;
-      background:var(--brand); color:#fff;
-      padding:12px 14px; border-radius:12px;
-      text-align:center;
+      cursor:pointer; background:var(--brand); color:#fff;
+      padding:12px 14px; border-radius:12px; text-align:center;
     }
 
     p.lead{margin:0 0 20px; color:var(--muted)}
@@ -49,10 +42,7 @@
       color:var(--text);
     }
     label{
-      display:block;            /* Labels stehen über dem Feld */
-      margin:0 0 6px;
-      font-weight:600;
-      color:var(--text);
+      display:block; margin:0 0 6px; font-weight:600; color:var(--text);
     }
     .hint{color:var(--muted); font-size:13px; margin-top:6px;}
     .checkline{border-top:1px dashed rgba(0,0,0,.08); padding-top:8px;}
@@ -125,7 +115,7 @@
       .btn{ padding:12px 14px; } .btn-wa{ padding:12px 16px; }
     }
 
-    /* Admin-Bar (hart versteckt, eigener Flex-Container) */
+    /* Admin-Bar */
     .admin-hidden { display: none !important; }
     .admin-bar { display:flex; gap:10px; align-items:center; margin:6px 0 12px; flex-wrap:wrap; }
 
@@ -135,8 +125,6 @@
 </head>
 <body>
   <div class="wrap">
-
-    <!-- Logo oberhalb der H1 -->
     <div class="brand">
       <img src="https://dekodenise.de/cdn/shop/files/De.Ko_Logo_Rund.png?v=1749137634&width=140"
            alt="De.Ko Denise Logo" loading="eager" decoding="async">
@@ -148,9 +136,8 @@
     <div id="adminBar" class="admin-hidden admin-bar">
       <button id="sendPdfAllBtn" class="btn btn-success" type="button" title="Komplette Liste senden">Alle senden</button>
       <button id="sendPdfNewBtn" class="btn btn-primary" type="button" title="Nur neue seit letztem Versand senden">Neue senden</button>
-      <a id="liveBtn" href="https://script.google.com/macros/s/AKfycbwahhpXp-34saIoElpBdZB1l2Z5Bo23KsnYU435wlMtmTjoJyYbtN_QEqM1VGdLcBUQ/exec" class="btn btn-danger" title="Live" target="_blank" rel="noopener">
-  Live
-</a>
+      <a id="liveBtn" href="https://script.google.com/macros/s/AKfycbwahhpXp-34saIoElpBdZB1l2Z5Bo23KsnYU435wlMtmTjoJyYbtN_QEqM1VGdLcBUQ/exec"
+         class="btn btn-danger" title="Live" target="_blank" rel="noopener noreferrer">Live</a>
       <span id="pdfHint" class="pdf-status"></span>
     </div>
 
@@ -230,7 +217,7 @@
         <div class="full checkline">
           <input id="acceptAgb" name="acceptAgb" type="checkbox" />
           <label for="acceptAgb" style="display:inline; font-weight:400;">
-            Ich akzeptiere die <a href="https://dekodenise.de/policies/terms-of-service" target="_blank" rel="noopener">AGB</a>. <span class="req" style="color:#dc2626; font-weight:700;">*</span>
+            Ich akzeptiere die <a href="https://dekodenise.de/policies/terms-of-service" target="_blank" rel="noopener noreferrer">AGB</a>. <span class="req" style="color:#dc2626; font-weight:700;">*</span>
           </label>
         </div>
         <div class="full"><div class="err err-inline" id="err-agb">Bitte AGB akzeptieren.</div></div>
@@ -238,7 +225,7 @@
         <div class="full checkline" style="margin-top:-8px;">
           <input id="acceptDsgvo" name="acceptDsgvo" type="checkbox" />
           <label for="acceptDsgvo" style="display:inline; font-weight:400;">
-            Ich stimme der <a href="https://dekodenise.de/policies/privacy-policy" target="_blank" rel="noopener">Datenschutzerklärung</a> zu. <span class="req" style="color:#dc2626; font-weight:700;">*</span>
+            Ich stimme der <a href="https://dekodenise.de/policies/privacy-policy" target="_blank" rel="noopener noreferrer">Datenschutzerklärung</a> zu. <span class="req" style="color:#dc2626; font-weight:700;">*</span>
           </label>
         </div>
         <div class="full"><div class="err err-inline" id="err-dsgvo">Bitte der Datenschutzerklärung zustimmen.</div></div>
@@ -299,322 +286,312 @@
       <p>Danke, <span id="ovName"></span>! Deine Kundennummer lautet: <b id="ovKdNr"></b>.</p>
       <p style="color:#b91c1c; font-weight:700; margin-top:16px;">Bitte setze dich einmal über WhatsApp mit mir in Verbindung. Werde mich morgen persönlich bei Dir zurück melden!</p>
       <div style="margin-top:10px; display:flex; justify-content:flex-start;">
-        <a id="waBtn" class="btn btn-wa" href="#" target="_blank" rel="noopener">
-          Jetzt per WhatsApp schreiben
-        </a>
+        <a id="waBtn" class="btn btn-wa" href="#" target="_blank" rel="noopener noreferrer">Jetzt per WhatsApp schreiben</a>
       </div>
     </div>
   </div>
 
   <script>
-(function(){
-  // === Web-App URL (einmalig) ===
-  const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxcslNZhjXLbOeTsk8yuabOatZXQEaWSnc0cl5kiXg9ylEIwPaRohFlrDyHcqkzoV4/exec';
+  (function(){
+    // === Web-App URL (einmalig) ===
+    const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxcslNZhjXLbOeTsk8yuabOatZXQEaWSnc0cl5kiXg9ylEIwPaRohFlrDyHcqkzoV4/exec';
 
-  // === UI-Elemente, Konstanten ===
-  const SUBMIT_COOLDOWN_MS = 10000;
+    // === UI-Elemente, Konstanten ===
+    const SUBMIT_COOLDOWN_MS = 10000;
 
-  const form = document.getElementById('form');
-  const submitBtn = document.getElementById('submitBtn');
-  const resetBtn  = document.getElementById('resetBtn');
-  const submitHint= document.getElementById('submitHint');
+    const form = document.getElementById('form');
+    const submitBtn = document.getElementById('submitBtn');
+    const resetBtn  = document.getElementById('resetBtn');
+    const submitHint= document.getElementById('submitHint');
 
-  const reviewOverlay = document.getElementById('reviewOverlay');
-  const confirmSubmitBtn = document.getElementById('confirmSubmitBtn');
-  const editBtn = document.getElementById('editBtn');
+    const reviewOverlay = document.getElementById('reviewOverlay');
+    const confirmSubmitBtn = document.getElementById('confirmSubmitBtn');
+    const editBtn = document.getElementById('editBtn');
 
-  const processingOverlay = document.getElementById('processingOverlay');
-  const procMsg = document.getElementById('procMsg');
-  const procSub = document.getElementById('procSub');
+    const processingOverlay = document.getElementById('processingOverlay');
+    const procMsg = document.getElementById('procMsg');
+    const procSub = document.getElementById('procSub');
 
-  const successOverlay = document.getElementById('successOverlay');
-  const ovName = document.getElementById('ovName');
-  const ovKdNr = document.getElementById('ovKdNr');
+    const successOverlay = document.getElementById('successOverlay');
+    const ovName = document.getElementById('ovName');
+    const ovKdNr = document.getElementById('ovKdNr');
 
-  const landSelect = document.getElementById('landSelect');
-  const landOther  = document.getElementById('landOther');
+    const landSelect = document.getElementById('landSelect');
+    const landOther  = document.getElementById('landOther');
 
-  const pageTitle     = document.getElementById('pageTitle');
-  const adminBar      = document.getElementById('adminBar');
-  const sendPdfAllBtn = document.getElementById('sendPdfAllBtn');
-  const sendPdfNewBtn = document.getElementById('sendPdfNewBtn');
-  const pdfHint       = document.getElementById('pdfHint');
+    const pageTitle     = document.getElementById('pageTitle');
+    const adminBar      = document.getElementById('adminBar');
+    const sendPdfAllBtn = document.getElementById('sendPdfAllBtn');
+    const sendPdfNewBtn = document.getElementById('sendPdfNewBtn');
+    const pdfHint       = document.getElementById('pdfHint');
 
-  const $ = (id) => document.getElementById(id);
+    const $ = (id) => document.getElementById(id);
 
-  // === Admin-Bar initial verstecken
-  adminBar.classList.add('admin-hidden');
+    // Admin-Bar initial verstecken
+    adminBar.classList.add('admin-hidden');
 
-  // === Registrierungsstatus (Pause) vom Backend holen
-  let REGISTRATION_PAUSED = false;
-  const REG_BLOCK_MSG = 'Registrierung vorübergehend pausiert. Bitte später erneut versuchen.';
+    // Registrierungsstatus (Pause) vom Backend holen – scheitert still, wenn Endpoint fehlt
+    let REGISTRATION_PAUSED = false;
+    const REG_BLOCK_MSG = 'Registrierung vorübergehend pausiert. Bitte später erneut versuchen.';
+    (async function fetchRegistrationState(){
+      try {
+        const res = await fetch(WEB_APP_URL + '?action=getRegStatus', { cache: 'no-store' });
+        const raw = await res.text();
+        let json = null; try { json = JSON.parse(raw); } catch(_) {}
+        if (json && json.ok) {
+          REGISTRATION_PAUSED = !!json.paused;
+          if (REGISTRATION_PAUSED) {
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Aktuell pausiert';
+            submitHint.textContent = REG_BLOCK_MSG;
+          }
+        }
+      } catch(e) { /* ignorieren */ }
+    })();
 
-  async function fetchRegistrationState() {
-    try {
-      const res = await fetch(WEB_APP_URL + '?action=getRegStatus');
-      const raw = await res.text();
-      const json = JSON.parse(raw);
-      REGISTRATION_PAUSED = !!json.paused;
+    // Overlay-Helper
+    function showOverlay(ov){ ov.classList.add('show'); ov.setAttribute('aria-hidden','false'); }
+    function hideOverlay(ov){ ov.classList.remove('show'); ov.setAttribute('aria-hidden','true'); }
 
-      if (REGISTRATION_PAUSED) {
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'Aktuell pausiert';
-        submitHint.textContent = REG_BLOCK_MSG;
-      }
-    } catch(e) {
-      // Status nicht verfügbar -> ignorieren
+    // Validierung
+    function markInvalid(input, errId, show){
+      if(!input) return;
+      if(show){ if (input.type !== 'checkbox') input.classList.add('is-invalid'); if(errId) $(errId).classList.add('show'); }
+      else { if (input.type !== 'checkbox') input.classList.remove('is-invalid'); if(errId) $(errId).classList.remove('show'); }
     }
-  }
-  fetchRegistrationState();
 
-  // === Overlays helpers
-  function showOverlay(ov){ ov.classList.add('show'); ov.setAttribute('aria-hidden','false'); }
-  function hideOverlay(ov){ ov.classList.remove('show'); ov.setAttribute('aria-hidden','true'); }
-
-  // === Validierung
-  function markInvalid(input, errId, show){
-    if(!input) return;
-    if(show){
-      if (input.type !== 'checkbox') input.classList.add('is-invalid');
-      if(errId) $(errId).classList.add('show');
-    } else {
-      if (input.type !== 'checkbox') input.classList.remove('is-invalid');
-      if(errId) $(errId).classList.remove('show');
+    function firstErrorScroll(){
+      const el = document.querySelector('.err.show, .is-invalid');
+      if (el) (el.closest('.checkline') || el).scrollIntoView({behavior:'smooth', block:'center'});
     }
-  }
 
-  function firstErrorScroll(){
-    const el = document.querySelector('.err.show, .is-invalid');
-    if (el) (el.closest('.checkline') || el).scrollIntoView({behavior:'smooth', block:'center'});
-  }
+    // Standard: Deutschland
+    landSelect.value = 'Deutschland';
+    landSelect.addEventListener('change', ()=>{
+      const isOther = landSelect.value === 'other';
+      landOther.style.display = isOther ? 'block' : 'none';
+      if (!isOther) landOther.value = '';
+      markInvalid(landSelect, 'err-land', false);
+      markInvalid(landOther,  'err-land', false);
+    });
 
-  // Standard: Deutschland vorauswählen
-  landSelect.value = 'Deutschland';
-  landSelect.addEventListener('change', ()=>{
-    const isOther = landSelect.value === 'other';
-    landOther.style.display = isOther ? 'block' : 'none';
-    if (!isOther) landOther.value = '';
-    markInvalid(landSelect, 'err-land', false);
-    markInvalid(landOther,  'err-land', false);
-  });
-
-  function getLandValue(){
-    return (landSelect.value === 'other') ? landOther.value.trim() : landSelect.value.trim();
-  }
-
-  function validate(){
-    let ok = true;
-    const vorname=$('vorname'), nachname=$('nachname'), strasse=$('strasse'),
-          plz=$('plz'), ort=$('ort'), handy=$('handy'),
-          email=$('email'), emailConfirm=$('emailConfirm'),
-          acceptAgb=$('acceptAgb'), acceptDsgvo=$('acceptDsgvo');
-
-    [['vorname','err-vorname'],['nachname','err-nachname'],['strasse','err-strasse'],['ort','err-ort'],['handy','err-handy']]
-      .forEach(([id,err])=>{ const el=$(id); const bad=!el.value.trim(); markInvalid(el,err,bad); ok=ok && !bad; });
-
-    const plzBad = !plz.value.trim() || !(new RegExp(/^[A-Za-z0-9 \-]{1,10}$/).test(plz.value.trim()));
-    markInvalid(plz,'err-plz',plzBad); ok = ok && !plzBad;
-
-    const landVal = getLandValue(); const landBad = !landVal;
-    markInvalid(landSelect,'err-land',landBad && landSelect.value!=='other');
-    markInvalid(landOther,'err-land',landBad && landSelect.value==='other');
-    ok = ok && !landBad;
-
-    const emailVal=email.value.trim(); const emailGood = emailVal.length && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal);
-    markInvalid(email,'err-email',!emailGood); ok = ok && emailGood;
-
-    const emailConfVal=emailConfirm.value.trim(); const emailMatch = emailConfVal.length && (emailVal.toLowerCase()===emailConfVal.toLowerCase());
-    markInvalid(emailConfirm,'err-emailConfirm',!emailMatch); ok = ok && emailMatch;
-
-    const agbBad=!acceptAgb.checked, dsgvoBad=!acceptDsgvo.checked;
-    markInvalid(acceptAgb,'err-agb',agbBad); ok = ok && !agbBad;
-    markInvalid(document.getElementById('acceptDsgvo'),'err-dsgvo',dsgvoBad); ok = ok && !dsgvoBad;
-
-    if(!ok) firstErrorScroll();
-    return ok;
-  }
-
-  function fillReview(){
-    $('rev-firma').textContent   = $('firma').value.trim() || '—';
-    $('rev-vorname').textContent = $('vorname').value.trim();
-    $('rev-nachname').textContent= $('nachname').value.trim();
-    $('rev-strasse').textContent = $('strasse').value.trim();
-    $('rev-plz').textContent     = $('plz').value.trim();
-    $('rev-ort').textContent     = $('ort').value.trim();
-    $('rev-land').textContent    = getLandValue();
-    $('rev-handy').textContent   = $('handy').value.trim();
-    $('rev-email').textContent   = $('email').value.trim();
-  }
-
-  function buildPayload(nonce){
-    return {
-      nonce,
-      firma:$('firma').value.trim(),
-      vorname:$('vorname').value.trim(),
-      nachname:$('nachname').value.trim(),
-      strasse:$('strasse').value.trim(),
-      plz:$('plz').value.trim(),
-      ort:$('ort').value.trim(),
-      land:getLandValue(),
-      handy:$('handy').value.trim(),
-      email:$('email').value.trim(),
-      emailConfirm:$('emailConfirm').value.trim(),
-      acceptAgb:$('acceptAgb').checked,
-      acceptDsgvo:$('acceptDsgvo').checked
-    };
-  }
-
-  // Submit -> Review
-  form.addEventListener('submit', (e)=>{
-    e.preventDefault();
-    if(!validate()) return;
-    fillReview();
-    showOverlay(reviewOverlay);
-  });
-
-  // Review schließen / ändern
-  document.getElementById('editBtn').addEventListener('click', ()=> reviewOverlay.classList.remove('show'));
-  document.getElementById('closeReview').addEventListener('click', ()=> reviewOverlay.classList.remove('show'));
-
-  // === Doppel-Klick-Schutz + Idempotenz ===
-  let submitting = false;
-  function genNonce(){
-    try{ return crypto.randomUUID(); }catch(_){ return Date.now()+'-'+Math.random().toString(16).slice(2); }
-  }
-
-  document.getElementById('confirmSubmitBtn').addEventListener('click', async ()=>{
-    if(submitting) return;
-    if (REGISTRATION_PAUSED) return; // Hard-stop bei Pause
-
-    submitting = true;
-
-    confirmSubmitBtn.disabled = true;
-    confirmSubmitBtn.classList.add('loading');
-    editBtn.disabled = true;
-
-    reviewOverlay.classList.remove('show');
-    processingOverlay.classList.add('show');
-    processingOverlay.classList.add('locked');
-
-    procMsg.textContent = 'Deine Daten werden sicher übertragen.';
-    procSub.textContent = 'Das kann je nach Netz 5–15 Sekunden dauern.';
-
-    submitBtn.disabled = true;
-    submitBtn.classList.add('loading');
-    const cooldownTimer = setTimeout(()=>{ submitBtn.disabled=false; submitBtn.classList.remove('loading'); }, SUBMIT_COOLDOWN_MS);
-
-    let slowTimer1 = setTimeout(()=>{ procMsg.textContent='Noch dran …'; procSub.textContent='Es dauert gerade länger als üblich. Bitte weiterhin warten.'; }, 8000);
-    let slowTimer2 = setTimeout(()=>{ procMsg.textContent='Fast geschafft …'; procSub.textContent='Wir haben die Registrierung im System, finalisieren gleich die Kundennummer.'; }, 15000);
-
-    const nonce = genNonce();
-    const payload = buildPayload(nonce);
-
-    try{
-      const body = new URLSearchParams(payload).toString();
-      const res = await fetch(WEB_APP_URL, { method:'POST', headers:{ 'Content-Type':'application/x-www-form-urlencoded' }, body });
-      const raw = await res.text();
-      let json=null; try{ json = JSON.parse(raw);}catch(_){ throw new Error(`Kein JSON (${res.status}): ${raw.slice(0,180)}…`); }
-      if(!json.ok) throw new Error(json.error || 'Fehler beim Senden.');
-
-      const fullName = json.fullName || (payload.vorname + ' ' + payload.nachname);
-      const kdNr = json.kdNr || '';
-      ovName.textContent = fullName;
-      ovKdNr.textContent = kdNr;
-
-      // WhatsApp-Link
-      const waNumber = '4915258164673';
-      const rows = [
-        'Hallo Denise,',
-        'ich habe mich gerade registriert und soll mich bei dir melden.',
-        `Meine Kundennummer: ${kdNr}`,
-        payload.firma ? `Firmenname: ${payload.firma}` : '',
-        `Name: ${fullName}`,
-        payload.strasse ? `Straße & Nr.: ${payload.strasse}` : '',
-        payload.plz ? `PLZ: ${payload.plz}` : '',
-        payload.ort ? `Ort: ${payload.ort}` : '',
-        payload.land ? `Land: ${payload.land}` : '',
-        payload.email ? `E-Mail: ${payload.email}` : ''
-      ].filter(Boolean);
-      rows.push('Liebe Grüße');
-      const waText = rows.join('\n');
-      document.getElementById('waBtn').setAttribute('href','https://wa.me/' + waNumber + '?text=' + encodeURIComponent(waText));
-
-      processingOverlay.classList.remove('locked'); processingOverlay.classList.remove('show');
-      successOverlay.classList.add('show');
-      submitBtn.textContent = 'Senden erfolgreich';
-      form.reset();
-
-    }catch(err){
-      console.error(err);
-      submitHint.textContent = (err && err.message) ? err.message : 'Netzwerk-/CORS-Fehler.';
-      processingOverlay.classList.remove('locked'); processingOverlay.classList.remove('show');
-    }finally{
-      clearTimeout(slowTimer1); clearTimeout(slowTimer2); clearTimeout(cooldownTimer);
-      submitBtn.classList.remove('loading'); confirmSubmitBtn.classList.remove('loading');
-      submitting = false; confirmSubmitBtn.disabled = false; editBtn.disabled = false;
+    function getLandValue(){
+      return (landSelect.value === 'other') ? landOther.value.trim() : landSelect.value.trim();
     }
-  });
 
-  // Overlays schließen
-  document.getElementById('closeSuccess').addEventListener('click', ()=> successOverlay.classList.remove('show'));
-  successOverlay.addEventListener('click', (e)=>{ if(e.target === successOverlay) successOverlay.classList.remove('show'); });
-  reviewOverlay.addEventListener('click', (e)=>{ if(e.target === reviewOverlay) reviewOverlay.classList.remove('show'); });
-  document.addEventListener('keydown', (e)=>{
-    if(e.key==='Escape'){
-      if (reviewOverlay.classList.contains('show')) reviewOverlay.classList.remove('show');
-      else if (successOverlay.classList.contains('show')) successOverlay.classList.remove('show');
+    function validate(){
+      let ok = true;
+      const vorname=$('vorname'), nachname=$('nachname'), strasse=$('strasse'),
+            plz=$('plz'), ort=$('ort'), handy=$('handy'),
+            email=$('email'), emailConfirm=$('emailConfirm'),
+            acceptAgb=$('acceptAgb'), acceptDsgvo=$('acceptDsgvo');
+
+      [['vorname','err-vorname'],['nachname','err-nachname'],['strasse','err-strasse'],['ort','err-ort'],['handy','err-handy']]
+        .forEach(([id,err])=>{ const el=$(id); const bad=!el.value.trim(); markInvalid(el,err,bad); ok=ok && !bad; });
+
+      const plzBad = !plz.value.trim() || !(new RegExp(/^[A-Za-z0-9 \-]{1,10}$/).test(plz.value.trim()));
+      markInvalid(plz,'err-plz',plzBad); ok = ok && !plzBad;
+
+      const landVal = getLandValue(); const landBad = !landVal;
+      markInvalid(landSelect,'err-land',landBad && landSelect.value!=='other');
+      markInvalid(landOther,'err-land',landBad && landSelect.value==='other');
+      ok = ok && !landBad;
+
+      const emailVal=email.value.trim(); const emailGood = emailVal.length && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal);
+      markInvalid(email,'err-email',!emailGood); ok = ok && emailGood;
+
+      const emailConfVal=emailConfirm.value.trim(); const emailMatch = emailConfVal.length && (emailVal.toLowerCase()===emailConfVal.toLowerCase());
+      markInvalid(emailConfirm,'err-emailConfirm',!emailMatch); ok = ok && emailMatch;
+
+      const agbBad=!acceptAgb.checked, dsgvoBad=!acceptDsgvo.checked;
+      markInvalid(acceptAgb,'err-agb',agbBad); ok = ok && !agbBad;
+      markInvalid(document.getElementById('acceptDsgvo'),'err-dsgvo',dsgvoBad); ok = ok && !dsgvoBad;
+
+      if(!ok) firstErrorScroll();
+      return ok;
     }
-  });
 
-  // === Reveal-Mechanik „5× H1 in 4s“ ===
-  (()=>{
-    let clicks = 0, timer = null;
-    pageTitle.addEventListener('click', ()=>{
-      clicks++;
-      if (clicks === 1) { timer = setTimeout(()=>{ clicks = 0; }, 4000); }
-      if (clicks >= 5) {
-        clearTimeout(timer); clicks = 0;
-        adminBar.classList.remove('admin-hidden');
-        pdfHint.textContent = 'Admin-Tools aktiv.';
-        setTimeout(()=> pdfHint.textContent = '', 3000);
+    function fillReview(){
+      $('rev-firma').textContent   = $('firma').value.trim() || '—';
+      $('rev-vorname').textContent = $('vorname').value.trim();
+      $('rev-nachname').textContent= $('nachname').value.trim();
+      $('rev-strasse').textContent = $('strasse').value.trim();
+      $('rev-plz').textContent     = $('plz').value.trim();
+      $('rev-ort').textContent     = $('ort').value.trim();
+      $('rev-land').textContent    = getLandValue();
+      $('rev-handy').textContent   = $('handy').value.trim();
+      $('rev-email').textContent   = $('email').value.trim();
+    }
+
+    function buildPayload(nonce){
+      return {
+        nonce,
+        firma:$('firma').value.trim(),
+        vorname:$('vorname').value.trim(),
+        nachname:$('nachname').value.trim(),
+        strasse:$('strasse').value.trim(),
+        plz:$('plz').value.trim(),
+        ort:$('ort').value.trim(),
+        land:getLandValue(),
+        handy:$('handy').value.trim(),
+        email:$('email').value.trim(),
+        emailConfirm:$('emailConfirm').value.trim(),
+        acceptAgb:$('acceptAgb').checked,
+        acceptDsgvo:$('acceptDsgvo').checked
+      };
+    }
+
+    // Submit -> Review
+    form.addEventListener('submit', (e)=>{
+      e.preventDefault();
+      if(!validate()) return;
+      fillReview();
+      showOverlay(reviewOverlay);
+    });
+
+    // Review schließen / ändern
+    document.getElementById('editBtn').addEventListener('click', ()=> reviewOverlay.classList.remove('show'));
+    document.getElementById('closeReview').addEventListener('click', ()=> reviewOverlay.classList.remove('show'));
+
+    // Doppel-Klick-Schutz + Idempotenz
+    let submitting = false;
+    function genNonce(){
+      try{ return crypto.randomUUID(); }catch(_){ return Date.now()+'-'+Math.random().toString(16).slice(2); }
+    }
+
+    document.getElementById('confirmSubmitBtn').addEventListener('click', async ()=>{
+      if(submitting) return;
+      if (REGISTRATION_PAUSED) return;
+
+      submitting = true;
+
+      confirmSubmitBtn.disabled = true;
+      confirmSubmitBtn.classList.add('loading');
+      editBtn.disabled = true;
+
+      reviewOverlay.classList.remove('show');
+      processingOverlay.classList.add('show');
+      processingOverlay.classList.add('locked');
+
+      procMsg.textContent = 'Deine Daten werden sicher übertragen.';
+      procSub.textContent = 'Das kann je nach Netz 5–15 Sekunden dauern.';
+
+      submitBtn.disabled = true;
+      submitBtn.classList.add('loading');
+      const cooldownTimer = setTimeout(()=>{ submitBtn.disabled=false; submitBtn.classList.remove('loading'); }, SUBMIT_COOLDOWN_MS);
+
+      let slowTimer1 = setTimeout(()=>{ procMsg.textContent='Noch dran …'; procSub.textContent='Es dauert gerade länger als üblich. Bitte weiterhin warten.'; }, 8000);
+      let slowTimer2 = setTimeout(()=>{ procMsg.textContent='Fast geschafft …'; procSub.textContent='Wir haben die Registrierung im System, finalisieren gleich die Kundennummer.'; }, 15000);
+
+      const nonce = genNonce();
+      const payload = buildPayload(nonce);
+
+      try{
+        const body = new URLSearchParams(payload).toString();
+        const res = await fetch(WEB_APP_URL, { method:'POST', headers:{ 'Content-Type':'application/x-www-form-urlencoded' }, body });
+        const raw = await res.text();
+        let json=null; try{ json = JSON.parse(raw);}catch(_){ throw new Error(`Kein JSON (${res.status}): ${raw.slice(0,180)}…`); }
+        if(!json.ok) throw new Error(json.error || 'Fehler beim Senden.');
+
+        const fullName = json.fullName || (payload.vorname + ' ' + payload.nachname);
+        const kdNr = json.kdNr || '';
+        ovName.textContent = fullName;
+        ovKdNr.textContent = kdNr;
+
+        // WhatsApp-Link
+        const waNumber = '4915258164673';
+        const rows = [
+          'Hallo Denise,',
+          'ich habe mich gerade registriert und soll mich bei dir melden.',
+          `Meine Kundennummer: ${kdNr}`,
+          payload.firma ? `Firmenname: ${payload.firma}` : '',
+          `Name: ${fullName}`,
+          payload.strasse ? `Straße & Nr.: ${payload.strasse}` : '',
+          payload.plz ? `PLZ: ${payload.plz}` : '',
+          payload.ort ? `Ort: ${payload.ort}` : '',
+          payload.land ? `Land: ${payload.land}` : '',
+          payload.email ? `E-Mail: ${payload.email}` : ''
+        ].filter(Boolean);
+        rows.push('Liebe Grüße');
+        const waText = rows.join('\n');
+        document.getElementById('waBtn').setAttribute('href','https://wa.me/' + waNumber + '?text=' + encodeURIComponent(waText));
+
+        processingOverlay.classList.remove('locked'); processingOverlay.classList.remove('show');
+        successOverlay.classList.add('show');
+        submitBtn.textContent = 'Senden erfolgreich';
+        form.reset();
+
+      }catch(err){
+        console.error(err);
+        submitHint.textContent = (err && err.message) ? err.message : 'Netzwerk-/CORS-Fehler.';
+        processingOverlay.classList.remove('locked'); processingOverlay.classList.remove('show');
+      }finally{
+        clearTimeout(slowTimer1); clearTimeout(slowTimer2); clearTimeout(cooldownTimer);
+        submitBtn.classList.remove('loading'); confirmSubmitBtn.classList.remove('loading');
+        submitting = false; confirmSubmitBtn.disabled = false; editBtn.disabled = false;
       }
     });
-  })();
 
-  // === PDF-Versand (Alle / Nur neue) ===
-  async function sendPdf(scope){
-    const btn = (scope === 'new') ? sendPdfNewBtn : sendPdfAllBtn;
-    btn.disabled = true; btn.classList.add('loading');
-    pdfHint.textContent = (scope === 'new') ? 'Sende nur neue …' : 'Sende alle …';
-    try{
-      const body = new URLSearchParams({ action: 'sendPdfNow', scope }).toString();
-      const res = await fetch(WEB_APP_URL, { method: 'POST', headers: { 'Content-Type':'application/x-www-form-urlencoded' }, body });
-      const raw = await res.text();
-      let json=null; try{ json = JSON.parse(raw);}catch(_){ throw new Error(`Unerwartete Antwort: ${raw.slice(0,200)}…`); }
-      if(!json.ok) throw new Error(json.error || 'Fehler beim PDF-Versand.');
-      pdfHint.textContent = 'PDF versendet.';
-    } catch(err){
-      console.error(err);
-      pdfHint.textContent = (err && err.message) ? err.message : 'Netzwerkfehler.';
-    } finally{
-      btn.disabled = false; btn.classList.remove('loading');
-      setTimeout(()=> pdfHint.textContent = '', 8000);
+    // Overlays schließen
+    document.getElementById('closeSuccess').addEventListener('click', ()=> successOverlay.classList.remove('show'));
+    successOverlay.addEventListener('click', (e)=>{ if(e.target === successOverlay) successOverlay.classList.remove('show'); });
+    reviewOverlay.addEventListener('click', (e)=>{ if(e.target === reviewOverlay) reviewOverlay.classList.remove('show'); });
+    document.addEventListener('keydown', (e)=>{
+      if(e.key==='Escape'){
+        if (reviewOverlay.classList.contains('show')) reviewOverlay.classList.remove('show');
+        else if (successOverlay.classList.contains('show')) successOverlay.classList.remove('show');
+      }
+    });
+
+    // Reveal-Mechanik „5× H1 in 4s“
+    (()=>{
+      let clicks = 0, timer = null;
+      pageTitle.addEventListener('click', ()=>{
+        clicks++;
+        if (clicks === 1) { timer = setTimeout(()=>{ clicks = 0; }, 4000); }
+        if (clicks >= 5) {
+          clearTimeout(timer); clicks = 0;
+          adminBar.classList.remove('admin-hidden');
+          pdfHint.textContent = 'Admin-Tools aktiv.';
+          setTimeout(()=> pdfHint.textContent = '', 3000);
+        }
+      });
+    })();
+
+    // PDF-Versand (Alle / Nur neue)
+    async function sendPdf(scope){
+      const btn = (scope === 'new') ? sendPdfNewBtn : sendPdfAllBtn;
+      btn.disabled = true; btn.classList.add('loading');
+      pdfHint.textContent = (scope === 'new') ? 'Sende nur neue …' : 'Sende alle …';
+      try{
+        const body = new URLSearchParams({ action: 'sendPdfNow', scope }).toString();
+        const res = await fetch(WEB_APP_URL, { method: 'POST', headers: { 'Content-Type':'application/x-www-form-urlencoded' }, body });
+        const raw = await res.text();
+        let json=null; try{ json = JSON.parse(raw);}catch(_){ throw new Error(`Unerwartete Antwort: ${raw.slice(0,200)}…`); }
+        if(!json.ok) throw new Error(json.error || 'Fehler beim PDF-Versand.');
+        pdfHint.textContent = 'PDF versendet.';
+      } catch(err){
+        console.error(err);
+        pdfHint.textContent = (err && err.message) ? err.message : 'Netzwerkfehler.';
+      } finally{
+        btn.disabled = false; btn.classList.remove('loading');
+        setTimeout(()=> pdfHint.textContent = '', 8000);
+      }
     }
-  }
-  sendPdfAllBtn.addEventListener('click', ()=> sendPdf('all'));
-  sendPdfNewBtn.addEventListener('click', ()=> sendPdf('new'));
+    sendPdfAllBtn.addEventListener('click', ()=> sendPdf('all'));
+    sendPdfNewBtn.addEventListener('click', ()=> sendPdf('new'));
 
-  // === Zurücksetzen ===
-  resetBtn.addEventListener('click', ()=>{
-    form.reset();
-    landSelect.value = 'Deutschland';
-    landOther.style.display='none';
-    submitHint.textContent='';
-    document.querySelectorAll('.is-invalid').forEach(el=>el.classList.remove('is-invalid'));
-    document.querySelectorAll('.err.show').forEach(el=>el.classList.remove('show'));
-    submitBtn.textContent='Kundennummer anfordern';
-  });
-})();
-</script>
+    // Zurücksetzen
+    resetBtn.addEventListener('click', ()=>{
+      form.reset();
+      landSelect.value = 'Deutschland';
+      landOther.style.display='none';
+      submitHint.textContent='';
+      document.querySelectorAll('.is-invalid').forEach(el=>el.classList.remove('is-invalid'));
+      document.querySelectorAll('.err.show').forEach(el=>el.classList.remove('show'));
+      submitBtn.textContent='Kundennummer anfordern';
+    });
+  })();
+  </script>
 </body>
 </html>
