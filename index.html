@@ -81,6 +81,8 @@
     .btn-primary:hover{ background:var(--primary-hover); }
     .btn-success{ background:var(--success); color:#fff; }
     .btn-success:hover{ background:var(--success-strong); }
+    .btn-danger{ background:var(--danger); color:#fff; }
+    .btn-danger:hover{ filter:brightness(.92); }
     .btn[disabled]{ opacity:.65; pointer-events:none; }
     .btn.loading{ position:relative; }
     .btn.loading::after{
@@ -148,6 +150,7 @@
     <div id="adminBar" class="admin-hidden admin-bar">
       <button id="sendPdfAllBtn" class="btn btn-success" type="button" title="Komplette Liste senden">Alle senden</button>
       <button id="sendPdfNewBtn" class="btn btn-primary" type="button" title="Nur neue seit letztem Versand senden">Neue senden</button>
+      <button id="toggleRegBtn" class="btn" type="button" title="Registrierung aktivieren/deaktivieren">-</button>
       <a id="liveBtn" href="https://script.google.com/macros/s/AKfycbwahhpXp-34saIoElpBdZB1l2Z5Bo23KsnYU435wlMtmTjoJyYbtN_QEqM1VGdLcBUQ/exec" class="btn btn-danger" title="Live" target="_blank" rel="noopener">
   Live
 </a>
@@ -309,9 +312,7 @@
   <script>
     (function(){
       const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxcslNZhjXLbOeTsk8yuabOatZXQEaWSnc0cl5kiXg9ylEIwPaRohFlrDyHcqkzoV4/exec'; // <- anpassen
-      const SUBMIT_COOLDOWN_MS = 10000;
-      // === WARTUNGSSCHALTER: Registrierung hart pausieren ===
-const REGISTRATION_PAUSED = true; // <- bei Reaktivierung auf false setzen
+      let REGISTRATION_PAUSED = JSON.parse(localStorage.getItem('regPaused') ?? 'true');
      
       const form = document.getElementById('form');
       const submitBtn = document.getElementById('submitBtn');
@@ -338,20 +339,39 @@ const REGISTRATION_PAUSED = true; // <- bei Reaktivierung auf false setzen
       const sendPdfAllBtn = document.getElementById('sendPdfAllBtn');
       const sendPdfNewBtn = document.getElementById('sendPdfNewBtn');
       const pdfHint       = document.getElementById('pdfHint');
+      const toggleRegBtn  = document.getElementById('toggleRegBtn');
 
       const $ = (id) => document.getElementById(id);
-      // Registrierung pausieren: Buttons deaktivieren + Hinweis setzen
-if (REGISTRATION_PAUSED) {
-  submitBtn.disabled = true;
-  submitBtn.textContent = 'Registrierung pausiert';
-  submitBtn.title = 'Vorübergehend deaktiviert';
+           function applyRegistrationState(paused){
+        REGISTRATION_PAUSED = paused;
+        localStorage.setItem('regPaused', JSON.stringify(paused));
 
-  confirmSubmitBtn.disabled = true;
-  confirmSubmitBtn.textContent = 'Derzeit nicht verfügbar';
-  confirmSubmitBtn.title = 'Vorübergehend deaktiviert';
+        // Submit-Button
+        submitBtn.disabled   = paused;
+        submitBtn.textContent= paused ? 'Registrierung pausiert' : 'Kundennummer anfordern';
+        submitBtn.title      = paused ? 'Vorübergehend deaktiviert' : '';
 
-  submitHint.textContent = 'Registrierung ist vorübergehend deaktiviert.';
-}
+        // Confirm-Button im Review-Overlay
+        confirmSubmitBtn.disabled    = paused;
+        confirmSubmitBtn.textContent = paused ? 'Derzeit nicht verfügbar' : 'Jetzt registrieren';
+        confirmSubmitBtn.title       = paused ? 'Vorübergehend deaktiviert' : '';
+
+        // Hinweis
+        submitHint.textContent = paused ? 'Registrierung ist vorübergehend deaktiviert.' : '';
+
+        // Toggle-Button (Text + Farbe)
+        toggleRegBtn.textContent = paused ? 'Aktivieren' : 'Deaktivieren';
+        toggleRegBtn.classList.toggle('btn-success', paused); // grün wenn pausiert
+        toggleRegBtn.classList.toggle('btn-danger', !paused); // rot wenn aktiv
+      }
+
+      // Initial anwenden (liest Startzustand aus Variable / localStorage)
+      applyRegistrationState(REGISTRATION_PAUSED);
+
+      // Toggle-Handler
+      toggleRegBtn.addEventListener('click', ()=>{
+        applyRegistrationState(!REGISTRATION_PAUSED);
+      });
       
       // Hard-hide Admin-Bar on load
       adminBar.classList.add('admin-hidden');
