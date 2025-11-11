@@ -459,10 +459,13 @@
         markInvalid(landOther,'err-land',landBad && landSelect.value==='other');
         ok = ok && !landBad;
 
-        const emailVal=email.value.trim(); const emailGood = emailVal.length && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal);
+        let emailVal = email.value.replace(/\u00A0/g, ' ').trim(); // NBSP -> Space
+email.value = emailVal; // normalisierten Wert zurück ins Feld
+const emailGood = emailVal.length && email.checkValidity(); // Native HTML5-Emailprüfung
         markInvalid(email,'err-email',!emailGood); ok = ok && emailGood;
 
-        const emailConfVal=emailConfirm.value.trim(); const emailMatch = emailConfVal.length && (emailVal.toLowerCase()===emailConfVal.toLowerCase());
+        const emailConfVal = emailConfirm.value.replace(/\u00A0/g, ' ').trim();
+        const emailMatch = emailConfVal.length && (emailVal.toLowerCase()===emailConfVal.toLowerCase());
         markInvalid(emailConfirm,'err-emailConfirm',!emailMatch); ok = ok && emailMatch;
 
         const agbBad=!acceptAgb.checked, dsgvoBad=!acceptDsgvo.checked;
