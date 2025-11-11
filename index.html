@@ -163,47 +163,47 @@
         <p class="lead">Bitte trage deine Daten ein. Felder mit <span class="req" style="color:#dc2626; font-weight:700;">*</span> sind Pflicht.</p>
 
     <form id="form" class="card" novalidate>
-      <div class="grid">
-        <div class="full">
-          <label for="firma">Firma</label>
-          <input id="firma" name="firma" type="text" autocomplete="organization" />
+              <div class="grid" style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+        <div class="full" style="grid-column:1 / -1;">
+          <label for="firma" style="display:block; margin:0 0 6px;">Firma</label>
+          <input id="firma" name="firma" type="text" autocomplete="organization" style="width:100%; padding:12px; border-radius:10px; border:1px solid var(--border);" />
           <div class="err" id="err-firma"></div>
         </div>
 
         <div>
-          <label for="vorname">Vorname <span class="req" style="color:#dc2626; font-weight:700;">*</span></label>
-          <input id="vorname" name="vorname" type="text" required autocomplete="given-name" />
+          <label for="vorname" style="display:block; margin:0 0 6px;">Vorname <span class="req" style="color:#dc2626; font-weight:700;">*</span></label>
+          <input id="vorname" name="vorname" type="text" required autocomplete="given-name" style="width:100%; padding:12px; border-radius:10px; border:1px solid var(--border);" />
           <div class="err" id="err-vorname">Bitte Vornamen angeben.</div>
         </div>
 
         <div>
-          <label for="nachname">Nachname <span class="req" style="color:#dc2626; font-weight:700;">*</span></label>
-          <input id="nachname" name="nachname" type="text" required autocomplete="family-name" />
+          <label for="nachname" style="display:block; margin:0 0 6px;">Nachname <span class="req" style="color:#dc2626; font-weight:700;">*</span></label>
+          <input id="nachname" name="nachname" type="text" required autocomplete="family-name" style="width:100%; padding:12px; border-radius:10px; border:1px solid var(--border);" />
           <div class="err" id="err-nachname">Bitte Nachnamen angeben.</div>
         </div>
 
-        <div class="full">
-          <label for="strasse">Straße &amp; Hausnummer <span class="req" style="color:#dc2626; font-weight:700;">*</span></label>
-          <input id="strasse" name="strasse" type="text" required autocomplete="address-line1" />
+        <div class="full" style="grid-column:1 / -1;">
+          <label for="strasse" style="display:block; margin:0 0 6px;">Straße &amp; Hausnummer <span class="req" style="color:#dc2626; font-weight:700;">*</span></label>
+          <input id="strasse" name="strasse" type="text" required autocomplete="address-line1" style="width:100%; padding:12px; border-radius:10px; border:1px solid var(--border);" />
           <div class="err" id="err-strasse">Bitte Straße &amp; Hausnummer angeben.</div>
         </div>
 
         <div>
-          <label for="plz">PLZ <span class="req" style="color:#dc2626; font-weight:700;">*</span></label>
-          <input id="plz" name="plz" type="text" required inputmode="text" pattern="^[A-Za-z0-9 \-]{1,10}$" />
+          <label for="plz" style="display:block; margin:0 0 6px;">PLZ <span class="req" style="color:#dc2626; font-weight:700;">*</span></label>
+          <input id="plz" name="plz" type="text" required inputmode="text" pattern="^[A-Za-z0-9 \-]{1,10}$" style="width:100%; padding:12px; border-radius:10px; border:1px solid var(--border);" />
           <div class="hint">International erlaubt (z. B. 10115, W1A 1HQ, 75008, 1234-AB). Max. 10 Zeichen.</div>
           <div class="err" id="err-plz">Bitte eine gültige PLZ angeben (Buchstaben/Zahlen/Leerzeichen/-, max. 10).</div>
         </div>
 
         <div>
-          <label for="ort">Ort <span class="req" style="color:#dc2626; font-weight:700;">*</span></label>
-          <input id="ort" name="ort" type="text" required autocomplete="address-level2" />
+          <label for="ort" style="display:block; margin:0 0 6px;">Ort <span class="req" style="color:#dc2626; font-weight:700;">*</span></label>
+          <input id="ort" name="ort" type="text" required autocomplete="address-level2" style="width:100%; padding:12px; border-radius:10px; border:1px solid var(--border);" />
           <div class="err" id="err-ort">Bitte Ort angeben.</div>
         </div>
 
-        <div class="full">
-          <label for="landSelect">Land <span class="req" style="color:#dc2626; font-weight:700;">*</span></label>
-          <select id="landSelect" required>
+        <div class="full" style="grid-column:1 / -1;">
+          <label for="landSelect" style="display:block; margin:0 0 6px;">Land <span class="req" style="color:#dc2626; font-weight:700;">*</span></label>
+          <select id="landSelect" required style="width:100%; padding:12px; border-radius:10px; border:1px solid var(--border);">
             <option value="">Land auswählen …</option>
             <option selected>Deutschland</option><option>Österreich</option><option>Schweiz</option><option>Luxemburg</option>
             <option>Niederlande</option><option>Belgien</option><option>Frankreich</option><option>Italien</option>
@@ -212,29 +212,29 @@
             <option>Vereinigtes Königreich</option>
             <option value="other">Anderes Land …</option>
           </select>
-          <input id="landOther" type="text" placeholder="Land eingeben" style="display:none; margin-top:8px;" />
+          <input id="landOther" type="text" placeholder="Land eingeben" style="display:none; margin-top:8px; width:100%; padding:12px; border-radius:10px; border:1px solid var(--border);" />
           <div class="err" id="err-land">Bitte Land angeben.</div>
         </div>
 
         <div>
-          <label for="handy">Handy (WhatsApp) <span class="req" style="color:#dc2626; font-weight:700;">*</span></label>
-          <input id="handy" name="handy" type="tel" required inputmode="tel" placeholder="+49 1525 1234567" />
+          <label for="handy" style="display:block; margin:0 0 6px;">Handy (WhatsApp) <span class="req" style="color:#dc2626; font-weight:700;">*</span></label>
+          <input id="handy" name="handy" type="tel" required inputmode="tel" placeholder="+49 1525 1234567" style="width:100%; padding:12px; border-radius:10px; border:1px solid var(--border);" />
           <div class="err" id="err-handy">Bitte eine gültige Handy-Nr. angeben.</div>
         </div>
 
         <div>
-          <label for="email">E-Mail <span class="req" style="color:#dc2626; font-weight:700;">*</span></label>
-          <input id="email" name="email" type="email" inputmode="email" autocomplete="email" placeholder="name@example.com" required />
+          <label for="email" style="display:block; margin:0 0 6px;">E-Mail <span class="req" style="color:#dc2626; font-weight:700;">*</span></label>
+          <input id="email" name="email" type="email" inputmode="email" autocomplete="email" placeholder="name@example.com" required style="width:100%; padding:12px; border-radius:10px; border:1px solid var(--border);" />
           <div class="err" id="err-email">Bitte eine gültige E-Mail eintragen.</div>
         </div>
 
         <div>
-          <label for="emailConfirm">E-Mail bestätigen <span class="req" style="color:#dc2626; font-weight:700;">*</span></label>
-          <input id="emailConfirm" name="emailConfirm" type="email" inputmode="email" placeholder="E-Mail erneut eingeben" required />
+          <label for="emailConfirm" style="display:block; margin:0 0 6px;">E-Mail bestätigen <span class="req" style="color:#dc2626; font-weight:700;">*</span></label>
+          <input id="emailConfirm" name="emailConfirm" type="email" inputmode="email" placeholder="E-Mail erneut eingeben" required style="width:100%; padding:12px; border-radius:10px; border:1px solid var(--border);" />
           <div class="err" id="err-emailConfirm">Die E-Mail-Adressen stimmen nicht überein.</div>
         </div>
 
-        <div class="full checkline">
+        <div class="full checkline" style="grid-column:1 / -1; border-top:1px dashed rgba(0,0,0,.08); padding-top:8px;">
           <input id="acceptAgb" name="acceptAgb" type="checkbox" />
           <label for="acceptAgb" style="display:inline; font-weight:400;">
             Ich akzeptiere die <a href="https://dekodenise.de/policies/terms-of-service" target="_blank" rel="noopener">AGB</a>. <span class="req" style="color:#dc2626; font-weight:700;">*</span>
@@ -242,7 +242,7 @@
         </div>
         <div class="full"><div class="err err-inline" id="err-agb">Bitte AGB akzeptieren.</div></div>
 
-        <div class="full checkline" style="margin-top:-8px;">
+        <div class="full checkline" style="grid-column:1 / -1; margin-top:-8px; border-top:1px dashed rgba(0,0,0,.08); padding-top:8px;">
           <input id="acceptDsgvo" name="acceptDsgvo" type="checkbox" />
           <label for="acceptDsgvo" style="display:inline; font-weight:400;">
             Ich stimme der <a href="https://dekodenise.de/policies/privacy-policy" target="_blank" rel="noopener">Datenschutzerklärung</a> zu. <span class="req" style="color:#dc2626; font-weight:700;">*</span>
@@ -250,7 +250,7 @@
         </div>
         <div class="full"><div class="err err-inline" id="err-dsgvo">Bitte der Datenschutzerklärung zustimmen.</div></div>
 
-        <div class="full actions">
+        <div class="full actions" style="grid-column:1 / -1; display:flex; gap:10px; align-items:center; margin-top:8px;">
           <button id="submitBtn" class="btn btn-primary" type="submit">Kundennummer anfordern</button>
           <button id="resetBtn" class="btn" type="button">Zurücksetzen</button>
           <span class="muted" id="submitHint"></span>
@@ -279,7 +279,6 @@
       <div class="ok">
         <button id="editBtn" class="btn" type="button">ändern</button>
         <button id="confirmSubmitBtn" class="btn btn-primary" type="button">Jetzt registrieren</button>
-        <input type="hidden" id="nonceField" />
       </div>
     </div>
   </div>
@@ -294,7 +293,6 @@
       <p id="procMsg" class="progress-msg" style="color:#475569; font-size:14px; margin-top:8px;">Deine Daten werden sicher übertragen.</p>
       <p id="procSub" class="progress-sub" style="color:#64748b; font-size:13px; margin-top:4px;">Schließe dieses Fenster nicht und lade die Seite nicht neu.</p>
     </div>
-    
   </div>
 
     <div id="successOverlay" class="overlay" aria-hidden="true">
@@ -343,12 +341,10 @@
       const sendPdfNewBtn = document.getElementById('sendPdfNewBtn');
       const pdfHint       = document.getElementById('pdfHint');
       
-      // <<< NEU: Elemente für die Registrierungssteuerung >>>
       const toggleRegBtn      = document.getElementById('toggleRegBtn');
       const regDeactivatedMsg = document.getElementById('regDeactivatedMsg');
-      const formCard          = document.getElementById('form'); // Das Formular selbst
-      const leadText          = document.querySelector('p.lead'); // Der Einleitungstext
-      // NEU >>>
+      const formCard          = document.getElementById('form'); 
+      const leadText          = document.querySelector('p.lead'); 
 
       const $ = (id) => document.getElementById(id);
 
