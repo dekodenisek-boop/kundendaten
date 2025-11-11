@@ -160,6 +160,9 @@
     </div>
 
     <p class="lead">Bitte trage deine Daten ein. Felder mit <span class="req" style="color:#dc2626; font-weight:700;">*</span> sind Pflicht.</p>
+    <p id="globalRegHint" class="muted" style="color:#b91c1c; font-weight:700; margin-bottom:16px; display:none;">
+  Registrierungen sind vorübergehend deaktiviert.
+</p>
 
     <form id="form" class="card" novalidate>
       <div class="grid">
@@ -391,7 +394,16 @@ function applyRegistrationStateUI() {
   const locked = REGISTRATION_PAUSED === true;
   submitBtn.disabled = locked;
   submitBtn.textContent = locked ? 'Registrierung pausiert' : 'Kundennummer anfordern';
-  submitHint.textContent = locked ? 'Registrierungen sind vorübergehend deaktiviert.' : '';
+  // neuer globaler Hinweis oben im Formular
+const globalHint = document.getElementById('globalRegHint');
+
+if (locked) {
+  submitHint.textContent = '';         // unten NICHT mehr verwenden
+  if (globalHint) globalHint.style.display = 'block';
+} else {
+  if (globalHint) globalHint.style.display = 'none';
+  submitHint.textContent = '';
+}
 
   if (toggleRegBtn) toggleRegBtn.textContent = locked ? 'Registrierung aktivieren' : 'Registrierung pausieren';
   if (regStateHint) regStateHint.textContent = locked ? 'Status: pausiert' : 'Status: aktiv';
@@ -517,8 +529,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // Submit -> Review
       form.addEventListener('submit', (e)=>{
         if (REGISTRATION_PAUSED) {
-  submitHint.textContent = 'Registrierungen sind vorübergehend deaktiviert.';
-  return;
+  return; // Hinweis kommt nun oben global, nicht unten
 }
         e.preventDefault();
         if(!validate()) return;
