@@ -386,7 +386,13 @@ async function fetchJsonGET(url){
                // Lead-Hinweis neben dem Text
   regStatus.textContent = paused ? ' – Registrierung pausiert' : '';
       }
-
+    async function getRegStatusFromServer(){
+  const url = REG_APP_URL + '?api=reg&action=get&_=' + Date.now();
+  const json = await fetchJsonGET(url);
+  if (!json.ok) throw new Error('Config get failed');
+  // true = "paused", wenn Status 'deaktiviert' zurückkommt
+  return String(json.status || '').toLowerCase().includes('deaktiv');
+}
       // Initialstatus vom Server laden; Fallback = lokale Variable
 getRegStatusFromServer()
   .then(paused => applyRegistrationState(paused))
@@ -517,14 +523,6 @@ toggleRegBtn.addEventListener('click', async ()=>{
   const json = await fetchJsonGET(url);
   if (!json.ok) throw new Error('Config set failed');
   return String(json.status || '').toLowerCase().includes('deaktiv');
-}
-async function setRegStatusOnServer(paused){
-  const value = paused ? 'deaktiviert' : 'aktiviert';
-  const url = WEB_APP_URL + '?api=reg&action=set&value=' + encodeURIComponent(value);
-  const res = await fetch(url, { method:'GET' });
-  const json = await res.json();
-  if (!json.ok) throw new Error('Config set failed');
-  return json.status === 'deaktiviert';
 }
 
       // Submit -> Review
