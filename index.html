@@ -22,20 +22,38 @@
     }
     .wrap{max-width:860px; margin:0 auto;}
 
-    .brand{ display:flex; justify-content:center; align-items:center; margin:0 0 10px; }
-    .brand img{ display:block; height:64px; width:auto; }
+    /* Brand */
+    .brand{
+      display:flex; justify-content:center; align-items:center;
+      margin:0 0 10px;
+    }
+    .brand img{
+      display:block; height:64px; width:auto;
+    }
 
+    /* H1 als „Badge“ mit Brand-Farbe */
     h1{
       margin:0 0 8px; font-size:22px; font-weight:800; letter-spacing:.3px;
-      cursor:pointer; background:var(--brand); color:#fff;
-      padding:12px 14px; border-radius:12px; text-align:center;
+      cursor:pointer;
+      background:var(--brand); color:#fff;
+      padding:12px 14px; border-radius:12px;
+      text-align:center;
     }
 
     p.lead{margin:0 0 20px; color:var(--muted)}
 
-    .card{ background:var(--card); border:1px solid var(--border);
-      border-radius:var(--radius); padding:20px; box-shadow:var(--shadow); color:var(--text); }
-    label{ display:block; margin:0 0 6px; font-weight:600; color:var(--text); }
+    /* Card & Form */
+    .card{
+      background:var(--card); border:1px solid var(--border);
+      border-radius:var(--radius); padding:20px; box-shadow:var(--shadow);
+      color:var(--text);
+    }
+    label{
+      display:block;            /* Labels stehen über dem Feld */
+      margin:0 0 6px;
+      font-weight:600;
+      color:var(--text);
+    }
     .hint{color:var(--muted); font-size:13px; margin-top:6px;}
     .checkline{border-top:1px dashed rgba(0,0,0,.08); padding-top:8px;}
 
@@ -50,6 +68,7 @@
     .full{grid-column:1 / -1;}
     @media (max-width:720px){ .grid{grid-template-columns:1fr;} }
 
+    /* Buttons */
     .actions{display:flex; gap:10px; align-items:center; margin-top:8px; flex-wrap:wrap;}
     .btn{
       display:inline-flex; align-items:center; justify-content:center;
@@ -62,7 +81,6 @@
     .btn-primary:hover{ background:var(--primary-hover); }
     .btn-success{ background:var(--success); color:#fff; }
     .btn-success:hover{ background:var(--success-strong); }
-    .btn-danger{ background:#ef4444; color:#fff; }
     .btn[disabled]{ opacity:.65; pointer-events:none; }
     .btn.loading{ position:relative; }
     .btn.loading::after{
@@ -76,6 +94,7 @@
 
     .muted{font-size:13px; color:var(--muted);}
 
+    /* Overlays */
     .overlay{position:fixed; inset:0; display:none; place-items:center; background:rgba(0,0,0,.45); z-index:9999; padding:16px;}
     .overlay.show{ display:grid; }
     .overlay.locked{ pointer-events:none; }
@@ -95,6 +114,7 @@
     .close:hover{ color:#0f172a; background:#f1f5f9; }
     .dialog.success{ background:#ecfdf5; border-color:#bbf7d0; color:#064e3b; }
 
+    /* Errors */
     .is-invalid{ border-color:#ef4444 !important; background:#fff; }
     .err{ display:none; font-size:12px; color:var(--danger); margin-top:6px;}
     .err.show{ display:block; }
@@ -105,13 +125,18 @@
       .btn{ padding:12px 14px; } .btn-wa{ padding:12px 16px; }
     }
 
+    /* Admin-Bar (hart versteckt, eigener Flex-Container) */
     .admin-hidden { display: none !important; }
     .admin-bar { display:flex; gap:10px; align-items:center; margin:6px 0 12px; flex-wrap:wrap; }
+
+    /* Rote, fette Statusmeldungen für Admin-Buttons */
     .pdf-status { color:#b91c1c; font-weight:bold; }
   </style>
 </head>
 <body>
   <div class="wrap">
+
+    <!-- Logo oberhalb der H1 -->
     <div class="brand">
       <img src="https://dekodenise.de/cdn/shop/files/De.Ko_Logo_Rund.png?v=1749137634&width=140"
            alt="De.Ko Denise Logo" loading="eager" decoding="async">
@@ -123,16 +148,14 @@
     <div id="adminBar" class="admin-hidden admin-bar">
       <button id="sendPdfAllBtn" class="btn btn-success" type="button" title="Komplette Liste senden">Alle senden</button>
       <button id="sendPdfNewBtn" class="btn btn-primary" type="button" title="Nur neue seit letztem Versand senden">Neue senden</button>
-      <a id="liveBtn" href="https://script.google.com/macros/s/AKfycbwahhpXp-34saIoElpBdZB1l2Z5Bo23KsnYU435wlMtmTjoJyYbtN_QEqM1VGdLcBUQ/exec" class="btn btn-danger" title="Live" target="_blank" rel="noopener">Live</a>
+      <a id="liveBtn" href="https://script.google.com/macros/s/AKfycbwahhpXp-34saIoElpBdZB1l2Z5Bo23KsnYU435wlMtmTjoJyYbtN_QEqM1VGdLcBUQ/exec" class="btn btn-danger" title="Live" target="_blank" rel="noopener">
+  Live
+</a>
       <button id="toggleRegBtn" class="btn" type="button" title="Registrierung umschalten"></button>
       <span id="pdfHint" class="pdf-status"></span>
     </div>
 
-    <p class="lead">
-      Bitte trage deine Daten ein.
-      <span id="regStatus" style="color:#b91c1c; font-weight:700; margin-left:8px;"></span>
-      Felder mit <span class="req" style="color:#dc2626; font-weight:700;">*</span> sind Pflicht.
-    </p>
+    <p class="lead">Bitte trage deine Daten ein.<span id="regStatus" style="color:#b91c1c; font-weight:700; margin-left:8px;"></span> Felder mit <span class="req" style="color:#dc2626; font-weight:700;">*</span> sind Pflicht.</p>
 
     <form id="form" class="card" novalidate>
       <div class="grid">
@@ -161,7 +184,7 @@
 
         <div>
           <label for="plz">PLZ <span class="req" style="color:#dc2626; font-weight:700;">*</span></label>
-          <input id="plz" name="plz" type="text" required inputmode="text" pattern="^[A-Za-z0-9 \\-]{1,10}$" />
+          <input id="plz" name="plz" type="text" required inputmode="text" pattern="^[A-Za-z0-9 \-]{1,10}$" />
           <div class="hint">International erlaubt (z. B. 10115, W1A 1HQ, 75008, 1234-AB). Max. 10 Zeichen.</div>
           <div class="err" id="err-plz">Bitte eine gültige PLZ angeben (Buchstaben/Zahlen/Leerzeichen/-, max. 10).</div>
         </div>
@@ -286,12 +309,12 @@
 
   <script>
     (function(){
-      const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxcslNZhjXLbOeTsk8yuabOatZXQEaWSnc0cl5kiXg9ylEIwPaRohFlrDyHcqkzoV4/exec';
+      const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxcslNZhjXLbOeTsk8yuabOatZXQEaWSnc0cl5kiXg9ylEIwPaRohFlrDyHcqkzoV4/exec'; // <- anpassen
       const SUBMIT_COOLDOWN_MS = 10000;
 
       // --- Runtime-Schalter: in localStorage persistiert ---
       const REG_KEY = 'regPaused';
-      let regPaused = JSON.parse(localStorage.getItem(REG_KEY) ?? 'true'); // Default: pausiert
+      let regPaused = JSON.parse(localStorage.getItem(REG_KEY) ?? 'true'); // Default: pausiert = true
 
       // Form-/UI-Refs
       const form = document.getElementById('form');
@@ -339,9 +362,9 @@
           confirmSubmitBtn.textContent = 'Derzeit nicht verfügbar';
           confirmSubmitBtn.title = 'Vorübergehend deaktiviert';
 
-          submitHint.textContent = '';
+          submitHint.textContent='';
           const rs = document.getElementById('regStatus');
-          if (rs) rs.textContent = 'Registrierung ist vorübergehend deaktiviert.';
+          if(rs) rs.textContent = 'Registrierung ist vorübergehend deaktiviert.';
 
           if (toggleRegBtn){
             toggleRegBtn.textContent = 'Registrierung aktivieren';
@@ -358,9 +381,8 @@
           confirmSubmitBtn.textContent = 'Jetzt registrieren';
           confirmSubmitBtn.title = '';
 
-          submitHint.textContent = '';
-          const rs = document.getElementById('regStatus');
-          if (rs) rs.textContent = '';
+          submitHint.textContent='';
+          const rs = document.getElementById('regStatus'); if(rs) rs.textContent='';
 
           if (toggleRegBtn){
             toggleRegBtn.textContent = 'Registrierung deaktivieren';
@@ -369,9 +391,21 @@
             toggleRegBtn.title = 'Registrierung ausschalten';
           }
         }
+      } else {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Kundennummer anfordern';
+          submitBtn.title = '';
+
+          confirmSubmitBtn.disabled = false;
+          confirmSubmitBtn.textContent = 'Jetzt registrieren';
+          confirmSubmitBtn.title = '';
+
+          submitHint.textContent='';
+          const rs = document.getElementById('regStatus'); if(rs) rs.textContent='';
+        }
       }
 
-      // Admin-Bar initial verstecken
+      // Hard-hide Admin-Bar on load
       adminBar.classList.add('admin-hidden');
 
       function showOverlay(ov){ ov.classList.add('show'); ov.setAttribute('aria-hidden','false'); }
@@ -417,7 +451,7 @@
         [['vorname','err-vorname'],['nachname','err-nachname'],['strasse','err-strasse'],['ort','err-ort'],['handy','err-handy']]
           .forEach(([id,err])=>{ const el=$(id); const bad=!el.value.trim(); markInvalid(el,err,bad); ok=ok && !bad; });
 
-        const plzBad = !plz.value.trim() || !(new RegExp(/^[A-Za-z0-9 \\-]{1,10}$/).test(plz.value.trim()));
+        const plzBad = !plz.value.trim() || !(new RegExp(/^[A-Za-z0-9 \-]{1,10}$/).test(plz.value.trim()));
         markInvalid(plz,'err-plz',plzBad); ok = ok && !plzBad;
 
         const landVal = getLandValue(); const landBad = !landVal;
@@ -425,7 +459,7 @@
         markInvalid(landOther,'err-land',landBad && landSelect.value==='other');
         ok = ok && !landBad;
 
-        const emailVal=email.value.trim(); const emailGood = emailVal.length && /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(emailVal);
+        const emailVal=email.value.trim(); const emailGood = emailVal.length && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal);
         markInvalid(email,'err-email',!emailGood); ok = ok && emailGood;
 
         const emailConfVal=emailConfirm.value.trim(); const emailMatch = emailConfVal.length && (emailVal.toLowerCase()===emailConfVal.toLowerCase());
@@ -529,7 +563,8 @@
           ovName.textContent = fullName;
           ovKdNr.textContent = kdNr;
 
-          const waNumber = '4915258164673';
+          // ===== WhatsApp-Text: nur gefüllte Felder, keine Platzhalter =====
+          const waNumber = '4915258164673'; // ohne "+"
           const rows = [
             'Hallo Denise,',
             'ich habe mich gerade registriert und soll mich bei dir melden.',
@@ -545,7 +580,7 @@
 
           rows.push('Liebe Grüße');
 
-          const waText = rows.join('\\n');
+          const waText = rows.join('\n');
           document.getElementById('waBtn').setAttribute(
             'href',
             'https://wa.me/' + waNumber + '?text=' + encodeURIComponent(waText)
@@ -578,7 +613,7 @@
         }
       });
 
-      // ====== Reveal-Mechanik „5× H1 in 4s“: nur Admin-Bar einblenden ======
+      // ====== Reveal-Mechanik „5× H1 in 4s“: Admin-Bar & Toggle ======
       (()=>{
         const MAX_WINDOW_MS = 4000;
         let clicks = 0;
@@ -595,8 +630,6 @@
               resetClicks();
               if (adminBar && adminBar.classList.contains('admin-hidden')){
                 adminBar.classList.remove('admin-hidden');
-                const t = document.getElementById('toggleRegBtn');
-                if (t) t.focus();
               }
               pdfHint.textContent = 'Admin-Tools sichtbar. Nutzung: Schalter oben.';
               setTimeout(()=> pdfHint.textContent = '', 3000);
@@ -605,7 +638,7 @@
         }
       })();
 
-      // ====== PDF-Versand (Alle / Nur neue) ======
+      // ====== PDF-Versand (Alle / Nur neue) ====== (Alle / Nur neue) ======
       async function sendPdf(scope){
         const btn = (scope === 'new') ? sendPdfNewBtn : sendPdfAllBtn;
         btn.disabled = true; btn.classList.add('loading');
@@ -620,6 +653,7 @@
           const raw = await res.text();
           let json=null; try{ json = JSON.parse(raw);}catch(_){ throw new Error(`Unerwartete Antwort: ${raw.slice(0,200)}…`); }
           if(!json.ok) throw new Error(json.error || 'Fehler beim PDF-Versand.');
+          // Variante C: generische Erfolgsmeldung, ohne Empfänger/Dateiname/Zeilen
           pdfHint.textContent = 'PDF versendet.';
         } catch(err){
           console.error(err);
@@ -651,9 +685,6 @@
         document.querySelectorAll('.err.show').forEach(el=>el.classList.remove('show'));
         applyRegUi();
       });
-
-      // Initial einmal korrekten Status rendern
-      applyRegUi();
     })();
   </script>
 </body>
