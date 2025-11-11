@@ -312,9 +312,26 @@
 
   <script>
     (function(){
-      const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxcslNZhjXLbOeTsk8yuabOatZXQEaWSnc0cl5kiXg9ylEIwPaRohFlrDyHcqkzoV4/exec'; // <- anpassen
+      // REG-Backend (Form+API=reg) — DEINE bisherige Registrierungs-URL hier lassen!
+const REG_APP_URL = 'https://script.google.com/macros/s/AKfycbxcslNZhjXLbOeTsk8yuabOatZXQEaWSnc0cl5kiXg9ylEIwPaRohFlrDyHcqkzoV4/exec'.replace(/[#?].*$/, '');
+
+// LIVE-Button bleibt unberührt; wir lesen ihn nur, falls du ihn später irgendwo brauchst
+const LIVE_APP_URL = document.getElementById('liveBtn').href.replace(/[#?].*$/, '');
+      function parseJsonOrJsonp(txt){
+  try { return JSON.parse(txt); } catch(_){}
+  const m = String(txt || '').match(/^[\w.$]+\s*\(\s*([\s\S]+?)\s*\)\s*;?\s*$/);
+  if (m && m[1]) {
+    try { return JSON.parse(m[1]); } catch(_){}
+  }
+  throw new Error('Unerwartetes Antwortformat');
+}
+async function fetchJsonGET(url){
+  const res = await fetch(url, { method:'GET', cache:'no-store' });
+  const raw = await res.text();
+  return parseJsonOrJsonp(raw);
+}
       const SUBMIT_COOLDOWN_MS = 10000;
-      let REGISTRATION_PAUSED = JSON.parse(localStorage.getItem('regPaused') ?? 'true');
+      let REGISTRATION_PAUSED = true; // Default; wird gleich vom Server überschrieben
      
       const form = document.getElementById('form');
       const submitBtn = document.getElementById('submitBtn');
@@ -494,12 +511,12 @@ toggleRegBtn.addEventListener('click', async ()=>{
           acceptDsgvo:$('acceptDsgvo').checked
         };
       }
-      async function getRegStatusFromServer(){
-  const url = WEB_APP_URL + '?api=reg&action=get';
-  const res = await fetch(url, { method:'GET' });
-  const json = await res.json();
-  if (!json.ok) throw new Error('Config get failed');
-  return json.status === 'deaktiviert'; // true = paused
+      async function setRegStatusOnServer(paused){
+  const value = paused ? 'deaktiviert' : 'aktiviert';
+  const url = REG_APP_URL + '?api=reg&action=set&value=' + encodeURIComponent(value) + '&_=' + Date.now();
+  const json = await fetchJsonGET(url);
+  if (!json.ok) throw new Error('Config set failed');
+  return String(json.status || '').toLowerCase().includes('deaktiv');
 }
 async function setRegStatusOnServer(paused){
   const value = paused ? 'deaktiviert' : 'aktiviert';
@@ -562,7 +579,7 @@ const cooldownTimer = setTimeout(()=>{
 
         try{
           const body = new URLSearchParams(payload).toString();
-          const res = await fetch(WEB_APP_URL, { method:'POST', headers:{ 'Content-Type':'application/x-www-form-urlencoded' }, body });
+          const res = await fetch(REG_APP_URL, { method:'POST', headers:{ 'Content-Type':'application/x-www-form-urlencoded' }, body });
           const raw = await res.text();
           let json=null; try{ json = JSON.parse(raw);}catch(_){ throw new Error(`Kein JSON (${res.status}): ${raw.slice(0,180)}…`); }
           if(!json.ok) throw new Error(json.error || 'Fehler beim Senden.');
@@ -646,7 +663,7 @@ const cooldownTimer = setTimeout(()=>{
         pdfHint.textContent = (scope === 'new') ? 'Sende nur neue …' : 'Sende alle …';
         try{
           const body = new URLSearchParams({ action: 'sendPdfNow', scope }).toString();
-          const res = await fetch(WEB_APP_URL, {
+          const res = await fetch(REG_APP_URL, {
             method: 'POST',
             headers: { 'Content-Type':'application/x-www-form-urlencoded' },
             body
