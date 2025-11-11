@@ -132,6 +132,7 @@
     .admin-bar { display:flex; gap:10px; align-items:center; margin:6px 0 12px; flex-wrap:wrap; }
 
     /* Rote, fette Statusmeldungen für Admin-Buttons */
+    .reg-status { color:#b91c1c; font-weight:700; margin-left:8px; }
     .pdf-status { color:#b91c1c; font-weight:bold; }
   </style>
 </head>
@@ -151,13 +152,13 @@
       <button id="sendPdfAllBtn" class="btn btn-success" type="button" title="Komplette Liste senden">Alle senden</button>
       <button id="sendPdfNewBtn" class="btn btn-primary" type="button" title="Nur neue seit letztem Versand senden">Neue senden</button>
       <button id="toggleRegBtn" class="btn" type="button" title="Registrierung aktivieren/deaktivieren">-</button>
-      <a id="liveBtn" href="https://script.google.com/macros/s/AKfycbwahhpXp-34saIoElpBdZB1l2Z5Bo23KsnYU435wlMtmTjoJyYbtN_QEqM1VGdLcBUQ/exec" class="btn btn-danger" title="Live" target="_blank" rel="noopener">
+      <a id="liveBtn" href="https://script.google.com/macros/s/AKfycbwahhpXp-34saIoElpBdZB1l2Z5Bo23KsnYU435wlMtmTjoJyYbtN_QEqM1VGdLcBUQ/exec" class="btn" title="Live" target="_blank" rel="noopener">
   Live
 </a>
       <span id="pdfHint" class="pdf-status"></span>
     </div>
 
-    <p class="lead">Bitte trage deine Daten ein. Felder mit <span class="req" style="color:#dc2626; font-weight:700;">*</span> sind Pflicht.</p>
+        <p class="lead">Bitte trage deine Daten ein. Felder mit <span class="req" style="color:#dc2626; font-weight:700;">*</span> sind Pflicht.<span id="regStatus" class="reg-status" aria-live="polite"></span></p>
 
     <form id="form" class="card" novalidate>
       <div class="grid">
@@ -339,6 +340,7 @@
       const sendPdfAllBtn = document.getElementById('sendPdfAllBtn');
       const sendPdfNewBtn = document.getElementById('sendPdfNewBtn');
       const pdfHint       = document.getElementById('pdfHint');
+      const regStatus     = document.getElementById('regStatus');
       const toggleRegBtn  = document.getElementById('toggleRegBtn');
 
       const $ = (id) => document.getElementById(id);
@@ -363,6 +365,8 @@
         toggleRegBtn.textContent = paused ? 'Aktivieren' : 'Deaktivieren';
         toggleRegBtn.classList.toggle('btn-success', paused); // grün wenn pausiert
         toggleRegBtn.classList.toggle('btn-danger', !paused); // rot wenn aktiv
+               // Lead-Hinweis neben dem Text
+  regStatus.textContent = paused ? ' – Registrierung pausiert' : '';
       }
 
       // Initial anwenden (liest Startzustand aus Variable / localStorage)
