@@ -147,8 +147,13 @@
     <!-- Admin-Bar -->
     <div id="adminBar" class="admin-hidden admin-bar">
       <button id="sendPdfAllBtn" class="btn btn-success" type="button" title="Komplette Liste senden">Alle senden</button>
-      <button id="sendPdfNewBtn" class="btn btn-primary" type="button" title="Nur neue seit letztem Versand senden">Neue senden</button>
-      <a id="liveBtn" href="https://script.google.com/macros/s/AKfycbwahhpXp-34saIoElpBdZB1l2Z5Bo23KsnYU435wlMtmTjoJyYbtN_QEqM1VGdLcBUQ/exec" class="btn btn-danger" title="Live" target="_blank" rel="noopener">
+     <button id="sendPdfNewBtn" class="btn btn-primary" type="button" title="Nur neue seit letztem Versand senden">Neue senden</button>
+
+<!-- NEU: Toggle für Registrierungsstatus -->
+<button id="toggleRegBtn" class="btn" type="button" title="Registrierung temporär deaktivieren/aktivieren">Registrierung pausieren</button>
+<span id="regStateHint" class="muted"></span>
+
+<a id="liveBtn" href="https://script.google.com/macros/s/AKfycbwahhpXp-34saIoElpBdZB1l2Z5Bo23KsnYU435wlMtmTjoJyYbtN_QEqM1VGdLcBUQ/exec" class="btn btn-danger" title="Live" target="_blank" rel="noopener">
   Live
 </a>
       <span id="pdfHint" class="pdf-status"></span>
@@ -336,6 +341,10 @@
       const sendPdfAllBtn = document.getElementById('sendPdfAllBtn');
       const sendPdfNewBtn = document.getElementById('sendPdfNewBtn');
       const pdfHint       = document.getElementById('pdfHint');
+      // === NEU: Registrierungsstatus (UI + Flag)
+let REGISTRATION_PAUSED = false;
+const toggleRegBtn = document.getElementById('toggleRegBtn');
+const regStateHint = document.getElementById('regStateHint');
 
       const $ = (id) => document.getElementById(id);
 
@@ -374,6 +383,67 @@
       function getLandValue(){
         return (landSelect.value === 'other') ? landOther.value.trim() : landSelect.value.trim();
       }
+      // === UI je nach Status sperren/freigeben
+function applyRegistrationStateUI() {
+  const locked = REGISTRATION_PAUSED === true;
+  submitBtn.disabled = locked;
+  submitBtn.textContent = locked ? 'Registrierung pausiert' : 'Kundennummer anfordern';
+  submitHint.textContent = locked ? 'Registrierungen sind vorübergehend deaktiviert.' : '';
+
+  if (toggleRegBtn) toggleRegBtn.textContent = locked ? 'Registrierung aktivieren' : 'Registrierung pausieren';
+  if (regStateHint) regStateHint.textContent = locked ? 'Status: pausiert' : 'Status: aktiv';
+}
+
+// === Status vom Server lesen
+async function fetchRegistrationState() {
+  try {
+    const body = new URLSearchParams({ action: 'getRegState' }).toString();
+    const res  = await fetch(WEB_APP_URL, {
+      method: 'POST',
+      headers: { 'Content-Type':'application/x-www-form-urlencoded' },
+      body
+    });
+    const raw = await res.text();
+    let json = null; try { json = JSON.parse(raw); } catch(_) {
+      throw new Error(`Unerwartete Antwort: ${raw.slice(0,180)}…`);
+    }
+    if (!json.ok) throw new Error(json.error || 'getRegState fehlgeschlagen.');
+    REGISTRATION_PAUSED = (json.state === 'paused' || json.paused === true);
+  } catch (err) {
+    console.error(err);
+    // Fallback: lieber offen lassen als fälschlich sperren
+    REGISTRATION_PAUSED = false;
+  } finally {
+    applyRegistrationStateUI();
+  }
+}
+
+// === Status am Server setzen
+async function setRegistrationState(paused) {
+  try {
+    if (toggleRegBtn) { toggleRegBtn.disabled = true; toggleRegBtn.classList.add('loading'); }
+    const state = paused ? 'paused' : 'active';
+    const body = new URLSearchParams({ action: 'setRegState', state }).toString();
+    const res  = await fetch(WEB_APP_URL, {
+      method: 'POST',
+      headers: { 'Content-Type':'application/x-www-form-urlencoded' },
+      body
+    });
+    const raw = await res.text();
+    let json = null; try { json = JSON.parse(raw); } catch(_) {
+      throw new Error(`Unerwartete Antwort: ${raw.slice(0,180)}…`);
+    }
+    if (!json.ok) throw new Error(json.error || 'setRegState fehlgeschlagen.');
+    REGISTRATION_PAUSED = (json.state === 'paused' || json.paused === true);
+    applyRegistrationStateUI();
+    if (pdfHint) { pdfHint.textContent = 'Status aktualisiert.'; setTimeout(()=> pdfHint.textContent='', 3000); }
+  } catch (err) {
+    console.error(err);
+    submitHint.textContent = (err && err.message) ? err.message : 'Netzwerk-/CORS-Fehler.';
+  } finally {
+    if (toggleRegBtn) { toggleRegBtn.disabled = false; toggleRegBtn.classList.remove('loading'); }
+  }
+}
 
       function validate(){
         let ok = true;
@@ -439,6 +509,10 @@
 
       // Submit -> Review
       form.addEventListener('submit', (e)=>{
+        if (REGISTRATION_PAUSED) {
+  submitHint.textContent = 'Registrierungen sind vorübergehend deaktiviert.';
+  return;
+}
         e.preventDefault();
         if(!validate()) return;
         fillReview();
@@ -552,9 +626,13 @@
           }
           if (clicks >= 5) {
             clearTimeout(timer); clicks = 0;
-            adminBar.classList.remove('admin-hidden'); // sichtbar machen
-            pdfHint.textContent = 'Admin-Tools aktiv.';
-            setTimeout(()=> pdfHint.textContent = '', 3000);
+                  clearTimeout(timer); clicks = 0;
+      adminBar.classList.remove('admin-hidden'); // sichtbar machen
+      pdfHint.textContent = 'Admin-Tools aktiv.';
+      setTimeout(()=> pdfHint.textContent = '', 3000);
+
+      // NEU: Beim Sichtbarwerden der Admin-Bar Status laden
+      fetchRegistrationState();
           }
         });
       })();
@@ -586,6 +664,12 @@
       }
       sendPdfAllBtn.addEventListener('click', ()=> sendPdf('all'));
       sendPdfNewBtn.addEventListener('click', ()=> sendPdf('new'));
+      // NEU: Registrierungsstatus toggeln
+if (toggleRegBtn) {
+  toggleRegBtn.addEventListener('click', () => {
+    setRegistrationState(!REGISTRATION_PAUSED);
+  });
+}
 
       // Zurücksetzen (Form UI)
       resetBtn.addEventListener('click', ()=>{
@@ -596,6 +680,7 @@
         document.querySelectorAll('.is-invalid').forEach(el=>el.classList.remove('is-invalid'));
         document.querySelectorAll('.err.show').forEach(el=>el.classList.remove('show'));
         submitBtn.textContent='Kundennummer anfordern';
+        fetchRegistrationState();
       });
     })();
   </script>
