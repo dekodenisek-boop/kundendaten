@@ -1,699 +1,603 @@
 <!doctype html>
 <html lang="de">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <title>Kundennummer beantragen</title>
-  
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Kundennummer beantragen</title>
   <style>
-    :root{
-      --bg:#ffffff; --card:#ffffff; --text:#0f172a; --muted:#6b7280;
-      --primary:#2563eb; --primary-hover:#1d4ed8;
-      --success:#16a34a; --success-strong:#15803d;
-      --danger:#b91c1c; --border:#e5e7eb; --input:#f9fafb;
-      --shadow:0 10px 30px rgba(0,0,0,.06); --radius:14px; --wa:#25D366;
-      --brand:#4B134A;
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0; padding:24px; background:var(--bg);
-      font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-      color:var(--text); -webkit-text-size-adjust:100%; text-size-adjust:100%;
-    }
-    .wrap{max-width:860px; margin:0 auto;}
+    :root{
+      --bg:#ffffff; --card:#ffffff; --text:#0f172a; --muted:#6b7280;
+      --primary:#2563eb; --primary-hover:#1d4ed8;
+      --success:#16a34a; --success-strong:#15803d;
+      --danger:#b91c1c; --border:#e5e7eb; --input:#f9fafb;
+      --shadow:0 10px 30px rgba(0,0,0,.06); --radius:14px; --wa:#25D366;
+      --brand:#4B134A;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; padding:24px; background:var(--bg);
+      font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      color:var(--text); -webkit-text-size-adjust:100%; text-size-adjust:100%;
+    }
+    .wrap{max-width:860px; margin:0 auto;}
 
-    /* Brand */
-    .brand{
-      display:flex; justify-content:center; align-items:center;
-      margin:0 0 10px;
-    }
-    .brand img{
-      display:block; height:64px; width:auto;
-    }
+    /* Brand */
+    .brand{
+      display:flex; justify-content:center; align-items:center;
+      margin:0 0 10px;
+    }
+    .brand img{
+      display:block; height:64px; width:auto;
+    }
 
-    /* H1 als „Badge“ mit Brand-Farbe */
-    h1{
-      margin:0 0 8px; font-size:22px; font-weight:800; letter-spacing:.3px;
-      cursor:pointer;
-      background:var(--brand); color:#fff;
-      padding:12px 14px; border-radius:12px;
-      text-align:center;
-    }
+    /* H1 als „Badge“ mit Brand-Farbe */
+    h1{
+      margin:0 0 8px; font-size:22px; font-weight:800; letter-spacing:.3px;
+      cursor:pointer;
+      background:var(--brand); color:#fff;
+      padding:12px 14px; border-radius:12px;
+      text-align:center;
+    }
 
-    p.lead{margin:0 0 20px; color:var(--muted)}
+    p.lead{margin:0 0 20px; color:var(--muted)}
 
-    /* Card & Form */
-    .card{
-      background:var(--card); border:1px solid var(--border);
-      border-radius:var(--radius); padding:20px; box-shadow:var(--shadow);
-      color:var(--text);
-    }
-    label{
-      display:block;            /* Labels stehen über dem Feld */
-      margin:0 0 6px;
-      font-weight:600;
-      color:var(--text);
-    }
-    .hint{color:var(--muted); font-size:13px; margin-top:6px;}
-    .checkline{border-top:1px dashed rgba(0,0,0,.08); padding-top:8px;}
+    /* Card & Form */
+    .card{
+      background:var(--card); border:1px solid var(--border);
+      border-radius:var(--radius); padding:20px; box-shadow:var(--shadow);
+      color:var(--text);
+    }
+    label{
+      display:block;            /* Labels stehen über dem Feld */
+      margin:0 0 6px;
+      font-weight:600;
+      color:var(--text);
+    }
+    .hint{color:var(--muted); font-size:13px; margin-top:6px;}
+    .checkline{border-top:1px dashed rgba(0,0,0,.08); padding-top:8px;}
 
-    input, select{
-      width:100%; padding:12px; border-radius:10px;
-      border:1px solid var(--border); background:var(--input); font-size:15px;
-      outline:none; transition:border-color .15s, background .15s; color:var(--text);
-    }
-    input:focus, select:focus{ border-color:var(--primary); background:#fff; }
+    input, select{
+      width:100%; padding:12px; border-radius:10px;
+      border:1px solid var(--border); background:var(--input); font-size:15px;
+      outline:none; transition:border-color .15s, background .15s; color:var(--text);
+    }
+    input:focus, select:focus{ border-color:var(--primary); background:#fff; }
 
-    .grid{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
-    .full{grid-column:1 / -1;}
-    @media (max-width:720px){ .grid{grid-template-columns:1fr;} }
+    .grid{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+    .full{grid-column:1 / -1;}
+    @media (max-width:720px){ .grid{grid-template-columns:1fr;} }
 
-    /* Buttons */
-    .actions{display:flex; gap:10px; align-items:center; margin-top:8px; flex-wrap:wrap;}
-    .btn{
-      display:inline-flex; align-items:center; justify-content:center;
-      padding:12px 16px; border-radius:10px; border:1px solid transparent;
-      background:#e5e7eb; color:#111; cursor:pointer; font-weight:700;
-      transition: background .15s, transform .04s ease; text-decoration:none;
-    }
-    .btn:active{ transform: translateY(1px); }
-    .btn-primary{ background:var(--primary); color:#fff; }
-    .btn-primary:hover{ background:var(--primary-hover); }
-    .btn-success{ background:var(--success); color:#fff; }
-    .btn-success:hover{ background:var(--success-strong); }
-    .btn-danger{ background:var(--danger); color:#fff; }
-    .btn[disabled]{ opacity:.65; pointer-events:none; }
-    .btn.loading{ position:relative; }
-    .btn.loading::after{
-      content:""; position:absolute; right:12px; width:14px; height:14px; border-radius:50%;
-      border:2px solid currentColor; border-right-color:transparent; animation:spin .7s linear infinite;
-    }
-    @keyframes spin{ to{ transform:rotate(360deg);} }
+    /* Buttons */
+    .actions{display:flex; gap:10px; align-items:center; margin-top:8px; flex-wrap:wrap;}
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center;
+      padding:12px 16px; border-radius:10px; border:1px solid transparent;
+      background:#e5e7eb; color:#111; cursor:pointer; font-weight:700;
+      transition: background .15s, transform .04s ease; text-decoration:none;
+    }
+    .btn:active{ transform: translateY(1px); }
+    .btn-primary{ background:var(--primary); color:#fff; }
+    .btn-primary:hover{ background:var(--primary-hover); }
+    .btn-success{ background:var(--success); color:#fff; }
+    .btn-success:hover{ background:var(--success-strong); }
+    .btn[disabled]{ opacity:.65; pointer-events:none; }
+    .btn.loading{ position:relative; }
+    .btn.loading::after{
+      content:""; position:absolute; right:12px; width:14px; height:14px; border-radius:50%;
+      border:2px solid currentColor; border-right-color:transparent; animation:spin .7s linear infinite;
+    }
+    @keyframes spin{ to{ transform:rotate(360deg);} }
 
-    .btn-wa{ background:var(--wa); color:#fff; border-radius:999px; padding:12px 18px; gap:10px; font-weight:800;}
-    .btn-wa svg{ width:20px; height:20px; display:block; }
+    .btn-wa{ background:var(--wa); color:#fff; border-radius:999px; padding:12px 18px; gap:10px; font-weight:800;}
+    .btn-wa svg{ width:20px; height:20px; display:block; }
 
-    .muted{font-size:13px; color:var(--muted);}
+    .muted{font-size:13px; color:var(--muted);}
 
-    /* Overlays */
-    .overlay{position:fixed; inset:0; display:none; place-items:center; background:rgba(0,0,0,.45); z-index:9999; padding:16px;}
-    .overlay.show{ display:grid; }
-    .overlay.locked{ pointer-events:none; }
-    .dialog{
-      width:min(620px,94vw); background:#fff; border:1px solid var(--border); color:var(--text);
-      border-radius:16px; padding:18px; box-shadow:0 20px 60px rgba(0,0,0,.15); position:relative;
-    }
-    .dialog h2{ margin:6px 0 12px; font-size:20px; }
-    .dialog p{ margin:6px 0 0; font-size:15px; }
-    .dialog .ok{ margin-top:12px; display:flex; gap:10px; justify-content:flex-end; flex-wrap:wrap; }
+    /* Overlays */
+    .overlay{position:fixed; inset:0; display:none; place-items:center; background:rgba(0,0,0,.45); z-index:9999; padding:16px;}
+    .overlay.show{ display:grid; }
+    .overlay.locked{ pointer-events:none; }
+    .dialog{
+      width:min(620px,94vw); background:#fff; border:1px solid var(--border); color:var(--text);
+      border-radius:16px; padding:18px; box-shadow:0 20px 60px rgba(0,0,0,.15); position:relative;
+    }
+    .dialog h2{ margin:6px 0 12px; font-size:20px; }
+    .dialog p{ margin:6px 0 0; font-size:15px; }
+    .dialog .ok{ margin-top:12px; display:flex; gap:10px; justify-content:flex-end; flex-wrap:wrap; }
 
-    .review-table{ width:100%; border-collapse:collapse; margin-top:8px; }
-    .review-table td{ padding:6px 8px; border-bottom:1px solid #f1f5f9; vertical-align:top; }
-    .review-table td:first-child{ width:180px; color:#334155; font-weight:600; }
+    .review-table{ width:100%; border-collapse:collapse; margin-top:8px; }
+    .review-table td{ padding:6px 8px; border-bottom:1px solid #f1f5f9; vertical-align:top; }
+    .review-table td:first-child{ width:180px; color:#334155; font-weight:600; }
 
-    .close{ position:absolute; top:10px; right:10px; background:transparent; border:0; cursor:pointer; font-size:22px; line-height:1; color:#64748b; padding:4px 8px; border-radius:8px;}
-    .close:hover{ color:#0f172a; background:#f1f5f9; }
-    .dialog.success{ background:#ecfdf5; border-color:#bbf7d0; color:#064e3b; }
+    .close{ position:absolute; top:10px; right:10px; background:transparent; border:0; cursor:pointer; font-size:22px; line-height:1; color:#64748b; padding:4px 8px; border-radius:8px;}
+    .close:hover{ color:#0f172a; background:#f1f5f9; }
+    .dialog.success{ background:#ecfdf5; border-color:#bbf7d0; color:#064e3b; }
 
-    /* Errors */
-    .is-invalid{ border-color:#ef4444 !important; background:#fff; }
-    .err{ display:none; font-size:12px; color:var(--danger); margin-top:6px;}
-    .err.show{ display:block; }
-    .err-inline{margin-top:4px; margin-left:2px;}
+    /* Errors */
+    .is-invalid{ border-color:#ef4444 !important; background:#fff; }
+    .err{ display:none; font-size:12px; color:var(--danger); margin-top:6px;}
+    .err.show{ display:block; }
+    .err-inline{margin-top:4px; margin-left:2px;}
 
-    @media (max-width:420px){
-      body{ padding:16px; } .dialog h2{ font-size:18px; } input,select{ font-size:16px; }
-      .btn{ padding:12px 14px; } .btn-wa{ padding:12px 16px; }
-    }
+    @media (max-width:420px){
+      body{ padding:16px; } .dialog h2{ font-size:18px; } input,select{ font-size:16px; }
+      .btn{ padding:12px 14px; } .btn-wa{ padding:12px 16px; }
+    }
 
-    /* Admin-Bar (hart versteckt, eigener Flex-Container) */
-    .admin-hidden { display: none !important; }
-    .admin-bar { display:flex; gap:10px; align-items:center; margin:6px 0 12px; flex-wrap:wrap; }
+    /* Admin-Bar (hart versteckt, eigener Flex-Container) */
+    .admin-hidden { display: none !important; }
+    .admin-bar { display:flex; gap:10px; align-items:center; margin:6px 0 12px; flex-wrap:wrap; }
 
-    /* Rote, fette Statusmeldungen für Admin-Buttons */
-    .pdf-status { color:#b91c1c; font-weight:bold; }
-  </style>
-  </head>
+    /* Rote, fette Statusmeldungen für Admin-Buttons */
+    .pdf-status { color:#b91c1c; font-weight:bold; }
+  </style>
+</head>
 <body>
-  <div class="wrap">
+  <div class="wrap">
 
-        <div class="brand">
-      <img src="https://dekodenise.de/cdn/shop/files/De.Ko_Logo_Rund.png?v=1749137634&width=140"
-           alt="De.Ko Denise Logo" loading="eager" decoding="async">
-    </div>
-
-    <h1 id="pageTitle">Kunden-Nr. beantragen</h1>
-
-        <div id="adminBar" class="admin-hidden admin-bar">
-      <button id="toggleRegBtn" class="btn btn-primary" type="button" title="Registrierung umschalten">
-          Lade Status...
-      </button>
-            <button id="sendPdfAllBtn" class="btn btn-success" type="button" title="Komplette Liste senden">Alle senden</button>
-      <button id="sendPdfNewBtn" class="btn btn-primary" type="button" title="Nur neue seit letztem Versand senden">Neue senden</button>
-      <a id="liveBtn" href="https://script.google.com/macros/s/AKfycbwahhpXp-34saIoElpBdZB1l2Z5Bo23KsnYU435wlMtmTjoJyYbtN_QEqM1VGdLcBUQ/exec" class="btn btn-danger" title="Live" target="_blank" rel="noopener">
-  Live
-</a>
-      <span id="pdfHint" class="pdf-status"></span>
-    </div>
-
-    <div id="regDeactivatedMsg" class="card" style="display:none; margin-bottom:20px; border:1px solid #ef4444; background:#fee2e2; color:#b91c1c; font-weight:700; text-align:center; padding:15px;">
-        ❌ Die Neuregistrierung ist derzeit deaktiviert. Bitte versuchen Sie es später erneut.
+    <!-- Logo oberhalb der H1 -->
+    <div class="brand">
+      <img src="https://dekodenise.de/cdn/shop/files/De.Ko_Logo_Rund.png?v=1749137634&width=140"
+           alt="De.Ko Denise Logo" loading="eager" decoding="async">
     </div>
-        <p class="lead">Bitte trage deine Daten ein. Felder mit <span class="req" style="color:#dc2626; font-weight:700;">*</span> sind Pflicht.</p>
 
-    <form id="form" class="card" novalidate>
-              <div class="grid" style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
-        <div class="full" style="grid-column:1 / -1;">
-          <label for="firma" style="display:block; margin:0 0 6px;">Firma</label>
-          <input id="firma" name="firma" type="text" autocomplete="organization" style="width:100%; padding:12px; border-radius:10px; border:1px solid var(--border);" />
-          <div class="err" id="err-firma"></div>
-        </div>
+    <h1 id="pageTitle">Kunden-Nr. beantragen</h1>
 
-        <div>
-          <label for="vorname" style="display:block; margin:0 0 6px;">Vorname <span class="req" style="color:#dc2626; font-weight:700;">*</span></label>
-          <input id="vorname" name="vorname" type="text" required autocomplete="given-name" style="width:100%; padding:12px; border-radius:10px; border:1px solid var(--border);" />
-          <div class="err" id="err-vorname">Bitte Vornamen angeben.</div>
-        </div>
+    <!-- Admin-Bar -->
+    <div id="adminBar" class="admin-hidden admin-bar">
+      <button id="sendPdfAllBtn" class="btn btn-success" type="button" title="Komplette Liste senden">Alle senden</button>
+      <button id="sendPdfNewBtn" class="btn btn-primary" type="button" title="Nur neue seit letztem Versand senden">Neue senden</button>
+      <a id="liveBtn" href="https://script.google.com/macros/s/AKfycbwahhpXp-34saIoElpBdZB1l2Z5Bo23KsnYU435wlMtmTjoJyYbtN_QEqM1VGdLcBUQ/exec" class="btn btn-danger" title="Live" target="_blank" rel="noopener">
+  Live
+</a>
+      <span id="pdfHint" class="pdf-status"></span>
+    </div>
 
-        <div>
-          <label for="nachname" style="display:block; margin:0 0 6px;">Nachname <span class="req" style="color:#dc2626; font-weight:700;">*</span></label>
-          <input id="nachname" name="nachname" type="text" required autocomplete="family-name" style="width:100%; padding:12px; border-radius:10px; border:1px solid var(--border);" />
-          <div class="err" id="err-nachname">Bitte Nachnamen angeben.</div>
-        </div>
+    <p class="lead">Bitte trage deine Daten ein. Felder mit <span class="req" style="color:#dc2626; font-weight:700;">*</span> sind Pflicht.</p>
 
-        <div class="full" style="grid-column:1 / -1;">
-          <label for="strasse" style="display:block; margin:0 0 6px;">Straße &amp; Hausnummer <span class="req" style="color:#dc2626; font-weight:700;">*</span></label>
-          <input id="strasse" name="strasse" type="text" required autocomplete="address-line1" style="width:100%; padding:12px; border-radius:10px; border:1px solid var(--border);" />
-          <div class="err" id="err-strasse">Bitte Straße &amp; Hausnummer angeben.</div>
-        </div>
+    <form id="form" class="card" novalidate>
+      <div class="grid">
+        <div class="full">
+          <label for="firma">Firma</label>
+          <input id="firma" name="firma" type="text" autocomplete="organization" />
+        </div>
 
-        <div>
-          <label for="plz" style="display:block; margin:0 0 6px;">PLZ <span class="req" style="color:#dc2626; font-weight:700;">*</span></label>
-          <input id="plz" name="plz" type="text" required inputmode="text" pattern="^[A-Za-z0-9 \-]{1,10}$" style="width:100%; padding:12px; border-radius:10px; border:1px solid var(--border);" />
-          <div class="hint">International erlaubt (z. B. 10115, W1A 1HQ, 75008, 1234-AB). Max. 10 Zeichen.</div>
-          <div class="err" id="err-plz">Bitte eine gültige PLZ angeben (Buchstaben/Zahlen/Leerzeichen/-, max. 10).</div>
-        </div>
+        <div>
+          <label for="vorname">Vorname <span class="req" style="color:#dc2626; font-weight:700;">*</span></label>
+          <input id="vorname" name="vorname" type="text" required autocomplete="given-name" />
+          <div class="err" id="err-vorname">Bitte Vornamen angeben.</div>
+        </div>
 
-        <div>
-          <label for="ort" style="display:block; margin:0 0 6px;">Ort <span class="req" style="color:#dc2626; font-weight:700;">*</span></label>
-          <input id="ort" name="ort" type="text" required autocomplete="address-level2" style="width:100%; padding:12px; border-radius:10px; border:1px solid var(--border);" />
-          <div class="err" id="err-ort">Bitte Ort angeben.</div>
-        </div>
+        <div>
+          <label for="nachname">Nachname <span class="req" style="color:#dc2626; font-weight:700;">*</span></label>
+          <input id="nachname" name="nachname" type="text" required autocomplete="family-name" />
+          <div class="err" id="err-nachname">Bitte Nachnamen angeben.</div>
+        </div>
 
-        <div class="full" style="grid-column:1 / -1;">
-          <label for="landSelect" style="display:block; margin:0 0 6px;">Land <span class="req" style="color:#dc2626; font-weight:700;">*</span></label>
-          <select id="landSelect" required style="width:100%; padding:12px; border-radius:10px; border:1px solid var(--border);">
-            <option value="">Land auswählen …</option>
-            <option selected>Deutschland</option><option>Österreich</option><option>Schweiz</option><option>Luxemburg</option>
-            <option>Niederlande</option><option>Belgien</option><option>Frankreich</option><option>Italien</option>
-            <option>Spanien</option><option>Polen</option><option>Tschechien</option><option>Dänemark</option>
-            <option>Schweden</option><option>Norwegen</option><option>Finnland</option><option>Irland</option>
-            <option>Vereinigtes Königreich</option>
-            <option value="other">Anderes Land …</option>
-          </select>
-          <input id="landOther" type="text" placeholder="Land eingeben" style="display:none; margin-top:8px; width:100%; padding:12px; border-radius:10px; border:1px solid var(--border);" />
-          <div class="err" id="err-land">Bitte Land angeben.</div>
-        </div>
+        <div class="full">
+          <label for="strasse">Straße &amp; Hausnummer <span class="req" style="color:#dc2626; font-weight:700;">*</span></label>
+          <input id="strasse" name="strasse" type="text" required autocomplete="address-line1" />
+          <div class="err" id="err-strasse">Bitte Straße &amp; Hausnummer angeben.</div>
+        </div>
 
-        <div>
-          <label for="handy" style="display:block; margin:0 0 6px;">Handy (WhatsApp) <span class="req" style="color:#dc2626; font-weight:700;">*</span></label>
-          <input id="handy" name="handy" type="tel" required inputmode="tel" placeholder="+49 1525 1234567" style="width:100%; padding:12px; border-radius:10px; border:1px solid var(--border);" />
-          <div class="err" id="err-handy">Bitte eine gültige Handy-Nr. angeben.</div>
-        </div>
+        <div>
+          <label for="plz">PLZ <span class="req" style="color:#dc2626; font-weight:700;">*</span></label>
+          <input id="plz" name="plz" type="text" required inputmode="text" pattern="^[A-Za-z0-9 \-]{1,10}$" />
+          <div class="hint">International erlaubt (z. B. 10115, W1A 1HQ, 75008, 1234-AB). Max. 10 Zeichen.</div>
+          <div class="err" id="err-plz">Bitte eine gültige PLZ angeben (Buchstaben/Zahlen/Leerzeichen/-, max. 10).</div>
+        </div>
 
-        <div>
-          <label for="email" style="display:block; margin:0 0 6px;">E-Mail <span class="req" style="color:#dc2626; font-weight:700;">*</span></label>
-          <input id="email" name="email" type="email" inputmode="email" autocomplete="email" placeholder="name@example.com" required style="width:100%; padding:12px; border-radius:10px; border:1px solid var(--border);" />
-          <div class="err" id="err-email">Bitte eine gültige E-Mail eintragen.</div>
-        </div>
+        <div>
+          <label for="ort">Ort <span class="req" style="color:#dc2626; font-weight:700;">*</span></label>
+          <input id="ort" name="ort" type="text" required autocomplete="address-level2" />
+          <div class="err" id="err-ort">Bitte Ort angeben.</div>
+        </div>
 
-        <div>
-          <label for="emailConfirm" style="display:block; margin:0 0 6px;">E-Mail bestätigen <span class="req" style="color:#dc2626; font-weight:700;">*</span></label>
-          <input id="emailConfirm" name="emailConfirm" type="email" inputmode="email" placeholder="E-Mail erneut eingeben" required style="width:100%; padding:12px; border-radius:10px; border:1px solid var(--border);" />
-          <div class="err" id="err-emailConfirm">Die E-Mail-Adressen stimmen nicht überein.</div>
-        </div>
+        <div class="full">
+          <label for="landSelect">Land <span class="req" style="color:#dc2626; font-weight:700;">*</span></label>
+          <select id="landSelect" required>
+            <option value="">Land auswählen …</option>
+            <option selected>Deutschland</option><option>Österreich</option><option>Schweiz</option><option>Luxemburg</option>
+            <option>Niederlande</option><option>Belgien</option><option>Frankreich</option><option>Italien</option>
+            <option>Spanien</option><option>Polen</option><option>Tschechien</option><option>Dänemark</option>
+            <option>Schweden</option><option>Norwegen</option><option>Finnland</option><option>Irland</option>
+            <option>Vereinigtes Königreich</option>
+            <option value="other">Anderes Land …</option>
+          </select>
+          <input id="landOther" type="text" placeholder="Land eingeben" style="display:none; margin-top:8px;" />
+          <div class="err" id="err-land">Bitte Land angeben.</div>
+        </div>
 
-        <div class="full checkline" style="grid-column:1 / -1; border-top:1px dashed rgba(0,0,0,.08); padding-top:8px;">
-          <input id="acceptAgb" name="acceptAgb" type="checkbox" />
-          <label for="acceptAgb" style="display:inline; font-weight:400;">
-            Ich akzeptiere die <a href="https://dekodenise.de/policies/terms-of-service" target="_blank" rel="noopener">AGB</a>. <span class="req" style="color:#dc2626; font-weight:700;">*</span>
-          </label>
-        </div>
-        <div class="full"><div class="err err-inline" id="err-agb">Bitte AGB akzeptieren.</div></div>
+        <div>
+          <label for="handy">Handy (WhatsApp) <span class="req" style="color:#dc2626; font-weight:700;">*</span></label>
+          <input id="handy" name="handy" type="tel" required inputmode="tel" placeholder="+49 1525 1234567" />
+          <div class="err" id="err-handy">Bitte eine gültige Handy-Nr. angeben.</div>
+        </div>
 
-        <div class="full checkline" style="grid-column:1 / -1; margin-top:-8px; border-top:1px dashed rgba(0,0,0,.08); padding-top:8px;">
-          <input id="acceptDsgvo" name="acceptDsgvo" type="checkbox" />
-          <label for="acceptDsgvo" style="display:inline; font-weight:400;">
-            Ich stimme der <a href="https://dekodenise.de/policies/privacy-policy" target="_blank" rel="noopener">Datenschutzerklärung</a> zu. <span class="req" style="color:#dc2626; font-weight:700;">*</span>
-          </label>
-        </div>
-        <div class="full"><div class="err err-inline" id="err-dsgvo">Bitte der Datenschutzerklärung zustimmen.</div></div>
+        <div>
+          <label for="email">E-Mail <span class="req" style="color:#dc2626; font-weight:700;">*</span></label>
+          <input id="email" name="email" type="email" inputmode="email" autocomplete="email" placeholder="name@example.com" required />
+          <div class="err" id="err-email">Bitte eine gültige E-Mail eintragen.</div>
+        </div>
 
-        <div class="full actions" style="grid-column:1 / -1; display:flex; gap:10px; align-items:center; margin-top:8px;">
-          <button id="submitBtn" class="btn btn-primary" type="submit">Kundennummer anfordern</button>
-          <button id="resetBtn" class="btn" type="button">Zurücksetzen</button>
-          <span class="muted" id="submitHint"></span>
-        </div>
-      </div>
-    </form>
-  </div>
+        <div>
+          <label for="emailConfirm">E-Mail bestätigen <span class="req" style="color:#dc2626; font-weight:700;">*</span></label>
+          <input id="emailConfirm" name="emailConfirm" type="email" inputmode="email" placeholder="E-Mail erneut eingeben" required />
+          <div class="err" id="err-emailConfirm">Die E-Mail-Adressen stimmen nicht überein.</div>
+        </div>
 
-    <div id="reviewOverlay" class="overlay" aria-hidden="true">
-    <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="reviewTitle">
-      <button type="button" class="close" id="closeReview" aria-label="Schließen">×</button>
-      <h2 id="reviewTitle">Bitte prüfe deine Angaben</h2>
-      <table class="review-table">
-        <tbody>
-          <tr><td>Firma</td><td id="rev-firma"></td></tr>
-          <tr><td>Vorname</td><td id="rev-vorname"></td></tr>
-          <tr><td>Nachname</td><td id="rev-nachname"></td></tr>
-          <tr><td>Straße &amp; Nr.</td><td id="rev-strasse"></td></tr>
-          <tr><td>PLZ</td><td id="rev-plz"></td></tr>
-          <tr><td>Ort</td><td id="rev-ort"></td></tr>
-          <tr><td>Land</td><td id="rev-land"></td></tr>
-          <tr><td>Handy</td><td id="rev-handy"></td></tr>
-          <tr><td>E-Mail</td><td id="rev-email"></td></tr>
-        </tbody>
-      </table>
-      <div class="ok">
-        <button id="editBtn" class="btn" type="button">ändern</button>
-        <button id="confirmSubmitBtn" class="btn btn-primary" type="button">Jetzt registrieren</button>
-      </div>
-    </div>
-  </div>
+        <div class="full checkline">
+          <input id="acceptAgb" name="acceptAgb" type="checkbox" />
+          <label for="acceptAgb" style="display:inline; font-weight:400;">
+            Ich akzeptiere die <a href="https://dekodenise.de/policies/terms-of-service" target="_blank" rel="noopener">AGB</a>. <span class="req" style="color:#dc2626; font-weight:700;">*</span>
+          </label>
+        </div>
+        <div class="full"><div class="err err-inline" id="err-agb">Bitte AGB akzeptieren.</div></div>
 
-    <div id="processingOverlay" class="overlay" aria-hidden="true">
-    <div class="dialog processing" role="dialog" aria-modal="true" aria-labelledby="procTitle">
-      <h2 id="procTitle">Einen Moment – wir registrieren dich …</h2>
-      <div class="loading-wrap" style="display:flex; align-items:center; gap:12px; margin:8px 0 2px;">
-        <div class="spinner" style="width:18px; height:18px; border-radius:50%; border:2px solid currentColor; border-right-color:transparent; animation:spin .7s linear infinite;" aria-hidden="true"></div>
-        <div><strong>Bitte warten</strong></div>
-      </div>
-      <p id="procMsg" class="progress-msg" style="color:#475569; font-size:14px; margin-top:8px;">Deine Daten werden sicher übertragen.</p>
-      <p id="procSub" class="progress-sub" style="color:#64748b; font-size:13px; margin-top:4px;">Schließe dieses Fenster nicht und lade die Seite nicht neu.</p>
-    </div>
-  </div>
+        <div class="full checkline" style="margin-top:-8px;">
+          <input id="acceptDsgvo" name="acceptDsgvo" type="checkbox" />
+          <label for="acceptDsgvo" style="display:inline; font-weight:400;">
+            Ich stimme der <a href="https://dekodenise.de/policies/privacy-policy" target="_blank" rel="noopener">Datenschutzerklärung</a> zu. <span class="req" style="color:#dc2626; font-weight:700;">*</span>
+          </label>
+        </div>
+        <div class="full"><div class="err err-inline" id="err-dsgvo">Bitte der Datenschutzerklärung zustimmen.</div></div>
 
-    <div id="successOverlay" class="overlay" aria-hidden="true">
-    <div class="dialog success" role="dialog" aria-modal="true" aria-labelledby="successTitle">
-      <button type="button" class="close" id="closeSuccess" aria-label="Schließen">×</button>
-      <h2 id="successTitle">Alles klar! ✅</h2>
-      <p><b>Senden erfolgreich.</b></p>
-      <p>Danke, <span id="ovName"></span>! Deine Kundennummer lautet: <b id="ovKdNr"></b>.</p>
-      <p style="color:#b91c1c; font-weight:700; margin-top:16px;">Bitte setze dich einmal über WhatsApp mit mir in Verbindung. Werde mich morgen persönlich bei Dir zurück melden!</p>
-      <div style="margin-top:10px; display:flex; justify-content:flex-start;">
-        <a id="waBtn" class="btn btn-wa" href="#" target="_blank" rel="noopener">
-          Jetzt per WhatsApp schreiben
-        </a>
-      </div>
-    </div>
-  </div>
+        <div class="full actions">
+          <button id="submitBtn" class="btn btn-primary" type="submit">Kundennummer anfordern</button>
+          <button id="resetBtn" class="btn" type="button">Zurücksetzen</button>
+          <span class="muted" id="submitHint"></span>
+        </div>
+      </div>
+    </form>
+  </div>
 
-    <script>
-    (function(){
-      const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxcslNZhjXLbOeTsk8yuabOatZXQEaWSnc0cl5kiXg9ylEIwPaRohFlrDyHcqkzoV4/exec'; // <- anpassen
-      const SUBMIT_COOLDOWN_MS = 10000;
+  <!-- Review-Overlay -->
+  <div id="reviewOverlay" class="overlay" aria-hidden="true">
+    <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="reviewTitle">
+      <button type="button" class="close" id="closeReview" aria-label="Schließen">×</button>
+      <h2 id="reviewTitle">Bitte prüfe deine Angaben</h2>
+      <table class="review-table">
+        <tbody>
+          <tr><td>Firma</td><td id="rev-firma"></td></tr>
+          <tr><td>Vorname</td><td id="rev-vorname"></td></tr>
+          <tr><td>Nachname</td><td id="rev-nachname"></td></tr>
+          <tr><td>Straße &amp; Nr.</td><td id="rev-strasse"></td></tr>
+          <tr><td>PLZ</td><td id="rev-plz"></td></tr>
+          <tr><td>Ort</td><td id="rev-ort"></td></tr>
+          <tr><td>Land</td><td id="rev-land"></td></tr>
+          <tr><td>Handy</td><td id="rev-handy"></td></tr>
+          <tr><td>E-Mail</td><td id="rev-email"></td></tr>
+        </tbody>
+      </table>
+      <div class="ok">
+        <button id="editBtn" class="btn" type="button">ändern</button>
+        <button id="confirmSubmitBtn" class="btn btn-primary" type="button">Jetzt registrieren</button>
+      </div>
+    </div>
+  </div>
 
-      const form = document.getElementById('form');
-      const submitBtn = document.getElementById('submitBtn');
-      const resetBtn  = document.getElementById('resetBtn');
-      const submitHint= document.getElementById('submitHint');
+  <!-- Processing-Overlay -->
+  <div id="processingOverlay" class="overlay" aria-hidden="true">
+    <div class="dialog processing" role="dialog" aria-modal="true" aria-labelledby="procTitle">
+      <h2 id="procTitle">Einen Moment – wir registrieren dich …</h2>
+      <div class="loading-wrap" style="display:flex; align-items:center; gap:12px; margin:8px 0 2px;">
+        <div class="spinner" style="width:18px; height:18px; border-radius:50%; border:2px solid currentColor; border-right-color:transparent; animation:spin .7s linear infinite;" aria-hidden="true"></div>
+        <div><strong>Bitte warten</strong></div>
+      </div>
+      <p id="procMsg" class="progress-msg" style="color:#475569; font-size:14px; margin-top:8px;">Deine Daten werden sicher übertragen.</p>
+      <p id="procSub" class="progress-sub" style="color:#64748b; font-size:13px; margin-top:4px;">Schließe dieses Fenster nicht und lade die Seite nicht neu.</p>
+    </div>
+  </div>
 
-      const reviewOverlay = document.getElementById('reviewOverlay');
-      const confirmSubmitBtn = document.getElementById('confirmSubmitBtn');
-      const editBtn = document.getElementById('editBtn');
+  <!-- Erfolgs-Overlay -->
+  <div id="successOverlay" class="overlay" aria-hidden="true">
+    <div class="dialog success" role="dialog" aria-modal="true" aria-labelledby="successTitle">
+      <button type="button" class="close" id="closeSuccess" aria-label="Schließen">×</button>
+      <h2 id="successTitle">Alles klar! ✅</h2>
+      <p><b>Senden erfolgreich.</b></p>
+      <p>Danke, <span id="ovName"></span>! Deine Kundennummer lautet: <b id="ovKdNr"></b>.</p>
+      <p style="color:#b91c1c; font-weight:700; margin-top:16px;">Bitte setze dich einmal über WhatsApp mit mir in Verbindung. Werde mich morgen persönlich bei Dir zurück melden!</p>
+      <div style="margin-top:10px; display:flex; justify-content:flex-start;">
+        <a id="waBtn" class="btn btn-wa" href="#" target="_blank" rel="noopener">
+          Jetzt per WhatsApp schreiben
+        </a>
+      </div>
+    </div>
+  </div>
 
-      const processingOverlay = document.getElementById('processingOverlay');
-      const procMsg = document.getElementById('procMsg');
-      const procSub = document.getElementById('procSub');
+  <script>
+    (function(){
+      const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxcslNZhjXLbOeTsk8yuabOatZXQEaWSnc0cl5kiXg9ylEIwPaRohFlrDyHcqkzoV4/exec'; // <- anpassen
+      const SUBMIT_COOLDOWN_MS = 10000;
 
-      const successOverlay = document.getElementById('successOverlay');
-      const ovName = document.getElementById('ovName');
-      const ovKdNr = document.getElementById('ovKdNr');
+      const form = document.getElementById('form');
+      const submitBtn = document.getElementById('submitBtn');
+      const resetBtn  = document.getElementById('resetBtn');
+      const submitHint= document.getElementById('submitHint');
 
-      const landSelect = document.getElementById('landSelect');
-      const landOther  = document.getElementById('landOther');
+      const reviewOverlay = document.getElementById('reviewOverlay');
+      const confirmSubmitBtn = document.getElementById('confirmSubmitBtn');
+      const editBtn = document.getElementById('editBtn');
 
-      const pageTitle     = document.getElementById('pageTitle');
-      const adminBar      = document.getElementById('adminBar');
-      const sendPdfAllBtn = document.getElementById('sendPdfAllBtn');
-      const sendPdfNewBtn = document.getElementById('sendPdfNewBtn');
-      const pdfHint       = document.getElementById('pdfHint');
-      
-      const toggleRegBtn      = document.getElementById('toggleRegBtn');
-      const regDeactivatedMsg = document.getElementById('regDeactivatedMsg');
-      const formCard          = document.getElementById('form'); 
-      const leadText          = document.querySelector('p.lead'); 
+      const processingOverlay = document.getElementById('processingOverlay');
+      const procMsg = document.getElementById('procMsg');
+      const procSub = document.getElementById('procSub');
 
-      const $ = (id) => document.getElementById(id);
+      const successOverlay = document.getElementById('successOverlay');
+      const ovName = document.getElementById('ovName');
+      const ovKdNr = document.getElementById('ovKdNr');
 
-      // Hard-hide Admin-Bar on load
-      adminBar.classList.add('admin-hidden');
+      const landSelect = document.getElementById('landSelect');
+      const landOther  = document.getElementById('landOther');
 
-      function showOverlay(ov){ ov.classList.add('show'); ov.setAttribute('aria-hidden','false'); }
-      function hideOverlay(ov){ ov.classList.remove('show'); ov.setAttribute('aria-hidden','true'); }
+      const pageTitle     = document.getElementById('pageTitle');
+      const adminBar      = document.getElementById('adminBar');
+      const sendPdfAllBtn = document.getElementById('sendPdfAllBtn');
+      const sendPdfNewBtn = document.getElementById('sendPdfNewBtn');
+      const pdfHint       = document.getElementById('pdfHint');
 
-      function markInvalid(input, errId, show){
-        if(!input) return;
-        if(show){
-          if (input.type !== 'checkbox') input.classList.add('is-invalid');
-          if(errId) $(errId).classList.add('show');
-        } else {
-          if (input.type !== 'checkbox') input.classList.remove('is-invalid');
-          if(errId) $(errId).classList.remove('show');
-        }
-      }
+      const $ = (id) => document.getElementById(id);
 
-      function firstErrorScroll(){
-        const el = document.querySelector('.err.show, .is-invalid');
-        if (el) (el.closest('.checkline') || el).scrollIntoView({behavior:'smooth', block:'center'});
-      }
+      // Hard-hide Admin-Bar on load
+      adminBar.classList.add('admin-hidden');
 
-      // Standard: Deutschland vorauswählen
-      landSelect.value = 'Deutschland';
-      landSelect.addEventListener('change', ()=>{
-        const isOther = landSelect.value === 'other';
-        landOther.style.display = isOther ? 'block' : 'none';
-        if (!isOther) landOther.value = '';
-        markInvalid(landSelect, 'err-land', false);
-        markInvalid(landOther,  'err-land', false);
-      });
+      function showOverlay(ov){ ov.classList.add('show'); ov.setAttribute('aria-hidden','false'); }
+      function hideOverlay(ov){ ov.classList.remove('show'); ov.setAttribute('aria-hidden','true'); }
 
-      function getLandValue(){
-        return (landSelect.value === 'other') ? landOther.value.trim() : landSelect.value.trim();
-      }
+      function markInvalid(input, errId, show){
+        if(!input) return;
+        if(show){
+          if (input.type !== 'checkbox') input.classList.add('is-invalid');
+          if(errId) $(errId).classList.add('show');
+        } else {
+          if (input.type !== 'checkbox') input.classList.remove('is-invalid');
+          if(errId) $(errId).classList.remove('show');
+        }
+      }
 
-      function validate(){
-        let ok = true;
-        const vorname=$('vorname'), nachname=$('nachname'), strasse=$('strasse'),
-              plz=$('plz'), ort=$('ort'), handy=$('handy'),
-              email=$('email'), emailConfirm=$('emailConfirm'),
-              acceptAgb=$('acceptAgb'), acceptDsgvo=$('acceptDsgvo');
+      function firstErrorScroll(){
+        const el = document.querySelector('.err.show, .is-invalid');
+        if (el) (el.closest('.checkline') || el).scrollIntoView({behavior:'smooth', block:'center'});
+      }
 
-        [['vorname','err-vorname'],['nachname','err-nachname'],['strasse','err-strasse'],['ort','err-ort'],['handy','err-handy']]
-          .forEach(([id,err])=>{ const el=$(id); const bad=!el.value.trim(); markInvalid(el,err,bad); ok=ok && !bad; });
+      // Standard: Deutschland vorauswählen
+      landSelect.value = 'Deutschland';
+      landSelect.addEventListener('change', ()=>{
+        const isOther = landSelect.value === 'other';
+        landOther.style.display = isOther ? 'block' : 'none';
+        if (!isOther) landOther.value = '';
+        markInvalid(landSelect, 'err-land', false);
+        markInvalid(landOther,  'err-land', false);
+      });
 
-        const plzBad = !plz.value.trim() || !(new RegExp(/^[A-Za-z0-9 \-]{1,10}$/).test(plz.value.trim()));
-        markInvalid(plz,'err-plz',plzBad); ok = ok && !plzBad;
+      function getLandValue(){
+        return (landSelect.value === 'other') ? landOther.value.trim() : landSelect.value.trim();
+      }
 
-        const landVal = getLandValue(); const landBad = !landVal;
-        markInvalid(landSelect,'err-land',landBad && landSelect.value!=='other');
-        markInvalid(landOther,'err-land',landBad && landSelect.value==='other');
-        ok = ok && !landBad;
+      function validate(){
+        let ok = true;
+        const vorname=$('vorname'), nachname=$('nachname'), strasse=$('strasse'),
+              plz=$('plz'), ort=$('ort'), handy=$('handy'),
+              email=$('email'), emailConfirm=$('emailConfirm'),
+              acceptAgb=$('acceptAgb'), acceptDsgvo=$('acceptDsgvo');
 
-        const emailVal=email.value.trim(); const emailGood = emailVal.length && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal);
-        markInvalid(email,'err-email',!emailGood); ok = ok && emailGood;
+        [['vorname','err-vorname'],['nachname','err-nachname'],['strasse','err-strasse'],['ort','err-ort'],['handy','err-handy']]
+          .forEach(([id,err])=>{ const el=$(id); const bad=!el.value.trim(); markInvalid(el,err,bad); ok=ok && !bad; });
 
-        const emailConfVal=emailConfirm.value.trim(); const emailMatch = emailConfVal.length && (emailVal.toLowerCase()===emailConfVal.toLowerCase());
-        markInvalid(emailConfirm,'err-emailConfirm',!emailMatch); ok = ok && emailMatch;
+        const plzBad = !plz.value.trim() || !(new RegExp(/^[A-Za-z0-9 \-]{1,10}$/).test(plz.value.trim()));
+        markInvalid(plz,'err-plz',plzBad); ok = ok && !plzBad;
 
-        const agbBad=!acceptAgb.checked, dsgvoBad=!acceptDsgvo.checked;
-        markInvalid(acceptAgb,'err-agb',agbBad); ok = ok && !agbBad;
-        markInvalid(document.getElementById('acceptDsgvo'),'err-dsgvo',dsgvoBad); ok = ok && !dsgvoBad;
+        const landVal = getLandValue(); const landBad = !landVal;
+        markInvalid(landSelect,'err-land',landBad && landSelect.value!=='other');
+        markInvalid(landOther,'err-land',landBad && landSelect.value==='other');
+        ok = ok && !landBad;
 
-        if(!ok) firstErrorScroll();
-        return ok;
-      }
+        const emailVal=email.value.trim(); const emailGood = emailVal.length && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal);
+        markInvalid(email,'err-email',!emailGood); ok = ok && emailGood;
 
-      function fillReview(){
-        $('rev-firma').textContent   = $('firma').value.trim() || '—';
-        $('rev-vorname').textContent = $('vorname').value.trim();
-        $('rev-nachname').textContent= $('nachname').value.trim();
-        $('rev-strasse').textContent = $('strasse').value.trim();
-        $('rev-plz').textContent     = $('plz').value.trim();
-        $('rev-ort').textContent     = $('ort').value.trim();
-        $('rev-land').textContent    = getLandValue();
-        $('rev-handy').textContent   = $('handy').value.trim();
-        $('rev-email').textContent   = $('email').value.trim();
-      }
+        const emailConfVal=emailConfirm.value.trim(); const emailMatch = emailConfVal.length && (emailVal.toLowerCase()===emailConfVal.toLowerCase());
+        markInvalid(emailConfirm,'err-emailConfirm',!emailMatch); ok = ok && emailMatch;
 
-      function buildPayload(nonce){
-        return {
-          nonce,
-          firma:$('firma').value.trim(),
-          vorname:$('vorname').value.trim(),
-          nachname:$('nachname').value.trim(),
-          strasse:$('strasse').value.trim(),
-          plz:$('plz').value.trim(),
-          ort:$('ort').value.trim(),
-          land:getLandValue(),
-          handy:$('handy').value.trim(),
-          email:$('email').value.trim(),
-          emailConfirm:$('emailConfirm').value.trim(),
-          acceptAgb:$('acceptAgb').checked,
-          acceptDsgvo:$('acceptDsgvo').checked
-        };
-      }
+        const agbBad=!acceptAgb.checked, dsgvoBad=!acceptDsgvo.checked;
+        markInvalid(acceptAgb,'err-agb',agbBad); ok = ok && !agbBad;
+        markInvalid(document.getElementById('acceptDsgvo'),'err-dsgvo',dsgvoBad); ok = ok && !dsgvoBad;
 
-      // Submit -> Review
-      form.addEventListener('submit', (e)=>{
-        e.preventDefault();
-        if(!validate()) return;
-        fillReview();
-        showOverlay(reviewOverlay);
-      });
+        if(!ok) firstErrorScroll();
+        return ok;
+      }
 
-      // Review schließen / ändern
-      document.getElementById('editBtn').addEventListener('click', ()=> reviewOverlay.classList.remove('show'));
-      document.getElementById('closeReview').addEventListener('click', ()=> reviewOverlay.classList.remove('show'));
+      function fillReview(){
+        $('rev-firma').textContent   = $('firma').value.trim() || '—';
+        $('rev-vorname').textContent = $('vorname').value.trim();
+        $('rev-nachname').textContent= $('nachname').value.trim();
+        $('rev-strasse').textContent = $('strasse').value.trim();
+        $('rev-plz').textContent     = $('plz').value.trim();
+        $('rev-ort').textContent     = $('ort').value.trim();
+        $('rev-land').textContent    = getLandValue();
+        $('rev-handy').textContent   = $('handy').value.trim();
+        $('rev-email').textContent   = $('email').value.trim();
+      }
 
-      // === Doppel-Klick-Schutz + Idempotenz ===
-      let submitting = false;
-      function genNonce(){
-        try{ return crypto.randomUUID(); }catch(_){ return Date.now()+'-'+Math.random().toString(16).slice(2); }
-      }
+      function buildPayload(nonce){
+        return {
+          nonce,
+          firma:$('firma').value.trim(),
+          vorname:$('vorname').value.trim(),
+          nachname:$('nachname').value.trim(),
+          strasse:$('strasse').value.trim(),
+          plz:$('plz').value.trim(),
+          ort:$('ort').value.trim(),
+          land:getLandValue(),
+          handy:$('handy').value.trim(),
+          email:$('email').value.trim(),
+          emailConfirm:$('emailConfirm').value.trim(),
+          acceptAgb:$('acceptAgb').checked,
+          acceptDsgvo:$('acceptDsgvo').checked
+        };
+      }
 
-      document.getElementById('confirmSubmitBtn').addEventListener('click', async ()=>{
-        if(submitting) return;
-        submitting = true;
+      // Submit -> Review
+      form.addEventListener('submit', (e)=>{
+        e.preventDefault();
+        if(!validate()) return;
+        fillReview();
+        showOverlay(reviewOverlay);
+      });
 
-        confirmSubmitBtn.disabled = true;
-        confirmSubmitBtn.classList.add('loading');
-        editBtn.disabled = true;
+      // Review schließen / ändern
+      document.getElementById('editBtn').addEventListener('click', ()=> reviewOverlay.classList.remove('show'));
+      document.getElementById('closeReview').addEventListener('click', ()=> reviewOverlay.classList.remove('show'));
 
-        reviewOverlay.classList.remove('show');
-        processingOverlay.classList.add('show');
-        processingOverlay.classList.add('locked');
+      // === Doppel-Klick-Schutz + Idempotenz ===
+      let submitting = false;
+      function genNonce(){
+        try{ return crypto.randomUUID(); }catch(_){ return Date.now()+'-'+Math.random().toString(16).slice(2); }
+      }
 
-        procMsg.textContent = 'Deine Daten werden sicher übertragen.';
-        procSub.textContent = 'Das kann je nach Netz 5–15 Sekunden dauern.';
+      document.getElementById('confirmSubmitBtn').addEventListener('click', async ()=>{
+        if(submitting) return;
+        submitting = true;
 
-        submitBtn.disabled = true;
-        submitBtn.classList.add('loading');
-        const cooldownTimer = setTimeout(()=>{ submitBtn.disabled=false; submitBtn.classList.remove('loading'); }, SUBMIT_COOLDOWN_MS);
+        confirmSubmitBtn.disabled = true;
+        confirmSubmitBtn.classList.add('loading');
+        editBtn.disabled = true;
 
-        let slowTimer1 = setTimeout(()=>{ procMsg.textContent='Noch dran …'; procSub.textContent='Es dauert gerade länger als üblich. Bitte weiterhin warten.'; }, 8000);
-        let slowTimer2 = setTimeout(()=>{ procMsg.textContent='Fast geschafft …'; procSub.textContent='Wir haben die Registrierung im System, finalisieren gleich die Kundennummer.'; }, 15000);
+        reviewOverlay.classList.remove('show');
+        processingOverlay.classList.add('show');
+        processingOverlay.classList.add('locked');
 
-        const nonce = genNonce();
-        const payload = buildPayload(nonce);
+        procMsg.textContent = 'Deine Daten werden sicher übertragen.';
+        procSub.textContent = 'Das kann je nach Netz 5–15 Sekunden dauern.';
 
-        try{
-          const body = new URLSearchParams(payload).toString();
-          const res = await fetch(WEB_APP_URL, { method:'POST', headers:{ 'Content-Type':'application/x-www-form-urlencoded' }, body });
-          const raw = await res.text();
-          let json=null; try{ json = JSON.parse(raw);}catch(_){ throw new Error(`Kein JSON (${res.status}): ${raw.slice(0,180)}…`); }
-          if(!json.ok) throw new Error(json.error || 'Fehler beim Senden.');
+        submitBtn.disabled = true;
+        submitBtn.classList.add('loading');
+        const cooldownTimer = setTimeout(()=>{ submitBtn.disabled=false; submitBtn.classList.remove('loading'); }, SUBMIT_COOLDOWN_MS);
 
-          const fullName = json.fullName || (payload.vorname + ' ' + payload.nachname);
-          const kdNr = json.kdNr || '';
-          ovName.textContent = fullName;
-          ovKdNr.textContent = kdNr;
+        let slowTimer1 = setTimeout(()=>{ procMsg.textContent='Noch dran …'; procSub.textContent='Es dauert gerade länger als üblich. Bitte weiterhin warten.'; }, 8000);
+        let slowTimer2 = setTimeout(()=>{ procMsg.textContent='Fast geschafft …'; procSub.textContent='Wir haben die Registrierung im System, finalisieren gleich die Kundennummer.'; }, 15000);
 
-          // ===== WhatsApp-Text: nur gefüllte Felder, keine Platzhalter =====
-          const waNumber = '4915258164673'; // ohne "+"
-          const rows = [
-            'Hallo Denise,',
-            'ich habe mich gerade registriert und soll mich bei dir melden.',
-            `Meine Kundennummer: ${kdNr}`,
-            payload.firma ? `Firmenname: ${payload.firma}` : '',
-            `Name: ${fullName}`,
-            payload.strasse ? `Straße & Nr.: ${payload.strasse}` : '',
-            payload.plz ? `PLZ: ${payload.plz}` : '',
-            payload.ort ? `Ort: ${payload.ort}` : '',
-            payload.land ? `Land: ${payload.land}` : '',
-            payload.email ? `E-Mail: ${payload.email}` : ''
-          ].filter(Boolean);
+        const nonce = genNonce();
+        const payload = buildPayload(nonce);
 
-          rows.push('Liebe Grüße');
+        try{
+          const body = new URLSearchParams(payload).toString();
+          const res = await fetch(WEB_APP_URL, { method:'POST', headers:{ 'Content-Type':'application/x-www-form-urlencoded' }, body });
+          const raw = await res.text();
+          let json=null; try{ json = JSON.parse(raw);}catch(_){ throw new Error(`Kein JSON (${res.status}): ${raw.slice(0,180)}…`); }
+          if(!json.ok) throw new Error(json.error || 'Fehler beim Senden.');
 
-          const waText = rows.join('\n');
-          document.getElementById('waBtn').setAttribute(
-            'href',
-            'https://wa.me/' + waNumber + '?text=' + encodeURIComponent(waText)
-          );
+          const fullName = json.fullName || (payload.vorname + ' ' + payload.nachname);
+          const kdNr = json.kdNr || '';
+          ovName.textContent = fullName;
+          ovKdNr.textContent = kdNr;
 
-          processingOverlay.classList.remove('locked'); processingOverlay.classList.remove('show');
-          successOverlay.classList.add('show');
-          submitBtn.textContent = 'Senden erfolgreich';
-          form.reset();
+          // ===== WhatsApp-Text: nur gefüllte Felder, keine Platzhalter =====
+          const waNumber = '4915258164673'; // ohne "+"
+          const rows = [
+            'Hallo Denise,',
+            'ich habe mich gerade registriert und soll mich bei dir melden.',
+            `Meine Kundennummer: ${kdNr}`,
+            payload.firma ? `Firmenname: ${payload.firma}` : '',
+            `Name: ${fullName}`,
+            payload.strasse ? `Straße & Nr.: ${payload.strasse}` : '',
+            payload.plz ? `PLZ: ${payload.plz}` : '',
+            payload.ort ? `Ort: ${payload.ort}` : '',
+            payload.land ? `Land: ${payload.land}` : '',
+            payload.email ? `E-Mail: ${payload.email}` : ''
+          ].filter(Boolean);
 
-        }catch(err){
-          console.error(err);
-          // Fehler bei fehlgeschlagenem POST-Request (z.B. wenn GAS Registrierung blockt)
-          submitHint.textContent = (err && err.message) ? err.message : 'Netzwerk-/CORS-Fehler.';
-          processingOverlay.classList.remove('locked'); processingOverlay.classList.remove('show');
-        }finally{
-          clearTimeout(slowTimer1); clearTimeout(slowTimer2); clearTimeout(cooldownTimer);
-          submitBtn.classList.remove('loading'); confirmSubmitBtn.classList.remove('loading');
-          submitting = false; confirmSubmitBtn.disabled = false; editBtn.disabled = false;
-        }
-      });
+          rows.push('Liebe Grüße');
 
-      // Overlays schließen
-      document.getElementById('closeSuccess').addEventListener('click', ()=> successOverlay.classList.remove('show'));
-      successOverlay.addEventListener('click', (e)=>{ if(e.target === successOverlay) successOverlay.classList.remove('show'); });
-      reviewOverlay.addEventListener('click', (e)=>{ if(e.target === reviewOverlay) reviewOverlay.classList.remove('show'); });
-      document.addEventListener('keydown', (e)=>{
-        if(e.key==='Escape'){
-          if (reviewOverlay.classList.contains('show')) reviewOverlay.classList.remove('show');
-          else if (successOverlay.classList.contains('show')) successOverlay.classList.remove('show');
-        }
-      });
+          const waText = rows.join('\n');
+          document.getElementById('waBtn').setAttribute(
+            'href',
+            'https://wa.me/' + waNumber + '?text=' + encodeURIComponent(waText)
+          );
 
-      // -------------------------------------------------------------
-      // <<< NEUE FUNKTIONEN FÜR REGISTRIERUNGSSTATUS (Client-Side) >>>
-      // -------------------------------------------------------------
+          processingOverlay.classList.remove('locked'); processingOverlay.classList.remove('show');
+          successOverlay.classList.add('show');
+          submitBtn.textContent = 'Senden erfolgreich';
+          form.reset();
 
-      /**
-       * Aktualisiert das Admin-Interface und blendet das Formular ein/aus.
-       * Wird als SuccessHandler für google.script.run verwendet.
-       */
-      function updateRegistrationUi(status) {
-          const isActive = status === 'Aktiv';
-          
-          // 1. Admin-Button aktualisieren
-          if (toggleRegBtn) {
-              toggleRegBtn.dataset.currentStatus = status; // Status speichern
-              if (isActive) {
-                  toggleRegBtn.textContent = 'Registrierung ist AKTIV. (Klick zum Deaktivieren)';
-                  toggleRegBtn.classList.replace('btn-danger', 'btn-primary');
-              } else {
-                  toggleRegBtn.textContent = 'Registrierung ist DEAKTIVIERT. (Klick zum Aktivieren)';
-                  toggleRegBtn.classList.replace('btn-primary', 'btn-danger');
-              }
-              // Zeigt den Status kurz in der Admin-Leiste an
-              pdfHint.textContent = `Registrierung: ${status}`;
-              setTimeout(()=> pdfHint.textContent = '', 8000); 
+        }catch(err){
+          console.error(err);
+          submitHint.textContent = (err && err.message) ? err.message : 'Netzwerk-/CORS-Fehler.';
+          processingOverlay.classList.remove('locked'); processingOverlay.classList.remove('show');
+        }finally{
+          clearTimeout(slowTimer1); clearTimeout(slowTimer2); clearTimeout(cooldownTimer);
+          submitBtn.classList.remove('loading'); confirmSubmitBtn.classList.remove('loading');
+          submitting = false; confirmSubmitBtn.disabled = false; editBtn.disabled = false;
+        }
+      });
+
+      // Overlays schließen
+      document.getElementById('closeSuccess').addEventListener('click', ()=> successOverlay.classList.remove('show'));
+      successOverlay.addEventListener('click', (e)=>{ if(e.target === successOverlay) successOverlay.classList.remove('show'); });
+      reviewOverlay.addEventListener('click', (e)=>{ if(e.target === reviewOverlay) reviewOverlay.classList.remove('show'); });
+      document.addEventListener('keydown', (e)=>{
+        if(e.key==='Escape'){
+          if (reviewOverlay.classList.contains('show')) reviewOverlay.classList.remove('show');
+          else if (successOverlay.classList.contains('show')) successOverlay.classList.remove('show');
+        }
+      });
+
+      // ====== Reveal-Mechanik „5× H1 in 4s“: Admin-Bar zeigen ======
+      (()=>{
+        let clicks = 0, timer = null;
+        pageTitle.addEventListener('click', ()=>{
+          clicks++;
+          if (clicks === 1) {
+            timer = setTimeout(()=>{ clicks = 0; }, 4000);
           }
-
-          // 2. Registrierungsformular anzeigen/ausblenden
-          if (isActive) {
-              if (regDeactivatedMsg) regDeactivatedMsg.style.display = 'none';
-              if (formCard) formCard.style.display = 'block';
-              if (leadText) leadText.style.display = 'block';
-          } else {
-              if (regDeactivatedMsg) regDeactivatedMsg.style.display = 'block';
-              if (formCard) formCard.style.display = 'none';
-              if (leadText) leadText.style.display = 'none';
+          if (clicks >= 5) {
+            clearTimeout(timer); clicks = 0;
+            adminBar.classList.remove('admin-hidden'); // sichtbar machen
+            pdfHint.textContent = 'Admin-Tools aktiv.';
+            setTimeout(()=> pdfHint.textContent = '', 3000);
           }
+        });
+      })();
+
+      // ====== PDF-Versand (Alle / Nur neue) ======
+      async function sendPdf(scope){
+        const btn = (scope === 'new') ? sendPdfNewBtn : sendPdfAllBtn;
+        btn.disabled = true; btn.classList.add('loading');
+        pdfHint.textContent = (scope === 'new') ? 'Sende nur neue …' : 'Sende alle …';
+        try{
+          const body = new URLSearchParams({ action: 'sendPdfNow', scope }).toString();
+          const res = await fetch(WEB_APP_URL, {
+            method: 'POST',
+            headers: { 'Content-Type':'application/x-www-form-urlencoded' },
+            body
+          });
+          const raw = await res.text();
+          let json=null; try{ json = JSON.parse(raw);}catch(_){ throw new Error(`Unerwartete Antwort: ${raw.slice(0,200)}…`); }
+          if(!json.ok) throw new Error(json.error || 'Fehler beim PDF-Versand.');
+          // Variante C: generische Erfolgsmeldung, ohne Empfänger/Dateiname/Zeilen
+          pdfHint.textContent = 'PDF versendet.';
+        } catch(err){
+          console.error(err);
+          pdfHint.textContent = (err && err.message) ? err.message : 'Netzwerkfehler.';
+        } finally{
+          btn.disabled = false; btn.classList.remove('loading');
+          setTimeout(()=> pdfHint.textContent = '', 8000);
+        }
       }
+      sendPdfAllBtn.addEventListener('click', ()=> sendPdf('all'));
+      sendPdfNewBtn.addEventListener('click', ()=> sendPdf('new'));
 
-      /**
-       * Logik zum Umschalten des Status (wird an Admin-Button gehängt).
-       */
-      function handleToggleRegistration() {
-          if (!toggleRegBtn) return;
-          
-          const currentStatus = toggleRegBtn.dataset.currentStatus;
-          const newStatus = (currentStatus === 'Aktiv') ? 'Deaktiviert' : 'Aktiv';
-
-          toggleRegBtn.disabled = true;
-          toggleRegBtn.classList.add('loading');
-          pdfHint.textContent = `Setze Status auf ${newStatus}...`;
-
-          // google.script.run (Apps Script) aufrufen
-          google.script.run
-              .withSuccessHandler(function(status) {
-                  updateRegistrationUi(status);
-                  toggleRegBtn.disabled = false;
-                  toggleRegBtn.classList.remove('loading');
-              })
-              .withFailureHandler(function(error) {
-                  pdfHint.textContent = 'Fehler beim Umschalten: ' + error.message;
-                  toggleRegBtn.disabled = false;
-                  toggleRegBtn.classList.remove('loading');
-              })
-              .toggleRegistration(newStatus); // Apps Script Funktion
-      }
-
-      /**
-       * Lädt den initialen Status, sobald die Admin-Bar sichtbar wird.
-       */
-      function loadInitialRegistrationStatus() {
-          // Ruft die GAS-Funktion auf, die den Status direkt aus dem Sheet holt.
-          google.script.run
-              .withSuccessHandler(updateRegistrationUi)
-              .withFailureHandler(function() { updateRegistrationUi('Fehler'); })
-              .getRegistrationStatusForFrontend(); 
-      }
-      // NEU >>>
-
-      // ====== Reveal-Mechanik „5× H1 in 4s“: Admin-Bar zeigen ======
-      (()=>{
-        let clicks = 0, timer = null;
-        pageTitle.addEventListener('click', ()=>{
-          clicks++;
-          if (clicks === 1) {
-            timer = setTimeout(()=>{ clicks = 0; }, 4000);
-          }
-          if (clicks >= 5) {
-            clearTimeout(timer); clicks = 0;
-            adminBar.classList.remove('admin-hidden'); // sichtbar machen
-            loadInitialRegistrationStatus(); // <<< NEU: Status laden, sobald Admin sichtbar
-            pdfHint.textContent = 'Admin-Tools aktiv.';
-            setTimeout(()=> pdfHint.textContent = '', 3000);
-          }
-        });
-      })();
-
-      // ====== PDF-Versand (Alle / Nur neue) ======
-      async function sendPdf(scope){
-        const btn = (scope === 'new') ? sendPdfNewBtn : sendPdfAllBtn;
-        btn.disabled = true; btn.classList.add('loading');
-        pdfHint.textContent = (scope === 'new') ? 'Sende nur neue …' : 'Sende alle …';
-        try{
-          const body = new URLSearchParams({ action: 'sendPdfNow', scope }).toString();
-          const res = await fetch(WEB_APP_URL, {
-            method: 'POST',
-            headers: { 'Content-Type':'application/x-www-form-urlencoded' },
-            body
-          });
-          const raw = await res.text();
-          let json=null; try{ json = JSON.parse(raw);}catch(_){ throw new Error(`Unerwartete Antwort: ${raw.slice(0,200)}…`); }
-          if(!json.ok) throw new Error(json.error || 'Fehler beim PDF-Versand.');
-          // Variante C: generische Erfolgsmeldung, ohne Empfänger/Dateiname/Zeilen
-          pdfHint.textContent = 'PDF versendet.';
-        } catch(err){
-          console.error(err);
-          pdfHint.textContent = (err && err.message) ? err.message : 'Netzwerkfehler.';
-        } finally{
-          btn.disabled = false; btn.classList.remove('loading');
-          setTimeout(()=> pdfHint.textContent = '', 8000);
-        }
-      }
-      sendPdfAllBtn.addEventListener('click', ()=> sendPdf('all'));
-      sendPdfNewBtn.addEventListener('click', ()=> sendPdf('new'));
-
-      // Zurücksetzen (Form UI)
-      resetBtn.addEventListener('click', ()=>{
-        form.reset();
-        landSelect.value = 'Deutschland';
-        landOther.style.display='none';
-        submitHint.textContent='';
-        document.querySelectorAll('.is-invalid').forEach(el=>el.classList.remove('is-invalid'));
-        document.querySelectorAll('.err.show').forEach(el=>el.classList.remove('show'));
-        submitBtn.textContent='Kundennummer anfordern';
-      });
-
-      // <<< NEU: Event Listener für den Toggle-Button hinzufügen >>>
-      if (toggleRegBtn) {
-          toggleRegBtn.addEventListener('click', handleToggleRegistration);
-      }
-      // NEU >>>
-
-    })();
-  </script>
-  </body>
+      // Zurücksetzen (Form UI)
+      resetBtn.addEventListener('click', ()=>{
+        form.reset();
+        landSelect.value = 'Deutschland';
+        landOther.style.display='none';
+        submitHint.textContent='';
+        document.querySelectorAll('.is-invalid').forEach(el=>el.classList.remove('is-invalid'));
+        document.querySelectorAll('.err.show').forEach(el=>el.classList.remove('show'));
+        submitBtn.textContent='Kundennummer anfordern';
+      });
+    })();
+  </script>
+</body>
 </html>
