@@ -81,8 +81,6 @@
     .btn-primary:hover{ background:var(--primary-hover); }
     .btn-success{ background:var(--success); color:#fff; }
     .btn-success:hover{ background:var(--success-strong); }
-    .btn-danger{ background:var(--danger); color:#fff; }
-    .btn-danger:hover{ filter:brightness(.92); }
     .btn[disabled]{ opacity:.65; pointer-events:none; }
     .btn.loading{ position:relative; }
     .btn.loading::after{
@@ -132,7 +130,6 @@
     .admin-bar { display:flex; gap:10px; align-items:center; margin:6px 0 12px; flex-wrap:wrap; }
 
     /* Rote, fette Statusmeldungen für Admin-Buttons */
-    .reg-status { color:#b91c1c; font-weight:700; margin-left:8px; }
     .pdf-status { color:#b91c1c; font-weight:bold; }
   </style>
 </head>
@@ -151,14 +148,13 @@
     <div id="adminBar" class="admin-hidden admin-bar">
       <button id="sendPdfAllBtn" class="btn btn-success" type="button" title="Komplette Liste senden">Alle senden</button>
       <button id="sendPdfNewBtn" class="btn btn-primary" type="button" title="Nur neue seit letztem Versand senden">Neue senden</button>
-      <button id="toggleRegBtn" class="btn" type="button" title="Registrierung aktivieren/deaktivieren">-</button>
-      <a id="liveBtn" href="https://script.google.com/macros/s/AKfycbwahhpXp-34saIoElpBdZB1l2Z5Bo23KsnYU435wlMtmTjoJyYbtN_QEqM1VGdLcBUQ/exec" class="btn" title="Live" target="_blank" rel="noopener">
+      <a id="liveBtn" href="https://script.google.com/macros/s/AKfycbwahhpXp-34saIoElpBdZB1l2Z5Bo23KsnYU435wlMtmTjoJyYbtN_QEqM1VGdLcBUQ/exec" class="btn btn-danger" title="Live" target="_blank" rel="noopener">
   Live
 </a>
       <span id="pdfHint" class="pdf-status"></span>
     </div>
 
-        <p class="lead">Bitte trage deine Daten ein. Felder mit <span class="req" style="color:#dc2626; font-weight:700;">*</span> sind Pflicht.<span id="regStatus" class="reg-status" aria-live="polite"></span></p>
+    <p class="lead">Bitte trage deine Daten ein. Felder mit <span class="req" style="color:#dc2626; font-weight:700;">*</span> sind Pflicht.</p>
 
     <form id="form" class="card" novalidate>
       <div class="grid">
@@ -314,8 +310,7 @@
     (function(){
       const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxcslNZhjXLbOeTsk8yuabOatZXQEaWSnc0cl5kiXg9ylEIwPaRohFlrDyHcqkzoV4/exec'; // <- anpassen
       const SUBMIT_COOLDOWN_MS = 10000;
-      let REGISTRATION_PAUSED = true; // Serverwert wird gleich geladen
-     
+
       const form = document.getElementById('form');
       const submitBtn = document.getElementById('submitBtn');
       const resetBtn  = document.getElementById('resetBtn');
@@ -341,84 +336,9 @@
       const sendPdfAllBtn = document.getElementById('sendPdfAllBtn');
       const sendPdfNewBtn = document.getElementById('sendPdfNewBtn');
       const pdfHint       = document.getElementById('pdfHint');
-      const regStatus     = document.getElementById('regStatus');
-      const toggleRegBtn  = document.getElementById('toggleRegBtn');
-      // === Server-Status API ===
-async function fetchRegStatus(){
-  try{
-    const body = new URLSearchParams({ action: 'getRegStatus' }).toString();
-    const res  = await fetch(WEB_APP_URL, { method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body });
-    const raw  = await res.text();
-    let json=null; try{ json = JSON.parse(raw);}catch(_){ throw new Error('Ungültige Server-Antwort'); }
-    if(!json.ok || typeof json.paused!=='boolean') throw new Error(json.error || 'Status konnte nicht geladen werden.');
-    REGISTRATION_PAUSED = json.paused;
-    applyRegistrationState(REGISTRATION_PAUSED);
-  }catch(err){
-    console.warn(err);
-    // Fallback: bleibt auf true (pausiert), damit nichts Unbeabsichtigtes passiert
-    applyRegistrationState(true);
-  }
-}
-
-async function setRegStatus(nextPaused){
-  try{
-    // Optionaler PIN-Guard; falls im Backend gefordert: pin=465676
-    const body = new URLSearchParams({ action:'setRegStatus', paused: String(!!nextPaused) }).toString();
-    const res  = await fetch(WEB_APP_URL, { method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body });
-    const raw  = await res.text();
-    let json=null; try{ json = JSON.parse(raw);}catch(_){ throw new Error('Ungültige Server-Antwort'); }
-    if(!json.ok || typeof json.paused!=='boolean') throw new Error(json.error || 'Status konnte nicht gesetzt werden.');
-    REGISTRATION_PAUSED = json.paused;
-    applyRegistrationState(REGISTRATION_PAUSED);
-    pdfHint.textContent = REGISTRATION_PAUSED ? 'Registrierung deaktiviert.' : 'Registrierung aktiviert.';
-    setTimeout(()=> pdfHint.textContent='', 3000);
-  }catch(err){
-    console.error(err);
-    pdfHint.textContent = err.message || 'Netzwerkfehler.';
-    setTimeout(()=> pdfHint.textContent='', 5000);
-  }
-}
 
       const $ = (id) => document.getElementById(id);
-           function applyRegistrationState(paused){
-        REGISTRATION_PAUSED = paused;
-      
 
-        // Submit-Button
-        submitBtn.disabled   = paused;
-        submitBtn.textContent= paused ? 'Registrierung pausiert' : 'Kundennummer anfordern';
-        submitBtn.title      = paused ? 'Vorübergehend deaktiviert' : '';
-
-        // Confirm-Button im Review-Overlay
-        confirmSubmitBtn.disabled    = paused;
-        confirmSubmitBtn.textContent = paused ? 'Derzeit nicht verfügbar' : 'Jetzt registrieren';
-        confirmSubmitBtn.title       = paused ? 'Vorübergehend deaktiviert' : '';
-
-        // Hinweis
-        submitHint.textContent = paused ? 'Registrierung ist vorübergehend deaktiviert.' : '';
-
-        // Toggle-Button (Text + Farbe)
-        toggleRegBtn.textContent = paused ? 'Aktivieren' : 'Deaktivieren';
-        toggleRegBtn.classList.toggle('btn-success', paused); // grün wenn pausiert
-        toggleRegBtn.classList.toggle('btn-danger', !paused); // rot wenn aktiv
-               // Lead-Hinweis neben dem Text
-  regStatus.textContent = paused ? ' – Registrierung pausiert' : '';
-      }
-
-      // Initial: UI konservativ sperren, dann Serverstatus laden
-applyRegistrationState(true);
-fetchRegStatus().catch(err => { pdfHint.textContent = 'Status-Load fehlgeschlagen'; setTimeout(()=>pdfHint.textContent='', 5000); });
-
-     // Toggle-Handler (schreibt auf Server)
-toggleRegBtn.addEventListener('click', async ()=>{
-  toggleRegBtn.disabled = true;
-  try{
-    await setRegStatus(!REGISTRATION_PAUSED);
-  }finally{
-    toggleRegBtn.disabled = false;
-  }
-});
-      
       // Hard-hide Admin-Bar on load
       adminBar.classList.add('admin-hidden');
 
@@ -519,8 +439,7 @@ toggleRegBtn.addEventListener('click', async ()=>{
 
       // Submit -> Review
       form.addEventListener('submit', (e)=>{
-    e.preventDefault();
-    if (REGISTRATION_PAUSED) return;
+        e.preventDefault();
         if(!validate()) return;
         fillReview();
         showOverlay(reviewOverlay);
@@ -537,7 +456,6 @@ toggleRegBtn.addEventListener('click', async ()=>{
       }
 
       document.getElementById('confirmSubmitBtn').addEventListener('click', async ()=>{
-          if (REGISTRATION_PAUSED) return;
         if(submitting) return;
         submitting = true;
 
@@ -552,14 +470,9 @@ toggleRegBtn.addEventListener('click', async ()=>{
         procMsg.textContent = 'Deine Daten werden sicher übertragen.';
         procSub.textContent = 'Das kann je nach Netz 5–15 Sekunden dauern.';
 
-       submitBtn.disabled = true;
-submitBtn.classList.add('loading');
-// Failsafe, falls SUBMIT_COOLDOWN_MS mal fehlt/fehlerhaft ist:
-const COOLDOWN = (typeof SUBMIT_COOLDOWN_MS === 'number' && isFinite(SUBMIT_COOLDOWN_MS)) ? SUBMIT_COOLDOWN_MS : 10000;
-const cooldownTimer = setTimeout(()=>{
-  submitBtn.disabled = false;
-  submitBtn.classList.remove('loading');
-}, COOLDOWN);
+        submitBtn.disabled = true;
+        submitBtn.classList.add('loading');
+        const cooldownTimer = setTimeout(()=>{ submitBtn.disabled=false; submitBtn.classList.remove('loading'); }, SUBMIT_COOLDOWN_MS);
 
         let slowTimer1 = setTimeout(()=>{ procMsg.textContent='Noch dran …'; procSub.textContent='Es dauert gerade länger als üblich. Bitte weiterhin warten.'; }, 8000);
         let slowTimer2 = setTimeout(()=>{ procMsg.textContent='Fast geschafft …'; procSub.textContent='Wir haben die Registrierung im System, finalisieren gleich die Kundennummer.'; }, 15000);
@@ -676,23 +589,14 @@ const cooldownTimer = setTimeout(()=>{
 
       // Zurücksetzen (Form UI)
       resetBtn.addEventListener('click', ()=>{
-  form.reset();
-  landSelect.value = 'Deutschland';
-  landOther.style.display='none';
-  submitHint.textContent='';
-  document.querySelectorAll('.is-invalid').forEach(el=>el.classList.remove('is-invalid'));
-  document.querySelectorAll('.err.show').forEach(el=>el.classList.remove('show'));
-
-  if (REGISTRATION_PAUSED) {
-    submitBtn.disabled = true;
-    submitBtn.textContent = 'Registrierung pausiert';
-    submitBtn.title = 'Vorübergehend deaktiviert';
-  } else {
-    submitBtn.disabled = false;
-    submitBtn.textContent = 'Kundennummer anfordern';
-    submitBtn.title = '';
-  }
-});
+        form.reset();
+        landSelect.value = 'Deutschland';
+        landOther.style.display='none';
+        submitHint.textContent='';
+        document.querySelectorAll('.is-invalid').forEach(el=>el.classList.remove('is-invalid'));
+        document.querySelectorAll('.err.show').forEach(el=>el.classList.remove('show'));
+        submitBtn.textContent='Kundennummer anfordern';
+      });
     })();
   </script>
 </body>
