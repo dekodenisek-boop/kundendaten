@@ -615,28 +615,30 @@
 
       // ====== Reveal-Mechanik „5× H1 in 4s“: Admin-Bar & Toggle ======
       (()=>{
-        let clicks = 0, timer = null;
-        pageTitle.addEventListener('click', ()=>{
-          clicks++;
-          if (clicks === 1) {
-            timer = setTimeout(()=>{ clicks = 0; }, 4000);
-          }
-          if (clicks >= 5) {
-            clearTimeout(timer); clicks = 0;
-            // Admin-Bar sichtbar machen
-            adminBar.classList.remove('admin-hidden');
-            // Registrierung umschalten (toggle)
-            setRegPaused(!regPaused);
-            // kurzer Status
-            pdfHint.textContent = 'Admin-Tools sichtbar. Nutzung: Schalter oben.';
-            setTimeout(()=> pdfHint.textContent = '', 3000);
-          }
-        });
-      })();
-        });
+        const MAX_WINDOW_MS = 4000;
+        let clicks = 0;
+        let firstTs = 0;
+        function resetClicks(){ clicks = 0; firstTs = 0; }
+        if (pageTitle){
+          pageTitle.addEventListener('click', ()=>{
+            const now = Date.now();
+            if (!firstTs || (now - firstTs) > MAX_WINDOW_MS){
+              firstTs = now; clicks = 0;
+            }
+            clicks++;
+            if (clicks >= 5){
+              resetClicks();
+              if (adminBar && adminBar.classList.contains('admin-hidden')){
+                adminBar.classList.remove('admin-hidden');
+              }
+              pdfHint.textContent = 'Admin-Tools sichtbar. Nutzung: Schalter oben.';
+              setTimeout(()=> pdfHint.textContent = '', 3000);
+            }
+          });
+        }
       })();
 
-      // ====== PDF-Versand (Alle / Nur neue) ======
+      // ====== PDF-Versand (Alle / Nur neue) ====== (Alle / Nur neue) ======
       async function sendPdf(scope){
         const btn = (scope === 'new') ? sendPdfNewBtn : sendPdfAllBtn;
         btn.disabled = true; btn.classList.add('loading');
