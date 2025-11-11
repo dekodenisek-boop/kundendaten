@@ -370,13 +370,32 @@
   regStatus.textContent = paused ? ' – Registrierung pausiert' : '';
       }
 
-      // Initial anwenden (liest Startzustand aus Variable / localStorage)
-      applyRegistrationState(REGISTRATION_PAUSED);
+      // Initialstatus vom Server laden; Fallback = lokale Variable
+getRegStatusFromServer()
+  .then(paused => applyRegistrationState(paused))
+  .catch(() => applyRegistrationState(REGISTRATION_PAUSED));
 
-      // Toggle-Handler
-      toggleRegBtn.addEventListener('click', ()=>{
-        applyRegistrationState(!REGISTRATION_PAUSED);
-      });
+     // Toggle-Handler (persistiert in Settings!A2 über /exec?api=reg&action=set)
+toggleRegBtn.addEventListener('click', async ()=>{
+  const next = !REGISTRATION_PAUSED;
+
+  // Optimistische UI
+  applyRegistrationState(next);
+  toggleRegBtn.disabled = true;
+
+  try {
+    const pausedServer = await setRegStatusOnServer(next); // schreibt "aktiviert"/"deaktiviert"
+    // Server ist die Wahrheit → ggf. zurücksetzen, falls abweichend
+    if (pausedServer !== next) applyRegistrationState(pausedServer);
+  } catch (e) {
+    // Rollback + kurze Fehlermeldung
+    applyRegistrationState(!next);
+    pdfHint.textContent = 'Status konnte nicht gespeichert werden.';
+    setTimeout(()=>{ pdfHint.textContent = ''; }, 4000);
+  } finally {
+    toggleRegBtn.disabled = false;
+  }
+});
       
       // Hard-hide Admin-Bar on load
       adminBar.classList.add('admin-hidden');
@@ -475,6 +494,21 @@
           acceptDsgvo:$('acceptDsgvo').checked
         };
       }
+      async function getRegStatusFromServer(){
+  const url = WEB_APP_URL + '?api=reg&action=get';
+  const res = await fetch(url, { method:'GET' });
+  const json = await res.json();
+  if (!json.ok) throw new Error('Config get failed');
+  return json.status === 'deaktiviert'; // true = paused
+}
+async function setRegStatusOnServer(paused){
+  const value = paused ? 'deaktiviert' : 'aktiviert';
+  const url = WEB_APP_URL + '?api=reg&action=set&value=' + encodeURIComponent(value);
+  const res = await fetch(url, { method:'GET' });
+  const json = await res.json();
+  if (!json.ok) throw new Error('Config set failed');
+  return json.status === 'deaktiviert';
+}
 
       // Submit -> Review
       form.addEventListener('submit', (e)=>{
