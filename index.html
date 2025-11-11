@@ -310,9 +310,12 @@
     (function(){
       const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxcslNZhjXLbOeTsk8yuabOatZXQEaWSnc0cl5kiXg9ylEIwPaRohFlrDyHcqkzoV4/exec'; // <- anpassen
       const SUBMIT_COOLDOWN_MS = 10000;
-      // === WARTUNGSSCHALTER: Registrierung hart pausieren ===
-const REGISTRATION_PAUSED = true; // <- bei Reaktivierung auf false setzen
-     
+
+      // --- Runtime-Schalter: in localStorage persistiert ---
+      const REG_KEY = 'regPaused';
+      let regPaused = JSON.parse(localStorage.getItem(REG_KEY) ?? 'true'); // Default: pausiert = true
+
+      // Form-/UI-Refs
       const form = document.getElementById('form');
       const submitBtn = document.getElementById('submitBtn');
       const resetBtn  = document.getElementById('resetBtn');
@@ -340,19 +343,37 @@ const REGISTRATION_PAUSED = true; // <- bei Reaktivierung auf false setzen
       const pdfHint       = document.getElementById('pdfHint');
 
       const $ = (id) => document.getElementById(id);
-      // Registrierung pausieren: Buttons deaktivieren + Hinweis setzen
-if (REGISTRATION_PAUSED) {
-  submitBtn.disabled = true;
-  submitBtn.textContent = 'Registrierung pausiert';
-  submitBtn.title = 'Vorübergehend deaktiviert';
 
-  confirmSubmitBtn.disabled = true;
-  confirmSubmitBtn.textContent = 'Derzeit nicht verfügbar';
-  confirmSubmitBtn.title = 'Vorübergehend deaktiviert';
+      function setRegPaused(val){
+        regPaused = !!val;
+        localStorage.setItem(REG_KEY, JSON.stringify(regPaused));
+        applyRegUi();
+      }
 
-  submitHint.textContent = 'Registrierung ist vorübergehend deaktiviert.';
-}
-      
+      function applyRegUi(){
+        if (regPaused){
+          submitBtn.disabled = true;
+          submitBtn.textContent = 'Registrierung pausiert';
+          submitBtn.title = 'Vorübergehend deaktiviert';
+
+          confirmSubmitBtn.disabled = true;
+          confirmSubmitBtn.textContent = 'Derzeit nicht verfügbar';
+          confirmSubmitBtn.title = 'Vorübergehend deaktiviert';
+
+          submitHint.textContent = 'Registrierung ist vorübergehend deaktiviert.';
+        } else {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Kundennummer anfordern';
+          submitBtn.title = '';
+
+          confirmSubmitBtn.disabled = false;
+          confirmSubmitBtn.textContent = 'Jetzt registrieren';
+          confirmSubmitBtn.title = '';
+
+          submitHint.textContent = '';
+        }
+      }
+
       // Hard-hide Admin-Bar on load
       adminBar.classList.add('admin-hidden');
 
@@ -451,10 +472,13 @@ if (REGISTRATION_PAUSED) {
         };
       }
 
+      // Initial UI-State anwenden
+      applyRegUi();
+
       // Submit -> Review
       form.addEventListener('submit', (e)=>{
-    e.preventDefault();
-    if (REGISTRATION_PAUSED) return;
+        e.preventDefault();
+        if (regPaused) return;
         if(!validate()) return;
         fillReview();
         showOverlay(reviewOverlay);
@@ -471,7 +495,7 @@ if (REGISTRATION_PAUSED) {
       }
 
       document.getElementById('confirmSubmitBtn').addEventListener('click', async ()=>{
-          if (REGISTRATION_PAUSED) return;
+        if (regPaused) return;
         if(submitting) return;
         submitting = true;
 
@@ -558,7 +582,7 @@ if (REGISTRATION_PAUSED) {
         }
       });
 
-      // ====== Reveal-Mechanik „5× H1 in 4s“: Admin-Bar zeigen ======
+      // ====== Reveal-Mechanik „5× H1 in 4s“: Admin-Bar & Toggle ======
       (()=>{
         let clicks = 0, timer = null;
         pageTitle.addEventListener('click', ()=>{
@@ -568,8 +592,12 @@ if (REGISTRATION_PAUSED) {
           }
           if (clicks >= 5) {
             clearTimeout(timer); clicks = 0;
-            adminBar.classList.remove('admin-hidden'); // sichtbar machen
-            pdfHint.textContent = 'Admin-Tools aktiv.';
+            // Admin-Bar sichtbar machen
+            adminBar.classList.remove('admin-hidden');
+            // Registrierung umschalten (toggle)
+            setRegPaused(!regPaused);
+            // kurzer Status
+            pdfHint.textContent = regPaused ? 'Registrierung deaktiviert.' : 'Registrierung aktiviert.';
             setTimeout(()=> pdfHint.textContent = '', 3000);
           }
         });
@@ -605,27 +633,15 @@ if (REGISTRATION_PAUSED) {
 
       // Zurücksetzen (Form UI)
       resetBtn.addEventListener('click', ()=>{
-  form.reset();
-  landSelect.value = 'Deutschland';
-  landOther.style.display='none';
-  submitHint.textContent='';
-  document.querySelectorAll('.is-invalid').forEach(el=>el.classList.remove('is-invalid'));
-  document.querySelectorAll('.err.show').forEach(el=>el.classList.remove('show'));
-
-  if (REGISTRATION_PAUSED) {
-    submitBtn.disabled = true;
-    submitBtn.textContent = 'Registrierung pausiert';
-    submitBtn.title = 'Vorübergehend deaktiviert';
-  } else {
-    submitBtn.disabled = false;
-    submitBtn.textContent = 'Kundennummer anfordern';
-    submitBtn.title = '';
-  }
-});
+        form.reset();
+        landSelect.value = 'Deutschland';
+        landOther.style.display='none';
+        submitHint.textContent='';
+        document.querySelectorAll('.is-invalid').forEach(el=>el.classList.remove('is-invalid'));
+        document.querySelectorAll('.err.show').forEach(el=>el.classList.remove('show'));
+        applyRegUi();
+      });
     })();
   </script>
 </body>
 </html>
-
-
-ist das jetzt korrekt?
